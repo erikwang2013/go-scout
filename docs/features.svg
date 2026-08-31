@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 630" font-family="'PingFang SC','Microsoft YaHei',sans-serif">
+  <title>go-scout 功能特性图</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a4a4a"/>
+    </marker>
+  </defs>
+  <text x="480" y="28" text-anchor="middle" font-size="18" fill="#3a3a3a">go-scout 功能特性</text>
+
+  <!-- 卡片 1: 查询构建链 -->
+  <rect x="40" y="52" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="60" y="78" font-size="14" font-weight="bold" fill="#3a3a3a">查询构建链（scout.Builder）</text>
+  <text x="60" y="100" font-size="11" fill="#555">流式 API：Query · Where · WhereIn · WhereNotIn · OrderBy · Take</text>
+  <text x="60" y="120" font-size="11" fill="#555">高级：VectorSearch · WhereRange · WhereGeoDistance · Aggregate</text>
+  <text x="60" y="140" font-size="11" fill="#555">回调注入：QueryCB · CallbackCB · AddResultProcessor</text>
+
+  <!-- 卡片 2: DSL 中间表示 -->
+  <rect x="480" y="52" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="500" y="78" font-size="14" font-weight="bold" fill="#3a3a3a">DSL 中间表示（engines/dsl.go）</text>
+  <text x="500" y="100" font-size="11" fill="#555">高级条件编译为 bool 查询 JSON（must · filter · should）</text>
+  <text x="500" y="120" font-size="11" fill="#555">multi_match · term · range · geo_distance · wildcard · regexp …</text>
+  <text x="500" y="140" font-size="11" fill="#555">ES / OpenSearch 共用；MapBooleanToBoolKey 映射 and/or/not</text>
+
+  <!-- 卡片 3: 分页与游标 -->
+  <rect x="40" y="184" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="60" y="210" font-size="14" font-weight="bold" fill="#3a3a3a">分页与游标</text>
+  <text x="60" y="232" font-size="11" fill="#555">Paginate · SimplePaginate · Cursor 惰性流式遍历</text>
+  <text x="60" y="252" font-size="11" fill="#555">PaginationResult：LastPage · HasMorePages · AppendQuery</text>
+  <text x="60" y="272" font-size="11" fill="#555">Result.As[T] / 包级 GetAs[T] 泛型取模型</text>
+
+  <!-- 卡片 4: 软删除 -->
+  <rect x="480" y="184" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="500" y="210" font-size="14" font-weight="bold" fill="#3a3a3a">软删除</text>
+  <text x="500" y="232" font-size="11" fill="#555">__soft_deleted 元数据随文档写入索引（0 / 1）</text>
+  <text x="500" y="252" font-size="11" fill="#555">OnlyTrashed / WithTrashed 查询过滤</text>
+  <text x="500" y="272" font-size="11" fill="#555">观察者 Deleted 分支 · ForceDeleted / Restored</text>
+
+  <!-- 卡片 5: 异步队列 -->
+  <rect x="40" y="316" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="60" y="342" font-size="14" font-weight="bold" fill="#3a3a3a">异步队列（scout.Queue）</text>
+  <text x="60" y="364" font-size="11" fill="#555">进程内队列：chan 缓冲 4096 + 工作协程</text>
+  <text x="60" y="384" font-size="11" fill="#555">队列不可用时同步回退并告警</text>
+  <text x="60" y="404" font-size="11" fill="#555">MakeAllSearchable 按 chunk 分块导入（默认 500）</text>
+
+  <!-- 卡片 6: 事件与观察者 -->
+  <rect x="480" y="316" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="500" y="342" font-size="14" font-weight="bold" fill="#3a3a3a">事件与观察者</text>
+  <text x="500" y="364" font-size="11" fill="#555">ModelObserver 监听 Saved · Deleted · Restored 自动同步</text>
+  <text x="500" y="384" font-size="11" fill="#555">EventBus 发布 models_imported · models_flushed</text>
+  <text x="500" y="404" font-size="11" fill="#555">WithoutSyncingToSearch 临时禁用同步</text>
+
+  <!-- 卡片 7: 多引擎注册 -->
+  <rect x="40" y="448" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="60" y="474" font-size="14" font-weight="bold" fill="#3a3a3a">多引擎注册（EngineManager）</text>
+  <text x="60" y="496" font-size="11" fill="#555">Extend + engines.Register 注册 15 个驱动名</text>
+  <text x="60" y="516" font-size="11" fill="#555">驱动惰性创建并缓存；未知驱动返回 ErrNotSupported</text>
+  <text x="60" y="536" font-size="11" fill="#555">切换引擎只改 SCOUT_DRIVER 配置</text>
+
+  <!-- 卡片 8: 高级搜索 -->
+  <rect x="480" y="448" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="500" y="474" font-size="14" font-weight="bold" fill="#3a3a3a">高级搜索（AdvancedEngine）</text>
+  <text x="500" y="496" font-size="11" fill="#555">AdvancedSearch · GetAggregations · GetFacets</text>
+  <text x="500" y="516" font-size="11" fill="#555">向量相似度 · 范围 · 地理距离过滤与排序</text>
+  <text x="500" y="536" font-size="11" fill="#555">聚合（Aggregate）+ 分类统计（Facet）+ 高亮</text>
+
+  <!-- 底部 -->
+  <rect x="40" y="582" width="880" height="36" rx="8" fill="#ebe9e3" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="480" y="605" text-anchor="middle" font-size="13" fill="#3a3a3a">纯标准库实现 · 零第三方依赖 · Go 1.24 · 移植自 webman/laravel-scout</text>
+</svg>

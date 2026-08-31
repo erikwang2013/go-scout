@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 580" font-family="'PingFang SC','Microsoft YaHei',sans-serif">
+  <title>go-scout 设计思路图</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a4a4a"/>
+    </marker>
+  </defs>
+  <text x="480" y="28" text-anchor="middle" font-size="18" fill="#3a3a3a">go-scout 设计思路</text>
+
+  <!-- 面板 A: 链式 Builder -->
+  <rect x="40" y="52" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="40" y="52" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="260" y="72" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a3a3a">链式 Builder 承载查询意图</text>
+  <text x="60" y="106" font-size="11" fill="#555">Search(ctx, query, cb) 返回 *Builder，链式调用只累积状态</text>
+  <text x="60" y="130" font-size="11" fill="#555">Get / First / Paginate / Cursor 才触发一次引擎往返</text>
+  <text x="60" y="154" font-size="11" fill="#555">QueryCB 改查询、CallbackCB 拿引擎请求体、</text>
+  <text x="60" y="174" font-size="11" fill="#555">AddResultProcessor 后处理结果</text>
+  <text x="60" y="206" font-size="11" fill="#d8d4c8">—</text>
+  <text x="60" y="222" font-size="11" fill="#555">搜索字段解析：Options["fields"] → FullTextColumner → FieldNames</text>
+
+  <!-- 面板 B: DSL 中间表示 -->
+  <rect x="480" y="52" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="480" y="52" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="700" y="72" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a3a3a">DSL 中间表示</text>
+  <text x="500" y="106" font-size="11" fill="#555">高级条件经 engines/dsl.go 统一编译为 bool 查询 JSON</text>
+  <text x="500" y="130" font-size="11" fill="#555">ES / OpenSearch 直接消费；meilisearch / typesense /</text>
+  <text x="500" y="150" font-size="11" fill="#555">algolia / database 各自翻译成自家语法</text>
+  <text x="500" y="174" font-size="11" fill="#555">MapBooleanToBoolKey：and/or/not → filter/should/must_not</text>
+  <text x="500" y="198" font-size="11" fill="#555">同一套高级查询 API，引擎差异收在翻译层</text>
+
+  <!-- 面板 C: 引擎接口隔离 -->
+  <rect x="40" y="272" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="40" y="272" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="260" y="292" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a3a3a">引擎接口隔离</text>
+  <text x="60" y="326" font-size="11" fill="#555">Engine / AdvancedEngine 只谈文档与结果，不感知模型类型</text>
+  <text x="60" y="350" font-size="11" fill="#555">统一 scout.Result + Hit；MapIDs / Map 负责回填模型</text>
+  <text x="60" y="374" font-size="11" fill="#555">Manager.Driver(name) 惰性创建并缓存，可随时 Extend 新引擎</text>
+  <text x="60" y="398" font-size="11" fill="#555">attachMeta 按 KeyString 对齐，过滤后的模型集不会错位</text>
+  <text x="60" y="422" font-size="11" fill="#555">错误约定：未知驱动 / 不支持操作 → scout.ErrNotSupported</text>
+
+  <!-- 面板 D: ponytail 刻意简化 -->
+  <rect x="480" y="272" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="480" y="272" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="700" y="292" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a3a3a">ponytail 刻意简化</text>
+  <text x="500" y="326" font-size="11" fill="#555">进程内队列而非 Redis；MemorySource 线性扫描 O(ids×models)</text>
+  <text x="500" y="350" font-size="11" fill="#555">algolia whereNotIns 以 "0=1" 无操作；v3/v4 单结构 + 标志位</text>
+  <text x="500" y="374" font-size="11" fill="#555">纯标准库零依赖；SQL 标识符白名单防注入</text>
+  <text x="500" y="398" font-size="11" fill="#555">简化处均以 ponytail 注释标明上限与升级路径</text>
+  <text x="500" y="422" font-size="11" fill="#555">升级路径：Redis 队列 / 索引表 / 每引擎独立结构</text>
+
+  <!-- 底部流转 -->
+  <rect x="40" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="120" y="536" text-anchor="middle" font-size="13" fill="#3a3a3a">查询意图</text>
+  <line x1="204" y1="532" x2="248" y2="532" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="252" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="332" y="536" text-anchor="middle" font-size="13" fill="#3a3a3a">DSL 中间表示</text>
+  <line x1="416" y1="532" x2="460" y2="532" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="464" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="544" y="536" text-anchor="middle" font-size="13" fill="#3a3a3a">引擎适配</text>
+  <line x1="628" y1="532" x2="672" y2="532" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="676" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="756" y="536" text-anchor="middle" font-size="13" fill="#3a3a3a">结果归一化</text>
+</svg>
