@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 630" font-family="'PingFang SC','Microsoft YaHei',sans-serif">
+  <title>Fonctionnalités de go-scout</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a4a4a"/>
+    </marker>
+  </defs>
+  <text x="480" y="28" text-anchor="middle" font-size="18" fill="#3a3a3a">Fonctionnalités de go-scout</text>
+
+  <!-- Carte 1 : chaîne de requêtes -->
+  <rect x="40" y="52" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="60" y="78" font-size="14" font-weight="bold" fill="#3a3a3a">Chaîne de requêtes (scout.Builder)</text>
+  <text x="60" y="100" font-size="10" fill="#555">API fluide : Query · Where · WhereIn · WhereNotIn · OrderBy · Take</text>
+  <text x="60" y="120" font-size="10" fill="#555">Avancé : VectorSearch · WhereRange · WhereGeoDistance · Aggregate</text>
+  <text x="60" y="140" font-size="10" fill="#555">Callbacks : QueryCB · CallbackCB · AddResultProcessor</text>
+
+  <!-- Carte 2 : DSL intermédiaire -->
+  <rect x="480" y="52" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="500" y="78" font-size="14" font-weight="bold" fill="#3a3a3a">DSL intermédiaire (engines/dsl.go)</text>
+  <text x="500" y="100" font-size="10" fill="#555">Conditions avancées compilées en bool query JSON (must · filter · should)</text>
+  <text x="500" y="120" font-size="10" fill="#555">multi_match · term · range · geo_distance · wildcard · regexp …</text>
+  <text x="500" y="140" font-size="10" fill="#555">ES / OpenSearch partagé ; MapBooleanToBoolKey mappe and/or/not</text>
+
+  <!-- Carte 3 : pagination et curseur -->
+  <rect x="40" y="184" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="60" y="210" font-size="14" font-weight="bold" fill="#3a3a3a">Pagination et curseur</text>
+  <text x="60" y="232" font-size="10" fill="#555">Paginate · SimplePaginate · Cursor : traversée paresseuse</text>
+  <text x="60" y="252" font-size="10" fill="#555">PaginationResult : LastPage · HasMorePages · AppendQuery</text>
+  <text x="60" y="272" font-size="10" fill="#555">Result.As[T] / GetAs[T] générique : modèles sans assertion</text>
+
+  <!-- Carte 4 : suppression douce -->
+  <rect x="480" y="184" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="500" y="210" font-size="14" font-weight="bold" fill="#3a3a3a">Suppression douce</text>
+  <text x="500" y="232" font-size="10" fill="#555">Métadonnées __soft_deleted écrites avec le document (0 / 1)</text>
+  <text x="500" y="252" font-size="10" fill="#555">Filtres de requête OnlyTrashed / WithTrashed</text>
+  <text x="500" y="272" font-size="10" fill="#555">Branche Deleted de l'observateur · ForceDeleted / Restored</text>
+
+  <!-- Carte 5 : file asynchrone -->
+  <rect x="40" y="316" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="60" y="342" font-size="14" font-weight="bold" fill="#3a3a3a">File asynchrone (scout.Queue)</text>
+  <text x="60" y="364" font-size="10" fill="#555">File in-process : chan tampon 4096 + goroutines de travail</text>
+  <text x="60" y="384" font-size="10" fill="#555">Repli synchrone avec avertissement si la file est indisponible</text>
+  <text x="60" y="404" font-size="10" fill="#555">MakeAllSearchable importe par lots (défaut 500)</text>
+
+  <!-- Carte 6 : événements et observateurs -->
+  <rect x="480" y="316" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="500" y="342" font-size="14" font-weight="bold" fill="#3a3a3a">Événements et observateurs</text>
+  <text x="500" y="364" font-size="10" fill="#555">ModelObserver écoute Saved · Deleted · Restored, synchro auto</text>
+  <text x="500" y="384" font-size="10" fill="#555">EventBus publie models_imported · models_flushed</text>
+  <text x="500" y="404" font-size="10" fill="#555">WithoutSyncingToSearch désactive temporairement la synchro</text>
+
+  <!-- Carte 7 : enregistrement multi-moteurs -->
+  <rect x="40" y="448" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="60" y="474" font-size="14" font-weight="bold" fill="#3a3a3a">Enregistrement multi-moteurs (EngineManager)</text>
+  <text x="60" y="496" font-size="10" fill="#555">Extend + engines.Register : 15 noms de pilotes</text>
+  <text x="60" y="516" font-size="10" fill="#555">Pilotes paresseux + cache ; inconnu → ErrNotSupported</text>
+  <text x="60" y="536" font-size="10" fill="#555">Changer de moteur ne change que SCOUT_DRIVER</text>
+
+  <!-- Carte 8 : recherche avancée -->
+  <rect x="480" y="448" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="500" y="474" font-size="14" font-weight="bold" fill="#3a3a3a">Recherche avancée (AdvancedEngine)</text>
+  <text x="500" y="496" font-size="10" fill="#555">AdvancedSearch · GetAggregations · GetFacets</text>
+  <text x="500" y="516" font-size="10" fill="#555">Similarité vectorielle · plages · filtres et tris géo</text>
+  <text x="500" y="536" font-size="10" fill="#555">Agrégats (Aggregate) + facettes (Facet) + surlignage</text>
+
+  <!-- Pied -->
+  <rect x="40" y="582" width="880" height="36" rx="8" fill="#ebe9e3" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="480" y="605" text-anchor="middle" font-size="12" fill="#3a3a3a">100 % bibliothèque standard · zéro dépendance tierce · Go 1.24 · portage de webman/laravel-scout</text>
+</svg>

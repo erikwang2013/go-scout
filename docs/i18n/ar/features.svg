@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 630" font-family="'Segoe UI',Tahoma,sans-serif">
+  <title>go-scout — الميزات</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a4a4a"/>
+    </marker>
+  </defs>
+  <text x="480" y="28" text-anchor="middle" font-size="18" fill="#3a3a3a">go-scout — الميزات</text>
+
+  <!-- البطاقة 1: سلسلة بناء الاستعلام -->
+  <rect x="40" y="52" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="60" y="78" font-size="14" font-weight="bold" fill="#3a3a3a">سلسلة بناء الاستعلام (scout.Builder)</text>
+  <text x="60" y="100" font-size="11" fill="#555">API انسيابي: Query · Where · WhereIn · WhereNotIn · OrderBy · Take</text>
+  <text x="60" y="120" font-size="11" fill="#555">متقدم: VectorSearch · WhereRange · WhereGeoDistance · Aggregate</text>
+  <text x="60" y="140" font-size="11" fill="#555">حقن استدعاءات: QueryCB · CallbackCB · AddResultProcessor</text>
+
+  <!-- البطاقة 2: تمثيل DSL الوسيط -->
+  <rect x="480" y="52" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="500" y="78" font-size="14" font-weight="bold" fill="#3a3a3a">تمثيل DSL الوسيط (engines/dsl.go)</text>
+  <text x="500" y="100" font-size="11" fill="#555">الشروط المتقدمة ← JSON استعلام bool (must · filter · should)</text>
+  <text x="500" y="120" font-size="11" fill="#555">multi_match · term · range · geo_distance · wildcard · regexp …</text>
+  <text x="500" y="140" font-size="11" fill="#555">مشترك بين ES/OpenSearch؛ MapBooleanToBoolKey يربط and/or/not</text>
+
+  <!-- البطاقة 3: ترقيم الصفحات والمؤشر -->
+  <rect x="40" y="184" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="60" y="210" font-size="14" font-weight="bold" fill="#3a3a3a">ترقيم الصفحات والمؤشر</text>
+  <text x="60" y="232" font-size="11" fill="#555">Paginate · SimplePaginate · Cursor — اجتياز كسول كتدفق</text>
+  <text x="60" y="252" font-size="11" fill="#555">PaginationResult: LastPage · HasMorePages · AppendQuery</text>
+  <text x="60" y="272" font-size="11" fill="#555">جلب النماذج عبر Result.As[T] / الأدوية العامة GetAs[T]</text>
+
+  <!-- البطاقة 4: الحذف الناعم -->
+  <rect x="480" y="184" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="500" y="210" font-size="14" font-weight="bold" fill="#3a3a3a">الحذف الناعم</text>
+  <text x="500" y="232" font-size="11" fill="#555">بيانات __soft_deleted تُكتب مع المستند في الفهرس (0 / 1)</text>
+  <text x="500" y="252" font-size="11" fill="#555">مرشحات الاستعلام: OnlyTrashed / WithTrashed</text>
+  <text x="500" y="272" font-size="11" fill="#555">فرع Deleted في المراقب · ForceDeleted / Restored</text>
+
+  <!-- البطاقة 5: قائمة الانتظار غير المتزامنة -->
+  <rect x="40" y="316" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="60" y="342" font-size="14" font-weight="bold" fill="#3a3a3a">قائمة انتظار غير متزامنة (scout.Queue)</text>
+  <text x="60" y="364" font-size="11" fill="#555">قائمة داخل العملية: مخزن chan بسعة 4096 + خيط عامل</text>
+  <text x="60" y="384" font-size="11" fill="#555">بدون قائمة — تنفيذ متزامن مع تحذير</text>
+  <text x="60" y="404" font-size="11" fill="#555">MakeAllSearchable يستورد على دفعات (افتراضي 500)</text>
+
+  <!-- البطاقة 6: الأحداث والمراقبون -->
+  <rect x="480" y="316" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="500" y="342" font-size="14" font-weight="bold" fill="#3a3a3a">الأحداث والمراقبون</text>
+  <text x="500" y="364" font-size="11" fill="#555">ModelObserver يستمع لـ Saved · Deleted · Restored — مزامنة تلقائية</text>
+  <text x="500" y="384" font-size="11" fill="#555">EventBus ينشر models_imported · models_flushed</text>
+  <text x="500" y="404" font-size="11" fill="#555">WithoutSyncingToSearch يوقف المزامنة مؤقتًا</text>
+
+  <!-- البطاقة 7: تسجيل محركات متعددة -->
+  <rect x="40" y="448" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="60" y="474" font-size="14" font-weight="bold" fill="#3a3a3a">تسجيل محركات متعددة (EngineManager)</text>
+  <text x="60" y="496" font-size="11" fill="#555">Extend + engines.Register — تسجيل 15 اسم محرك</text>
+  <text x="60" y="516" font-size="11" fill="#555">إنشاء كسول + تخزين مؤقت؛ محرك مجهول ← ErrNotSupported</text>
+  <text x="60" y="536" font-size="11" fill="#555">تغيير المحرك = تغيير SCOUT_DRIVER فقط</text>
+
+  <!-- البطاقة 8: البحث المتقدم -->
+  <rect x="480" y="448" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="500" y="474" font-size="14" font-weight="bold" fill="#3a3a3a">البحث المتقدم (AdvancedEngine)</text>
+  <text x="500" y="496" font-size="11" fill="#555">AdvancedSearch · GetAggregations · GetFacets</text>
+  <text x="500" y="516" font-size="11" fill="#555">تشابه متجه · نطاق · تصفية/فرز حسب المسافة الجغرافية</text>
+  <text x="500" y="536" font-size="11" fill="#555">تجميعات (Aggregate) + أوجه (Facet) + تمييز</text>
+
+  <!-- الشريط السفلي -->
+  <rect x="40" y="582" width="880" height="36" rx="8" fill="#ebe9e3" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="480" y="605" text-anchor="middle" font-size="13" fill="#3a3a3a">المكتبة القياسية فقط · بدون اعتماديات · Go 1.24 · منفذ webman/laravel-scout</text>
+</svg>

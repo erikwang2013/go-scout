@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 580" font-family="'Noto Sans Devanagari',sans-serif">
+  <title>go-scout — डिज़ाइन दृष्टिकोण</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a4a4a"/>
+    </marker>
+  </defs>
+  <text x="480" y="28" text-anchor="middle" font-size="18" fill="#3a3a3a">go-scout — डिज़ाइन दृष्टिकोण</text>
+
+  <!-- पैनल A: चेन Builder -->
+  <rect x="40" y="52" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="40" y="52" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="260" y="72" text-anchor="middle" font-size="13" font-weight="bold" fill="#3a3a3a">चेन Builder क्वेरी का इरादा वहन करता है</text>
+  <text x="60" y="106" font-size="11" fill="#555">Search(ctx, query, cb) *Builder लौटाता है;</text>
+  <text x="60" y="128" font-size="11" fill="#555">चेन केवल स्थिति जमा करती है</text>
+  <text x="60" y="152" font-size="11" fill="#555">Get / First / Paginate / Cursor — इंजन से एक एक्सचेंज</text>
+  <text x="60" y="174" font-size="11" fill="#555">QueryCB क्वेरी बदलता है, CallbackCB — बॉडी लेता है,</text>
+  <text x="60" y="196" font-size="11" fill="#555">AddResultProcessor परिणाम पोस्ट-प्रोसेस करता है</text>
+  <text x="60" y="222" font-size="11" fill="#555">सर्च फ़ील्ड पार्स: Options["fields"] → FullTextColumner → FieldNames</text>
+
+  <!-- पैनल B: DSL मध्यवर्ती निरूपण -->
+  <rect x="480" y="52" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="480" y="52" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="700" y="72" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a3a3a">DSL मध्यवर्ती निरूपण</text>
+  <text x="500" y="106" font-size="11" fill="#555">एडवांस कंडीशन engines/dsl.go से कंपाइल होती हैं</text>
+  <text x="500" y="130" font-size="11" fill="#555">bool-क्वेरी JSON में; ES / OpenSearch सीधे उपभोग करते हैं,</text>
+  <text x="500" y="150" font-size="11" fill="#555">meilisearch / typesense / algolia / database</text>
+  <text x="500" y="174" font-size="11" fill="#555">अपने सिंटैक्स में ट्रांसलेट करते हैं; MapBooleanToBoolKey:</text>
+  <text x="500" y="198" font-size="11" fill="#555">and/or/not → filter/should/must_not; अंतर ट्रांसलेशन में छिपे</text>
+
+  <!-- पैनल C: इंजन इंटरफ़ेस अलगाव -->
+  <rect x="40" y="272" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="40" y="272" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="260" y="292" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a3a3a">इंजन इंटरफ़ेस अलगाव</text>
+  <text x="60" y="326" font-size="11" fill="#555">Engine / AdvancedEngine: डॉक्यूमेंट और परिणाम, मॉडल टाइप नहीं</text>
+  <text x="60" y="350" font-size="11" fill="#555">समान scout.Result + Hit; MapIDs / Map मॉडल भरते हैं</text>
+  <text x="60" y="374" font-size="11" fill="#555">Manager.Driver(name) — लेज़ी + कैश; Extend नए इंजन जोड़ता है</text>
+  <text x="60" y="398" font-size="11" fill="#555">attachMeta KeyString से मेल खाता है — सेट खिसकता नहीं</text>
+  <text x="60" y="422" font-size="11" fill="#555">त्रुटियाँ: अज्ञात ड्राइवर / असहाय ऑप → scout.ErrNotSupported</text>
+
+  <!-- पैनल D: ponytail जानबूझकर सरलीकरण -->
+  <rect x="480" y="272" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="480" y="272" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="700" y="292" text-anchor="middle" font-size="13" font-weight="bold" fill="#3a3a3a">ponytail जानबूझकर सरलीकरण</text>
+  <text x="500" y="326" font-size="11" fill="#555">Redis के बजाय इन-प्रोसेस कतार; MemorySource O(ids×models)</text>
+  <text x="500" y="350" font-size="11" fill="#555">Algolia whereNotIns — no-op "0=1"; एकल v3/v4 संरचना + फ़्लैग</text>
+  <text x="500" y="374" font-size="11" fill="#555">केवल मानक लाइब्रेरी; SQL आइडेंटिफ़ायर व्हाइटलिस्ट</text>
+  <text x="500" y="398" font-size="11" fill="#555">हर सरलीकरण ponytail कमेंट से चिह्नित: सीमा और उन्नयन पथ</text>
+  <text x="500" y="422" font-size="11" fill="#555">उन्नयन पथ: Redis कतार / इंडेक्स टेबल / प्रति-इंजन संरचना</text>
+
+  <!-- निचली प्रवाह पट्टी -->
+  <rect x="40" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="120" y="536" text-anchor="middle" font-size="13" fill="#3a3a3a">क्वेरी का इरादा</text>
+  <line x1="204" y1="532" x2="248" y2="532" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="252" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="332" y="536" text-anchor="middle" font-size="13" fill="#3a3a3a">DSL निरूपण</text>
+  <line x1="416" y1="532" x2="460" y2="532" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="464" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="544" y="536" text-anchor="middle" font-size="13" fill="#3a3a3a">इंजन अनुकूलन</text>
+  <line x1="628" y1="532" x2="672" y2="532" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="676" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="756" y="536" text-anchor="middle" font-size="12" fill="#3a3a3a">परिणाम सामान्यीकरण</text>
+</svg>

@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 630" font-family="'Segoe UI','Helvetica Neue',Arial,'PingFang SC','Microsoft YaHei',sans-serif">
+  <title>go-scout Funktionen-Diagramm</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a4a4a"/>
+    </marker>
+  </defs>
+  <text x="480" y="28" text-anchor="middle" font-size="18" fill="#3a3a3a">go-scout Funktionen</text>
+
+  <!-- Karte 1: Query-Builder-Kette -->
+  <rect x="40" y="52" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="60" y="78" font-size="14" font-weight="bold" fill="#3a3a3a">Query-Builder-Kette (scout.Builder)</text>
+  <text x="60" y="100" font-size="11" fill="#555">Streaming-API: Query · Where · WhereIn · WhereNotIn · OrderBy · Take</text>
+  <text x="60" y="120" font-size="11" fill="#555">Erweitert: VectorSearch · WhereRange · WhereGeoDistance · Aggregate</text>
+  <text x="60" y="140" font-size="11" fill="#555">Callback-Injektion: QueryCB · CallbackCB · AddResultProcessor</text>
+
+  <!-- Karte 2: DSL-Zwischendarstellung -->
+  <rect x="480" y="52" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="500" y="78" font-size="14" font-weight="bold" fill="#3a3a3a">DSL-Zwischendarstellung (engines/dsl.go)</text>
+  <text x="500" y="100" font-size="11" fill="#555">Erweiterte Bedingungen → Bool-Query-JSON (must · filter · should)</text>
+  <text x="500" y="120" font-size="11" fill="#555">multi_match · term · range · geo_distance · wildcard · regexp …</text>
+  <text x="500" y="140" font-size="11" fill="#555">ES / OpenSearch gemeinsam; MapBooleanToBoolKey mappt and/or/not</text>
+
+  <!-- Karte 3: Paginierung & Cursor -->
+  <rect x="40" y="184" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="60" y="210" font-size="14" font-weight="bold" fill="#3a3a3a">Paginierung &amp; Cursor</text>
+  <text x="60" y="232" font-size="11" fill="#555">Paginate · SimplePaginate · Cursor-Lazy-Streaming</text>
+  <text x="60" y="252" font-size="11" fill="#555">PaginationResult: LastPage · HasMorePages · AppendQuery</text>
+  <text x="60" y="272" font-size="11" fill="#555">Result.As[T] / GetAs[T] auf Paketebene (Generics)</text>
+
+  <!-- Karte 4: Soft Deletes -->
+  <rect x="480" y="184" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="500" y="210" font-size="14" font-weight="bold" fill="#3a3a3a">Soft Deletes</text>
+  <text x="500" y="232" font-size="11" fill="#555">__soft_deleted-Metadaten im Dokument (0 / 1)</text>
+  <text x="500" y="252" font-size="11" fill="#555">OnlyTrashed / WithTrashed filtern Queries</text>
+  <text x="500" y="272" font-size="11" fill="#555">Observer-Deleted-Zweig · ForceDeleted / Restored</text>
+
+  <!-- Karte 5: Async-Queue -->
+  <rect x="40" y="316" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="60" y="342" font-size="14" font-weight="bold" fill="#3a3a3a">Async-Queue (scout.Queue)</text>
+  <text x="60" y="364" font-size="11" fill="#555">Prozessinterne Queue: chan-Puffer 4096 + Worker-Goroutinen</text>
+  <text x="60" y="384" font-size="11" fill="#555">Sync-Fallback mit Warnung, wenn Queue fehlt</text>
+  <text x="60" y="404" font-size="11" fill="#555">MakeAllSearchable Chunk-Import (Standard 500)</text>
+
+  <!-- Karte 6: Events & Observer -->
+  <rect x="480" y="316" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="500" y="342" font-size="14" font-weight="bold" fill="#3a3a3a">Events &amp; Observer</text>
+  <text x="500" y="364" font-size="11" fill="#555">ModelObserver synct automatisch: Saved · Deleted · Restored</text>
+  <text x="500" y="384" font-size="11" fill="#555">EventBus veröffentlicht models_imported · models_flushed</text>
+  <text x="500" y="404" font-size="11" fill="#555">WithoutSyncingToSearch deaktiviert Sync temporär</text>
+
+  <!-- Karte 7: Multi-Engine-Registrierung -->
+  <rect x="40" y="448" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="60" y="474" font-size="14" font-weight="bold" fill="#3a3a3a">Multi-Engine-Registrierung (EngineManager)</text>
+  <text x="60" y="496" font-size="11" fill="#555">Extend + engines.Register registrieren 15 Treibernamen</text>
+  <text x="60" y="516" font-size="11" fill="#555">Treiber lazy erstellt &amp; gecacht; unbekannt → ErrNotSupported</text>
+  <text x="60" y="536" font-size="11" fill="#555">Engine-Wechsel nur über SCOUT_DRIVER</text>
+
+  <!-- Karte 8: Erweiterte Suche -->
+  <rect x="480" y="448" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="500" y="474" font-size="14" font-weight="bold" fill="#3a3a3a">Erweiterte Suche (AdvancedEngine)</text>
+  <text x="500" y="496" font-size="11" fill="#555">AdvancedSearch · GetAggregations · GetFacets</text>
+  <text x="500" y="516" font-size="11" fill="#555">Vektor-Ähnlichkeit · Bereich · Geo-Distanz-Filter &amp; Sortierung</text>
+  <text x="500" y="536" font-size="11" fill="#555">Aggregate + Facets + Highlighting</text>
+
+  <!-- Untere Leiste -->
+  <rect x="40" y="582" width="880" height="36" rx="8" fill="#ebe9e3" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="480" y="605" text-anchor="middle" font-size="13" fill="#3a3a3a">Reine Standardbibliothek · 0 Drittanbieter-Abhängigkeiten · Go 1.24 · Port von webman/laravel-scout</text>
+</svg>

@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 580" font-family="'Hiragino Sans','Noto Sans JP','PingFang SC','Microsoft YaHei',sans-serif">
+  <title>go-scout 設計思想の図</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a4a4a"/>
+    </marker>
+  </defs>
+  <text x="480" y="28" text-anchor="middle" font-size="18" fill="#3a3a3a">go-scout 設計思想</text>
+
+  <!-- パネル A: チェーン Builder -->
+  <rect x="40" y="52" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="40" y="52" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="260" y="72" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a3a3a">チェーン Builder がクエリ意図を担う</text>
+  <text x="60" y="106" font-size="11" fill="#555">Search(ctx, query, cb) が *Builder を返し、チェーンは状態を蓄積するだけ</text>
+  <text x="60" y="130" font-size="11" fill="#555">Get / First / Paginate / Cursor で初めてエンジン往復が発生</text>
+  <text x="60" y="154" font-size="11" fill="#555">QueryCB はクエリ修正、CallbackCB はエンジンへのリクエストボディを傍受、</text>
+  <text x="60" y="174" font-size="11" fill="#555">AddResultProcessor は結果の後処理</text>
+  <text x="60" y="206" font-size="11" fill="#d8d4c8">—</text>
+  <text x="60" y="222" font-size="11" fill="#555">検索フィールド解決: Options["fields"] → FullTextColumner → FieldNames</text>
+
+  <!-- パネル B: DSL 中間表現 -->
+  <rect x="480" y="52" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="480" y="52" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="700" y="72" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a3a3a">DSL 中間表現</text>
+  <text x="500" y="106" font-size="11" fill="#555">高度な条件を engines/dsl.go で統一コンパイルし bool クエリ JSON 生成</text>
+  <text x="500" y="130" font-size="11" fill="#555">ES / OpenSearch は直接消費; meilisearch / typesense /</text>
+  <text x="500" y="150" font-size="11" fill="#555">algolia / database はそれぞれ独自の構文に翻訳</text>
+  <text x="500" y="174" font-size="11" fill="#555">MapBooleanToBoolKey: and/or/not → filter/should/must_not</text>
+  <text x="500" y="198" font-size="11" fill="#555">同一の高度なクエリ API、エンジン差異は翻訳層に隔離</text>
+
+  <!-- パネル C: エンジンインターフェースの隔離 -->
+  <rect x="40" y="272" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="40" y="272" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="260" y="292" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a3a3a">エンジンインターフェースの隔離</text>
+  <text x="60" y="326" font-size="11" fill="#555">Engine / AdvancedEngine はドキュメントと結果のみ扱い、モデル型に非関与</text>
+  <text x="60" y="350" font-size="11" fill="#555">統一 scout.Result + Hit; MapIDs / Map がモデルを埋め戻し</text>
+  <text x="60" y="374" font-size="11" fill="#555">Manager.Driver(name) 遅延生成・キャッシュ、いつでも Extend 可能</text>
+  <text x="60" y="398" font-size="11" fill="#555">attachMeta が KeyString で位置合わせ、フィルタ後の集合もずれない</text>
+  <text x="60" y="422" font-size="11" fill="#555">エラー規約: 未知ドライバ / 非対応操作 → scout.ErrNotSupported</text>
+
+  <!-- パネル D: ponytail 意図的簡略化 -->
+  <rect x="480" y="272" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="480" y="272" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="700" y="292" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a3a3a">ponytail 意図的簡略化</text>
+  <text x="500" y="326" font-size="11" fill="#555">Redis の代わりにプロセス内キュー; MemorySource 線形スキャン O(ids×models)</text>
+  <text x="500" y="350" font-size="11" fill="#555">algolia whereNotIns は "0=1" no-op; v3/v4 は単一構造体 + フラグ</text>
+  <text x="500" y="374" font-size="11" fill="#555">純粋な標準ライブラリのみ無依存; SQL 識別子ホワイトリストで注入防止</text>
+  <text x="500" y="398" font-size="11" fill="#555">簡略化の箇所には ponytail コメントで限界とアップグレード経路を明記</text>
+  <text x="500" y="422" font-size="11" fill="#555">アップグレード経路: Redis キュー / 索引テーブル / エンジン別独立構造</text>
+
+  <!-- 下部フロー -->
+  <rect x="40" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="120" y="536" text-anchor="middle" font-size="13" fill="#3a3a3a">クエリ意図</text>
+  <line x1="204" y1="532" x2="248" y2="532" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="252" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="332" y="536" text-anchor="middle" font-size="13" fill="#3a3a3a">DSL 中間表現</text>
+  <line x1="416" y1="532" x2="460" y2="532" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="464" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="544" y="536" text-anchor="middle" font-size="13" fill="#3a3a3a">エンジンアダプタ</text>
+  <line x1="628" y1="532" x2="672" y2="532" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="676" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="756" y="536" text-anchor="middle" font-size="13" fill="#3a3a3a">結果の正規化</text>
+</svg>

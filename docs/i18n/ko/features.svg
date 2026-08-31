@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 630" font-family="'Apple SD Gothic Neo','Malgun Gothic','PingFang SC','Microsoft YaHei',sans-serif">
+  <title>go-scout 기능 특성 다이어그램</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a4a4a"/>
+    </marker>
+  </defs>
+  <text x="480" y="28" text-anchor="middle" font-size="18" fill="#3a3a3a">go-scout 기능 특성</text>
+
+  <!-- 카드 1: 쿼리 빌더 체인 -->
+  <rect x="40" y="52" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="60" y="78" font-size="14" font-weight="bold" fill="#3a3a3a">쿼리 빌더 체인（scout.Builder）</text>
+  <text x="60" y="100" font-size="11" fill="#555">스트리밍 API: Query · Where · WhereIn · WhereNotIn · OrderBy · Take</text>
+  <text x="60" y="120" font-size="11" fill="#555">고급: VectorSearch · WhereRange · WhereGeoDistance · Aggregate</text>
+  <text x="60" y="140" font-size="11" fill="#555">콜백 주입: QueryCB · CallbackCB · AddResultProcessor</text>
+
+  <!-- 카드 2: DSL 중간 표현 -->
+  <rect x="480" y="52" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="500" y="78" font-size="14" font-weight="bold" fill="#3a3a3a">DSL 중간 표현（engines/dsl.go）</text>
+  <text x="500" y="100" font-size="11" fill="#555">고급 조건을 bool 쿼리 JSON으로 컴파일（must · filter · should）</text>
+  <text x="500" y="120" font-size="11" fill="#555">multi_match · term · range · geo_distance · wildcard · regexp …</text>
+  <text x="500" y="140" font-size="11" fill="#555">ES / OpenSearch 공용; MapBooleanToBoolKey가 and/or/not 매핑</text>
+
+  <!-- 카드 3: 페이지네이션과 커서 -->
+  <rect x="40" y="184" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="60" y="210" font-size="14" font-weight="bold" fill="#3a3a3a">페이지네이션과 커서</text>
+  <text x="60" y="232" font-size="11" fill="#555">Paginate · SimplePaginate · Cursor 지연 스트리밍 순회</text>
+  <text x="60" y="252" font-size="11" fill="#555">PaginationResult: LastPage · HasMorePages · AppendQuery</text>
+  <text x="60" y="272" font-size="11" fill="#555">Result.As[T] / 패키지 레벨 GetAs[T] 제네릭 조회</text>
+
+  <!-- 카드 4: 소프트 삭제 -->
+  <rect x="480" y="184" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="500" y="210" font-size="14" font-weight="bold" fill="#3a3a3a">소프트 삭제</text>
+  <text x="500" y="232" font-size="11" fill="#555">__soft_deleted 메타데이터를 문서와 함께 인덱스에 기록（0 / 1）</text>
+  <text x="500" y="252" font-size="11" fill="#555">OnlyTrashed / WithTrashed 쿼리 필터링</text>
+  <text x="500" y="272" font-size="11" fill="#555">옵저버 Deleted 분기 · ForceDeleted / Restored</text>
+
+  <!-- 카드 5: 비동기 큐 -->
+  <rect x="40" y="316" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="60" y="342" font-size="14" font-weight="bold" fill="#3a3a3a">비동기 큐（scout.Queue）</text>
+  <text x="60" y="364" font-size="11" fill="#555">프로세스 내 큐: chan 버퍼 4096 + 워커 고루틴</text>
+  <text x="60" y="384" font-size="11" fill="#555">큐 불가 시 동기 폴백 및 경고</text>
+  <text x="60" y="404" font-size="11" fill="#555">MakeAllSearchable chunk 분할 임포트（기본 500）</text>
+
+  <!-- 카드 6: 이벤트와 옵저버 -->
+  <rect x="480" y="316" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="500" y="342" font-size="14" font-weight="bold" fill="#3a3a3a">이벤트와 옵저버</text>
+  <text x="500" y="364" font-size="11" fill="#555">ModelObserver가 Saved · Deleted · Restored 감지 후 자동 동기화</text>
+  <text x="500" y="384" font-size="11" fill="#555">EventBus가 models_imported · models_flushed 발행</text>
+  <text x="500" y="404" font-size="11" fill="#555">WithoutSyncingToSearch로 동기화 임시 비활성화</text>
+
+  <!-- 카드 7: 멀티 엔진 등록 -->
+  <rect x="40" y="448" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="60" y="474" font-size="14" font-weight="bold" fill="#3a3a3a">멀티 엔진 등록（EngineManager）</text>
+  <text x="60" y="496" font-size="11" fill="#555">Extend + engines.Register로 15개 드라이버 이름 등록</text>
+  <text x="60" y="516" font-size="11" fill="#555">드라이버 지연 생성·캐시; 미지 드라이버는 ErrNotSupported</text>
+  <text x="60" y="536" font-size="11" fill="#555">엔진 전환은 SCOUT_DRIVER 설정만 변경</text>
+
+  <!-- 카드 8: 고급 검색 -->
+  <rect x="480" y="448" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="500" y="474" font-size="14" font-weight="bold" fill="#3a3a3a">고급 검색（AdvancedEngine）</text>
+  <text x="500" y="496" font-size="11" fill="#555">AdvancedSearch · GetAggregations · GetFacets</text>
+  <text x="500" y="516" font-size="11" fill="#555">벡터 유사도 · 범위 · 지리 거리 필터 및 정렬</text>
+  <text x="500" y="536" font-size="11" fill="#555">집계（Aggregate）+ 패싯（Facet）+ 하이라이트</text>
+
+  <!-- 하단 -->
+  <rect x="40" y="582" width="880" height="36" rx="8" fill="#ebe9e3" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="480" y="605" text-anchor="middle" font-size="13" fill="#3a3a3a">순수 표준 라이브러리 · 서드파티 의존성 0 · Go 1.24 · webman/laravel-scout 포팅</text>
+</svg>

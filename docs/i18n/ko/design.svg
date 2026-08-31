@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 580" font-family="'Apple SD Gothic Neo','Malgun Gothic','PingFang SC','Microsoft YaHei',sans-serif">
+  <title>go-scout 설계 사상 다이어그램</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a4a4a"/>
+    </marker>
+  </defs>
+  <text x="480" y="28" text-anchor="middle" font-size="18" fill="#3a3a3a">go-scout 설계 사상</text>
+
+  <!-- 패널 A: 체이닝 Builder -->
+  <rect x="40" y="52" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="40" y="52" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="260" y="72" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a3a3a">체이닝 Builder가 쿼리 의도를 담는다</text>
+  <text x="60" y="106" font-size="11" fill="#555">Search(ctx, query, cb)가 *Builder 반환, 체이닝은 상태만 누적</text>
+  <text x="60" y="130" font-size="11" fill="#555">Get / First / Paginate / Cursor에서야 엔진 왕복 발생</text>
+  <text x="60" y="154" font-size="11" fill="#555">QueryCB는 쿼리 수정, CallbackCB는 엔진 요청 본문 확인,</text>
+  <text x="60" y="174" font-size="11" fill="#555">AddResultProcessor는 결과 후처리</text>
+  <text x="60" y="206" font-size="11" fill="#d8d4c8">—</text>
+  <text x="60" y="222" font-size="11" fill="#555">검색 필드 해석: Options["fields"] → FullTextColumner → FieldNames</text>
+
+  <!-- 패널 B: DSL 중간 표현 -->
+  <rect x="480" y="52" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="480" y="52" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="700" y="72" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a3a3a">DSL 중간 표현</text>
+  <text x="500" y="106" font-size="11" fill="#555">고급 조건을 engines/dsl.go로 통일 컴파일해 bool 쿼리 JSON 생성</text>
+  <text x="500" y="130" font-size="11" fill="#555">ES / OpenSearch는 직접 소비; meilisearch / typesense /</text>
+  <text x="500" y="150" font-size="11" fill="#555">algolia / database는 각자 자기 문법으로 번역</text>
+  <text x="500" y="174" font-size="11" fill="#555">MapBooleanToBoolKey: and/or/not → filter/should/must_not</text>
+  <text x="500" y="198" font-size="11" fill="#555">동일한 고급 쿼리 API, 엔진 차이는 번역 계층에 격리</text>
+
+  <!-- 패널 C: 엔진 인터페이스 격리 -->
+  <rect x="40" y="272" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="40" y="272" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="260" y="292" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a3a3a">엔진 인터페이스 격리</text>
+  <text x="60" y="326" font-size="11" fill="#555">Engine / AdvancedEngine은 문서와 결과만 다루고 모델 타입 무시</text>
+  <text x="60" y="350" font-size="11" fill="#555">통일 scout.Result + Hit; MapIDs / Map이 모델 되채움</text>
+  <text x="60" y="374" font-size="11" fill="#555">Manager.Driver(name) 지연 생성·캐시, 언제든 Extend 가능</text>
+  <text x="60" y="398" font-size="11" fill="#555">attachMeta가 KeyString으로 정렬, 필터된 모델 집합도 어긋나지 않음</text>
+  <text x="60" y="422" font-size="11" fill="#555">오류 규약: 미지 드라이버 / 미지원 작업 → scout.ErrNotSupported</text>
+
+  <!-- 패널 D: ponytail 의도적 단순화 -->
+  <rect x="480" y="272" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="480" y="272" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="700" y="292" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a3a3a">ponytail 의도적 단순화</text>
+  <text x="500" y="326" font-size="11" fill="#555">Redis 대신 프로세스 내 큐; MemorySource 선형 스캔 O(ids×models)</text>
+  <text x="500" y="350" font-size="11" fill="#555">algolia whereNotIns는 "0=1" 무연산; v3/v4 단일 구조 + 플래그</text>
+  <text x="500" y="374" font-size="11" fill="#555">순수 표준 라이브러리 무의존; SQL 식별자 화이트리스트로 인젝션 방지</text>
+  <text x="500" y="398" font-size="11" fill="#555">단순화 지점마다 ponytail 주석으로 한계와 업그레이드 경로 명시</text>
+  <text x="500" y="422" font-size="11" fill="#555">업그레이드 경로: Redis 큐 / 인덱스 테이블 / 엔진별 독립 구조</text>
+
+  <!-- 하단 흐름 -->
+  <rect x="40" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="120" y="536" text-anchor="middle" font-size="13" fill="#3a3a3a">쿼리 의도</text>
+  <line x1="204" y1="532" x2="248" y2="532" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="252" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="332" y="536" text-anchor="middle" font-size="13" fill="#3a3a3a">DSL 중간 표현</text>
+  <line x1="416" y1="532" x2="460" y2="532" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="464" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="544" y="536" text-anchor="middle" font-size="13" fill="#3a3a3a">엔진 어댑터</text>
+  <line x1="628" y1="532" x2="672" y2="532" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="676" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="756" y="536" text-anchor="middle" font-size="13" fill="#3a3a3a">결과 정규화</text>
+</svg>

@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 650" font-family="'Noto Sans Bengali',sans-serif">
+  <title>go-scout — আর্কিটেকচার স্তর</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a4a4a"/>
+    </marker>
+  </defs>
+  <text x="480" y="28" text-anchor="middle" font-size="18" fill="#3a3a3a">go-scout — আর্কিটেকচার স্তর</text>
+
+  <!-- মডেল স্তর -->
+  <rect x="40" y="48" width="880" height="96" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="62" y="72" font-size="14" font-weight="bold" fill="#3a3a3a">মডেল স্তর · ডেটা ও মডেল</text>
+  <rect x="56" y="86" width="250" height="46" rx="6" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="181" y="108" text-anchor="middle" font-size="14" fill="#3a3a3a">scout.ScoutModel</text>
+  <text x="181" y="124" text-anchor="middle" font-size="11" fill="#555">ScoutKey · ToSearchableArray · ShouldBeSearchable</text>
+  <rect x="330" y="86" width="250" height="46" rx="6" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="455" y="108" text-anchor="middle" font-size="12" fill="#3a3a3a">scout.Source[T] — ডেটা সোর্স</text>
+  <text x="455" y="124" text-anchor="middle" font-size="10" fill="#555">All · ByIDs · Count (MemorySource উদাহরণ)</text>
+  <rect x="604" y="86" width="290" height="46" rx="6" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="749" y="108" text-anchor="middle" font-size="13" fill="#3a3a3a">ঐচ্ছিক এক্সটেনশন ইন্টারফেস</text>
+  <text x="749" y="124" text-anchor="middle" font-size="11" fill="#555">SoftDeleter · FullTextColumner · PrefixColumner …</text>
+  <line x1="480" y1="144" x2="480" y2="164" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- সিঙ্ক স্তর -->
+  <rect x="40" y="166" width="880" height="96" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="62" y="190" font-size="14" font-weight="bold" fill="#3a3a3a">সিঙ্ক স্তর · অবজার্ভার ও ইভেন্ট</text>
+  <rect x="56" y="204" width="250" height="46" rx="6" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="181" y="226" text-anchor="middle" font-size="14" fill="#3a3a3a">scout.ModelObserver</text>
+  <text x="181" y="242" text-anchor="middle" font-size="10" fill="#555">Saved · Deleted · Restored — স্বয়ংক্রিয় সিঙ্ক</text>
+  <rect x="330" y="204" width="250" height="46" rx="6" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="455" y="226" text-anchor="middle" font-size="14" fill="#3a3a3a">scout.EventBus</text>
+  <text x="455" y="242" text-anchor="middle" font-size="11" fill="#555">models_imported · models_flushed</text>
+  <rect x="604" y="204" width="290" height="46" rx="6" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="749" y="226" text-anchor="middle" font-size="13" fill="#3a3a3a">scout.Queue — অ্যাসিংক কিউ</text>
+  <text x="749" y="242" text-anchor="middle" font-size="10" fill="#555">বাফার 4096 · সিঙ্ক ফলব্যাক</text>
+  <line x1="480" y1="262" x2="480" y2="282" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- কোয়েরি স্তর -->
+  <rect x="40" y="284" width="880" height="96" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="62" y="308" font-size="14" font-weight="bold" fill="#3a3a3a">কোয়েরি স্তর · নির্মাণ ও নির্বাহ</text>
+  <rect x="56" y="322" width="250" height="46" rx="6" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="181" y="344" text-anchor="middle" font-size="13" fill="#3a3a3a">scout.Builder — চেইন কোয়েরি</text>
+  <text x="181" y="360" text-anchor="middle" font-size="11" fill="#555">Where · OrderBy · Take · WithTrashed …</text>
+  <rect x="330" y="322" width="250" height="46" rx="6" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="455" y="344" text-anchor="middle" font-size="12" fill="#3a3a3a">নির্বাহ (builder_search.go)</text>
+  <text x="455" y="360" text-anchor="middle" font-size="11" fill="#555">Get · First · Paginate · Cursor · Keys</text>
+  <rect x="604" y="322" width="290" height="46" rx="6" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="749" y="344" text-anchor="middle" font-size="14" fill="#3a3a3a">scout.Result · PaginationResult</text>
+  <text x="749" y="360" text-anchor="middle" font-size="11" fill="#555">Hits · Total · Aggregations · Raw</text>
+  <line x1="480" y1="380" x2="480" y2="400" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ইঞ্জিন অভিযোজন স্তর -->
+  <rect x="40" y="402" width="880" height="96" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="62" y="426" font-size="14" font-weight="bold" fill="#3a3a3a">ইঞ্জিন অভিযোজন স্তর · ইন্টারফেস বিচ্ছিন্নতা</text>
+  <rect x="56" y="440" width="250" height="46" rx="6" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="181" y="462" text-anchor="middle" font-size="14" fill="#3a3a3a">Engine ইন্টারফেস</text>
+  <text x="181" y="478" text-anchor="middle" font-size="11" fill="#555">Search · Paginate · Update · Delete · Map</text>
+  <rect x="330" y="440" width="250" height="46" rx="6" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="455" y="462" text-anchor="middle" font-size="13" fill="#3a3a3a">AdvancedEngine ইন্টারফেস</text>
+  <text x="455" y="478" text-anchor="middle" font-size="11" fill="#555">AdvancedSearch · GetAggregations · GetFacets</text>
+  <rect x="604" y="440" width="290" height="46" rx="6" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="749" y="462" text-anchor="middle" font-size="14" fill="#3a3a3a">EngineManager ব্যবস্থাপক</text>
+  <text x="749" y="478" text-anchor="middle" font-size="10" fill="#555">Extend · লেজি Driver + ক্যাশ</text>
+  <line x1="480" y1="498" x2="480" y2="518" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ইঞ্জিন স্তর -->
+  <rect x="40" y="520" width="880" height="110" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="62" y="544" font-size="14" font-weight="bold" fill="#3a3a3a">ইঞ্জিন স্তর · engines/ প্যাকেজ</text>
+  <rect x="50" y="556" width="92" height="56" rx="6" fill="#d8d4c8" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="96" y="578" text-anchor="middle" font-size="12" fill="#3a3a3a">null</text>
+  <text x="96" y="596" text-anchor="middle" font-size="8" fill="#555">খালি · ডিফল্ট</text>
+  <rect x="146" y="556" width="92" height="56" rx="6" fill="#d8d4c8" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="192" y="578" text-anchor="middle" font-size="12" fill="#3a3a3a">collection</text>
+  <text x="192" y="596" text-anchor="middle" font-size="8" fill="#555">মেমোরি সার্চ</text>
+  <rect x="242" y="556" width="92" height="56" rx="6" fill="#d8d4c8" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="288" y="578" text-anchor="middle" font-size="12" fill="#3a3a3a">database</text>
+  <text x="288" y="596" text-anchor="middle" font-size="8" fill="#555">টেবিল = ইনডেক্স</text>
+  <rect x="338" y="556" width="92" height="56" rx="6" fill="#d8d4c8" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="384" y="578" text-anchor="middle" font-size="12" fill="#3a3a3a">elasticsearch</text>
+  <text x="384" y="596" text-anchor="middle" font-size="9" fill="#555">REST + DSL</text>
+  <rect x="434" y="556" width="92" height="56" rx="6" fill="#d8d4c8" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="480" y="578" text-anchor="middle" font-size="12" fill="#3a3a3a">opensearch</text>
+  <text x="480" y="596" text-anchor="middle" font-size="9" fill="#555">REST + DSL</text>
+  <rect x="530" y="556" width="92" height="56" rx="6" fill="#d8d4c8" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="576" y="578" text-anchor="middle" font-size="12" fill="#3a3a3a">meilisearch</text>
+  <text x="576" y="596" text-anchor="middle" font-size="8" fill="#555">ভেক্টর · হাইব্রিড</text>
+  <rect x="626" y="556" width="92" height="56" rx="6" fill="#d8d4c8" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="672" y="578" text-anchor="middle" font-size="12" fill="#3a3a3a">typesense</text>
+  <text x="672" y="596" text-anchor="middle" font-size="8" fill="#555">এগ্রিগেশন · গ্রুপ</text>
+  <rect x="722" y="556" width="92" height="56" rx="6" fill="#d8d4c8" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="768" y="578" text-anchor="middle" font-size="12" fill="#3a3a3a">algolia</text>
+  <text x="768" y="596" text-anchor="middle" font-size="9" fill="#555">REST v3/v4</text>
+  <rect x="818" y="556" width="92" height="56" rx="6" fill="#d8d4c8" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="864" y="578" text-anchor="middle" font-size="12" fill="#3a3a3a">xunsearch</text>
+  <text x="864" y="596" text-anchor="middle" font-size="8" fill="#555">HTTP ডেমন</text>
+</svg>

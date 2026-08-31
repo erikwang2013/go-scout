@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 630" font-family="'Noto Sans Devanagari',sans-serif">
+  <title>go-scout — विशेषताएँ</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a4a4a"/>
+    </marker>
+  </defs>
+  <text x="480" y="28" text-anchor="middle" font-size="18" fill="#3a3a3a">go-scout — विशेषताएँ</text>
+
+  <!-- कार्ड 1: क्वेरी निर्माण चेन -->
+  <rect x="40" y="52" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="60" y="78" font-size="14" font-weight="bold" fill="#3a3a3a">क्वेरी निर्माण चेन (scout.Builder)</text>
+  <text x="60" y="100" font-size="11" fill="#555">फ़्लो API: Query · Where · WhereIn · WhereNotIn · OrderBy · Take</text>
+  <text x="60" y="120" font-size="11" fill="#555">एडवांस: VectorSearch · WhereRange · WhereGeoDistance · Aggregate</text>
+  <text x="60" y="140" font-size="11" fill="#555">कॉलबैक इंजेक्शन: QueryCB · CallbackCB · AddResultProcessor</text>
+
+  <!-- कार्ड 2: DSL मध्यवर्ती निरूपण -->
+  <rect x="480" y="52" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="500" y="78" font-size="14" font-weight="bold" fill="#3a3a3a">DSL मध्यवर्ती निरूपण (engines/dsl.go)</text>
+  <text x="500" y="100" font-size="11" fill="#555">एडवांस कंडीशन → bool-क्वेरी JSON (must · filter · should)</text>
+  <text x="500" y="120" font-size="11" fill="#555">multi_match · term · range · geo_distance · wildcard · regexp …</text>
+  <text x="500" y="140" font-size="11" fill="#555">ES / OpenSearch साझा; MapBooleanToBoolKey मैप करता है and/or/not</text>
+
+  <!-- कार्ड 3: पेजिनेशन और कर्सर -->
+  <rect x="40" y="184" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="60" y="210" font-size="14" font-weight="bold" fill="#3a3a3a">पेजिनेशन और कर्सर</text>
+  <text x="60" y="232" font-size="11" fill="#555">Paginate · SimplePaginate · Cursor — लेज़ी स्ट्रीम ट्रैवर्सल</text>
+  <text x="60" y="252" font-size="11" fill="#555">PaginationResult: LastPage · HasMorePages · AppendQuery</text>
+  <text x="60" y="272" font-size="11" fill="#555">Result.As[T] / पैकेज जेनेरिक GetAs[T] से मॉडल प्राप्ति</text>
+
+  <!-- कार्ड 4: सॉफ्ट डिलीट -->
+  <rect x="480" y="184" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="500" y="210" font-size="14" font-weight="bold" fill="#3a3a3a">सॉफ्ट डिलीट</text>
+  <text x="500" y="232" font-size="11" fill="#555">__soft_deleted मेटाडेटा डॉक्यूमेंट के साथ इंडेक्स में (0 / 1)</text>
+  <text x="500" y="252" font-size="11" fill="#555">क्वेरी फ़िल्टर: OnlyTrashed / WithTrashed</text>
+  <text x="500" y="272" font-size="11" fill="#555">ऑब्ज़र्वर Deleted शाखा · ForceDeleted / Restored</text>
+
+  <!-- कार्ड 5: एसिंक कतार -->
+  <rect x="40" y="316" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="60" y="342" font-size="14" font-weight="bold" fill="#3a3a3a">एसिंक कतार (scout.Queue)</text>
+  <text x="60" y="364" font-size="11" fill="#555">इन-प्रोसेस कतार: chan बफ़र 4096 + वर्कर गोरूटीन</text>
+  <text x="60" y="384" font-size="11" fill="#555">कतार न होने पर चेतावनी के साथ सिंक फ़ॉलबैक</text>
+  <text x="60" y="404" font-size="11" fill="#555">MakeAllSearchable चंकों में इम्पोर्ट (डिफ़ॉल्ट 500)</text>
+
+  <!-- कार्ड 6: इवेंट और ऑब्ज़र्वर -->
+  <rect x="480" y="316" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="500" y="342" font-size="14" font-weight="bold" fill="#3a3a3a">इवेंट और ऑब्ज़र्वर</text>
+  <text x="500" y="364" font-size="11" fill="#555">ModelObserver सुनता है Saved · Deleted · Restored — स्वतः सिंक</text>
+  <text x="500" y="384" font-size="11" fill="#555">EventBus प्रकाशित करता है models_imported · models_flushed</text>
+  <text x="500" y="404" font-size="11" fill="#555">WithoutSyncingToSearch सिंक अस्थायी रूप से बंद करता है</text>
+
+  <!-- कार्ड 7: मल्टी-इंजन पंजीकरण -->
+  <rect x="40" y="448" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="60" y="474" font-size="14" font-weight="bold" fill="#3a3a3a">मल्टी-इंजन पंजीकरण (EngineManager)</text>
+  <text x="60" y="496" font-size="11" fill="#555">Extend + engines.Register — 15 ड्राइवर नाम पंजीकृत</text>
+  <text x="60" y="516" font-size="11" fill="#555">ड्राइवर लेज़ी + कैश; अज्ञात ड्राइवर → ErrNotSupported</text>
+  <text x="60" y="536" font-size="11" fill="#555">इंजन बदलना = केवल SCOUT_DRIVER बदलना</text>
+
+  <!-- कार्ड 8: एडवांस सर्च -->
+  <rect x="480" y="448" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="500" y="474" font-size="14" font-weight="bold" fill="#3a3a3a">एडवांस सर्च (AdvancedEngine)</text>
+  <text x="500" y="496" font-size="11" fill="#555">AdvancedSearch · GetAggregations · GetFacets</text>
+  <text x="500" y="516" font-size="11" fill="#555">वेक्टर समानता · रेंज · जियो-दूरी फ़िल्टर/सॉर्ट</text>
+  <text x="500" y="536" font-size="11" fill="#555">एग्रीगेशन (Aggregate) + फ़ैसेट (Facet) + हाइलाइट</text>
+
+  <!-- निचली पट्टी -->
+  <rect x="40" y="582" width="880" height="36" rx="8" fill="#ebe9e3" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="480" y="605" text-anchor="middle" font-size="13" fill="#3a3a3a">केवल मानक लाइब्रेरी · शून्य निर्भरता · Go 1.24 · पोर्ट webman/laravel-scout</text>
+</svg>

@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 630" font-family="'Noto Sans Bengali',sans-serif">
+  <title>go-scout — বৈশিষ্ট্যসমূহ</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a4a4a"/>
+    </marker>
+  </defs>
+  <text x="480" y="28" text-anchor="middle" font-size="18" fill="#3a3a3a">go-scout — বৈশিষ্ট্যসমূহ</text>
+
+  <!-- কার্ড 1: কোয়েরি নির্মাণ চেইন -->
+  <rect x="40" y="52" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="60" y="78" font-size="14" font-weight="bold" fill="#3a3a3a">কোয়েরি নির্মাণ চেইন (scout.Builder)</text>
+  <text x="60" y="100" font-size="11" fill="#555">ফ্লো API: Query · Where · WhereIn · WhereNotIn · OrderBy · Take</text>
+  <text x="60" y="120" font-size="11" fill="#555">অ্যাডভান্সড: VectorSearch · WhereRange · WhereGeoDistance · Aggregate</text>
+  <text x="60" y="140" font-size="11" fill="#555">কলব্যাক ইনজেকশন: QueryCB · CallbackCB · AddResultProcessor</text>
+
+  <!-- কার্ড 2: DSL মধ্যবর্তী উপস্থাপনা -->
+  <rect x="480" y="52" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="500" y="78" font-size="14" font-weight="bold" fill="#3a3a3a">DSL মধ্যবর্তী উপস্থাপনা (engines/dsl.go)</text>
+  <text x="500" y="100" font-size="11" fill="#555">অ্যাডভান্সড শর্ত → bool-কোয়েরি JSON (must · filter · should)</text>
+  <text x="500" y="120" font-size="11" fill="#555">multi_match · term · range · geo_distance · wildcard · regexp …</text>
+  <text x="500" y="140" font-size="11" fill="#555">ES / OpenSearch সাঁঝা; MapBooleanToBoolKey ম্যাপ করে and/or/not</text>
+
+  <!-- কার্ড 3: পেজিনেশন ও কার্সর -->
+  <rect x="40" y="184" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="60" y="210" font-size="14" font-weight="bold" fill="#3a3a3a">পেজিনেশন ও কার্সর</text>
+  <text x="60" y="232" font-size="11" fill="#555">Paginate · SimplePaginate · Cursor — লেজি স্ট্রিম ট্র্যাভার্সাল</text>
+  <text x="60" y="252" font-size="11" fill="#555">PaginationResult: LastPage · HasMorePages · AppendQuery</text>
+  <text x="60" y="272" font-size="11" fill="#555">Result.As[T] / প্যাকেজ জেনেরিক GetAs[T] দিয়ে মডেল প্রাপ্তি</text>
+
+  <!-- কার্ড 4: সফট ডিলিট -->
+  <rect x="480" y="184" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="500" y="210" font-size="14" font-weight="bold" fill="#3a3a3a">সফট ডিলিট</text>
+  <text x="500" y="232" font-size="11" fill="#555">__soft_deleted মেটাডেটা ডকুমেন্টসহ ইনডেক্সে (0 / 1)</text>
+  <text x="500" y="252" font-size="11" fill="#555">কোয়েরি ফিল্টার: OnlyTrashed / WithTrashed</text>
+  <text x="500" y="272" font-size="11" fill="#555">অবজার্ভার Deleted শাখা · ForceDeleted / Restored</text>
+
+  <!-- কার্ড 5: অ্যাসিংক কিউ -->
+  <rect x="40" y="316" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="60" y="342" font-size="14" font-weight="bold" fill="#3a3a3a">অ্যাসিংক কিউ (scout.Queue)</text>
+  <text x="60" y="364" font-size="11" fill="#555">ইন-প্রসেস কিউ: chan বাফার 4096 + ওয়ার্কার গোরুটিন</text>
+  <text x="60" y="384" font-size="11" fill="#555">কিউ না থাকলে সতর্কতাসহ সিঙ্ক ফলব্যাক</text>
+  <text x="60" y="404" font-size="11" fill="#555">MakeAllSearchable চাঙ্কে ইমপোর্ট (ডিফল্ট ৫০০)</text>
+
+  <!-- কার্ড 6: ইভেন্ট ও অবজার্ভার -->
+  <rect x="480" y="316" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="500" y="342" font-size="14" font-weight="bold" fill="#3a3a3a">ইভেন্ট ও অবজার্ভার</text>
+  <text x="500" y="364" font-size="11" fill="#555">ModelObserver শোনে Saved · Deleted · Restored — স্বয়ংক্রিয় সিঙ্ক</text>
+  <text x="500" y="384" font-size="11" fill="#555">EventBus প্রকাশ করে models_imported · models_flushed</text>
+  <text x="500" y="404" font-size="11" fill="#555">WithoutSyncingToSearch সাময়িকভাবে সিঙ্ক বন্ধ করে</text>
+
+  <!-- কার্ড 7: মাল্টি-ইঞ্জিন নিবন্ধন -->
+  <rect x="40" y="448" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="60" y="474" font-size="14" font-weight="bold" fill="#3a3a3a">মাল্টি-ইঞ্জিন নিবন্ধন (EngineManager)</text>
+  <text x="60" y="496" font-size="11" fill="#555">Extend + engines.Register — ১৫টি ড্রাইভার নাম নিবন্ধিত</text>
+  <text x="60" y="516" font-size="11" fill="#555">ড্রাইভার লেজি + ক্যাশ; অজানা ড্রাইভার → ErrNotSupported</text>
+  <text x="60" y="536" font-size="11" fill="#555">ইঞ্জিন বদলানো = শুধু SCOUT_DRIVER বদলানো</text>
+
+  <!-- কার্ড 8: অ্যাডভান্সড সার্চ -->
+  <rect x="480" y="448" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="500" y="474" font-size="14" font-weight="bold" fill="#3a3a3a">অ্যাডভান্সড সার্চ (AdvancedEngine)</text>
+  <text x="500" y="496" font-size="11" fill="#555">AdvancedSearch · GetAggregations · GetFacets</text>
+  <text x="500" y="516" font-size="11" fill="#555">ভেক্টর সাদৃশ্য · রেঞ্জ · জিও-দূরত্ব ফিল্টার/সর্ট</text>
+  <text x="500" y="536" font-size="11" fill="#555">এগ্রিগেশন (Aggregate) + ফ্যাসেট (Facet) + হাইলাইট</text>
+
+  <!-- নিচের বার -->
+  <rect x="40" y="582" width="880" height="36" rx="8" fill="#ebe9e3" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="480" y="605" text-anchor="middle" font-size="13" fill="#3a3a3a">শুধু স্ট্যান্ডার্ড লাইব্রেরি · শূন্য ডিপেন্ডেন্সি · Go 1.24 · পোর্ট webman/laravel-scout</text>
+</svg>

@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 580" font-family="'PingFang SC','Microsoft YaHei',sans-serif">
+  <title>Filosofi desain go-scout</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a4a4a"/>
+    </marker>
+  </defs>
+  <text x="480" y="28" text-anchor="middle" font-size="18" fill="#3a3a3a">Filosofi desain go-scout</text>
+
+  <!-- Panel A : Builder berantai -->
+  <rect x="40" y="52" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="40" y="52" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="260" y="72" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a3a3a">Builder berantai membawa niat kueri</text>
+  <text x="60" y="106" font-size="10" fill="#555">Search(ctx, query, cb) mengembalikan *Builder; rantai hanya menumpuk status</text>
+  <text x="60" y="130" font-size="10" fill="#555">Get / First / Paginate / Cursor memicu satu perjalanan ke mesin</text>
+  <text x="60" y="154" font-size="10" fill="#555">QueryCB mengubah kueri · CallbackCB menangkap body,</text>
+  <text x="60" y="174" font-size="10" fill="#555">AddResultProcessor pasca-memproses hasil</text>
+  <text x="60" y="206" font-size="11" fill="#d8d4c8">—</text>
+  <text x="60" y="222" font-size="10" fill="#555">Kolom: Options["fields"] → FullTextColumner → FieldNames</text>
+
+  <!-- Panel B : representasi antara DSL -->
+  <rect x="480" y="52" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="480" y="52" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="700" y="72" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a3a3a">Representasi antara DSL</text>
+  <text x="500" y="106" font-size="10" fill="#555">Kondisi lanjutan dikompilasi ke JSON bool query (dsl.go)</text>
+  <text x="500" y="130" font-size="10" fill="#555">ES / OpenSearch langsung; meilisearch / typesense /</text>
+  <text x="500" y="150" font-size="10" fill="#555">algolia / database menerjemahkan ke sintaksnya sendiri</text>
+  <text x="500" y="174" font-size="10" fill="#555">MapBooleanToBoolKey: and/or/not → filter/should/must_not</text>
+  <text x="500" y="198" font-size="10" fill="#555">API lanjutan tunggal; perbedaan terkurung di terjemahan</text>
+
+  <!-- Panel C : isolasi antarmuka mesin -->
+  <rect x="40" y="272" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="40" y="272" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="260" y="292" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a3a3a">Isolasi antarmuka mesin</text>
+  <text x="60" y="326" font-size="10" fill="#555">Engine / AdvancedEngine hanya bicara dokumen & hasil</text>
+  <text x="60" y="350" font-size="10" fill="#555">scout.Result + Hit terpadu; MapIDs / Map mengisi model</text>
+  <text x="60" y="374" font-size="10" fill="#555">Manager.Driver(name) lazy + cache; Extend kapan saja</text>
+  <text x="60" y="398" font-size="10" fill="#555">attachMeta menyelaraskan via KeyString; tanpa misalignment</text>
+  <text x="60" y="422" font-size="10" fill="#555">Error: driver tidak dikenal / opsi tidak didukung → ErrNotSupported</text>
+
+  <!-- Panel D : penyederhanaan ponytail -->
+  <rect x="480" y="272" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="480" y="272" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="700" y="292" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a3a3a">Penyederhanaan ponytail yang disengaja</text>
+  <text x="500" y="326" font-size="10" fill="#555">Antrean dalam proses, bukan Redis; MemorySource O(ids×models)</text>
+  <text x="500" y="350" font-size="10" fill="#555">algolia whereNotIns no-op "0=1"; v3/v4 tunggal + bendera</text>
+  <text x="500" y="374" font-size="10" fill="#555">Hanya stdlib; identifikasi SQL di daftar putih</text>
+  <text x="500" y="398" font-size="10" fill="#555">Batas & jalur perbaikan ditandai ponytail</text>
+  <text x="500" y="422" font-size="10" fill="#555">Perbaikan: antrean Redis / tabel indeks / struktur per mesin</text>
+
+  <!-- Alur bawah -->
+  <rect x="40" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="120" y="536" text-anchor="middle" font-size="12" fill="#3a3a3a">Niat kueri</text>
+  <line x1="204" y1="532" x2="248" y2="532" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="252" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="332" y="536" text-anchor="middle" font-size="12" fill="#3a3a3a">IR DSL</text>
+  <line x1="416" y1="532" x2="460" y2="532" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="464" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="544" y="536" text-anchor="middle" font-size="12" fill="#3a3a3a">Adaptasi mesin</text>
+  <line x1="628" y1="532" x2="672" y2="532" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="676" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="756" y="536" text-anchor="middle" font-size="12" fill="#3a3a3a">Hasil ternormalisasi</text>
+</svg>

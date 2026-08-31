@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 580" font-family="'Noto Sans Bengali',sans-serif">
+  <title>go-scout — ডিজাইন দৃষ্টিভঙ্গি</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a4a4a"/>
+    </marker>
+  </defs>
+  <text x="480" y="28" text-anchor="middle" font-size="18" fill="#3a3a3a">go-scout — ডিজাইন দৃষ্টিভঙ্গি</text>
+
+  <!-- প্যানেল A: চেইন Builder -->
+  <rect x="40" y="52" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="40" y="52" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="260" y="72" text-anchor="middle" font-size="13" font-weight="bold" fill="#3a3a3a">চেইন Builder কোয়েরির অভিপ্রায় বহন করে</text>
+  <text x="60" y="106" font-size="11" fill="#555">Search(ctx, query, cb) *Builder ফেরত দেয়;</text>
+  <text x="60" y="128" font-size="11" fill="#555">চেইন কেবল অবস্থা জমা করে</text>
+  <text x="60" y="152" font-size="11" fill="#555">Get / First / Paginate / Cursor — ইঞ্জিনের সঙ্গে এক এক্সচেঞ্জ</text>
+  <text x="60" y="174" font-size="11" fill="#555">QueryCB কোয়েরি বদলায়, CallbackCB — বডি নেয়,</text>
+  <text x="60" y="196" font-size="11" fill="#555">AddResultProcessor ফলাফল পোস্ট-প্রসেস করে</text>
+  <text x="60" y="222" font-size="11" fill="#555">সার্চ ফিল্ড পার্স: Options["fields"] → FullTextColumner → FieldNames</text>
+
+  <!-- প্যানেল B: DSL মধ্যবর্তী উপস্থাপনা -->
+  <rect x="480" y="52" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="480" y="52" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="700" y="72" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a3a3a">DSL মধ্যবর্তী উপস্থাপনা</text>
+  <text x="500" y="106" font-size="11" fill="#555">অ্যাডভান্সড শর্ত engines/dsl.go থেকে কম্পাইল হয়</text>
+  <text x="500" y="130" font-size="11" fill="#555">bool-কোয়েরি JSON-এ; ES / OpenSearch সরাসরি গ্রহণ করে,</text>
+  <text x="500" y="150" font-size="11" fill="#555">meilisearch / typesense / algolia / database</text>
+  <text x="500" y="174" font-size="11" fill="#555">নিজস্ব সিনট্যাক্সে অনুবাদ করে; MapBooleanToBoolKey:</text>
+  <text x="500" y="198" font-size="11" fill="#555">and/or/not → filter/should/must_not; পার্থক্য অনুবাদে লুকিয়ে</text>
+
+  <!-- প্যানেল C: ইঞ্জিন ইন্টারফেস বিচ্ছিন্নতা -->
+  <rect x="40" y="272" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="40" y="272" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="260" y="292" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a3a3a">ইঞ্জিন ইন্টারফেস বিচ্ছিন্নতা</text>
+  <text x="60" y="326" font-size="11" fill="#555">Engine / AdvancedEngine: ডকুমেন্ট ও ফলাফল, মডেল টাইপ নয়</text>
+  <text x="60" y="350" font-size="11" fill="#555">সাঁঝা scout.Result + Hit; MapIDs / Map মডেল ভরাট করে</text>
+  <text x="60" y="374" font-size="11" fill="#555">Manager.Driver(name) — লেজি + ক্যাশ; Extend নতুন ইঞ্জিন যোগ করে</text>
+  <text x="60" y="398" font-size="11" fill="#555">attachMeta KeyString-এর সঙ্গে মেলে — সেট সরে না</text>
+  <text x="60" y="422" font-size="11" fill="#555">ত্রুটি: অজানা ড্রাইভার / অসমর্থিত অপ → scout.ErrNotSupported</text>
+
+  <!-- প্যানেল D: ponytail ইচ্ছাকৃত সরলীকরণ -->
+  <rect x="480" y="272" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="480" y="272" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="700" y="292" text-anchor="middle" font-size="13" font-weight="bold" fill="#3a3a3a">ponytail ইচ্ছাকৃত সরলীকরণ</text>
+  <text x="500" y="326" font-size="11" fill="#555">Redis-এর বদলে ইন-প্রসেস কিউ; MemorySource O(ids×models)</text>
+  <text x="500" y="350" font-size="11" fill="#555">Algolia whereNotIns — no-op "0=1"; একক v3/v4 কাঠামো + ফ্ল্যাগ</text>
+  <text x="500" y="374" font-size="11" fill="#555">শুধু স্ট্যান্ডার্ড লাইব্রেরি; SQL আইডেন্টিফায়ার হোয়াইটলিস্ট</text>
+  <text x="500" y="398" font-size="11" fill="#555">প্রতিটি সরলীকরণ ponytail কমেন্টে চিহ্নিত: সীমা ও আপগ্রেড পথ</text>
+  <text x="500" y="422" font-size="11" fill="#555">আপগ্রেড পথ: Redis কিউ / ইনডেক্স টেবিল / প্রতি-ইঞ্জিন কাঠামো</text>
+
+  <!-- নিচের প্রবাহ বার -->
+  <rect x="40" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="120" y="536" text-anchor="middle" font-size="13" fill="#3a3a3a">কোয়েরির অভিপ্রায়</text>
+  <line x1="204" y1="532" x2="248" y2="532" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="252" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="332" y="536" text-anchor="middle" font-size="13" fill="#3a3a3a">DSL উপস্থাপনা</text>
+  <line x1="416" y1="532" x2="460" y2="532" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="464" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="544" y="536" text-anchor="middle" font-size="13" fill="#3a3a3a">ইঞ্জিন অভিযোজন</text>
+  <line x1="628" y1="532" x2="672" y2="532" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="676" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="756" y="536" text-anchor="middle" font-size="12" fill="#3a3a3a">ফলাফল স্বাভাবিককরণ</text>
+</svg>

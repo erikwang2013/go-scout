@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 640" font-family="'Noto Sans Bengali',sans-serif">
+  <title>go-scout — সার্চ ও সিঙ্ক জীবনচক্র</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a4a4a"/>
+    </marker>
+  </defs>
+  <text x="480" y="28" text-anchor="middle" font-size="18" fill="#3a3a3a">go-scout: সার্চ ও সিঙ্ক জীবনচক্র</text>
+
+  <!-- সাইড কলাম: লেখার সিঙ্ক পথ -->
+  <rect x="40" y="48" width="250" height="452" rx="8" fill="#f7f6f2" stroke="#4a4a4a" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="165" y="74" text-anchor="middle" font-size="13" font-weight="bold" fill="#3a3a3a">লেখার সিঙ্ক পথ</text>
+  <rect x="56" y="90" width="218" height="44" rx="6" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="165" y="108" text-anchor="middle" font-size="11" fill="#3a3a3a">ModelObserver ইভেন্ট ধরে</text>
+  <text x="165" y="124" text-anchor="middle" font-size="11" fill="#555">Saved · Deleted · Restored</text>
+  <line x1="165" y1="134" x2="165" y2="152" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="56" y="154" width="218" height="44" rx="6" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="165" y="172" text-anchor="middle" font-size="11" fill="#3a3a3a">কিউতে পাঠানো / সিঙ্ক নির্বাহ</text>
+  <text x="165" y="188" text-anchor="middle" font-size="11" fill="#555">Queue.PushNamed (SCOUT_QUEUE)</text>
+  <line x1="165" y1="198" x2="165" y2="216" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="56" y="218" width="218" height="44" rx="6" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="165" y="236" text-anchor="middle" font-size="12" fill="#3a3a3a">ইনডেক্স সিঙ্ক্রোনাইজেশন</text>
+  <text x="165" y="252" text-anchor="middle" font-size="11" fill="#555">engine.Update / Delete + __soft_deleted</text>
+  <line x1="165" y1="262" x2="165" y2="280" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="56" y="282" width="218" height="44" rx="6" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="165" y="300" text-anchor="middle" font-size="12" fill="#3a3a3a">EventBus ইভেন্ট প্রকাশ করে</text>
+  <text x="165" y="316" text-anchor="middle" font-size="11" fill="#555">models_imported · models_flushed</text>
+  <line x1="165" y1="326" x2="165" y2="344" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="56" y="346" width="218" height="44" rx="6" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="165" y="364" text-anchor="middle" font-size="12" fill="#3a3a3a">বাল্ক ইমপোর্ট</text>
+  <text x="165" y="380" text-anchor="middle" font-size="10" fill="#555">MakeAllSearchable চাঙ্ক (৫০০)</text>
+  <text x="165" y="426" text-anchor="middle" font-size="10" fill="#555">কিউ বন্ধ থাকলে — সিঙ্ক নির্বাহ</text>
+  <text x="165" y="444" text-anchor="middle" font-size="10" fill="#555">(runInline: সিঙ্ক ফলব্যাক + সতর্কতা)</text>
+
+  <!-- মূল প্রবাহ: সার্চ -->
+  <rect x="340" y="48" width="300" height="44" rx="22" fill="#d8d4c8" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="490" y="74" text-anchor="middle" font-size="13" fill="#3a3a3a">প্রবেশ: Searchable(model, source)</text>
+  <line x1="490" y1="92" x2="490" y2="112" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="340" y="114" width="300" height="48" rx="6" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="490" y="136" text-anchor="middle" font-size="13" fill="#3a3a3a">কোয়েরি নির্মাণ (*scout.Builder)</text>
+  <text x="490" y="154" text-anchor="middle" font-size="11" fill="#555">Query · Where · OrderBy · WithTrashed</text>
+  <line x1="490" y1="162" x2="490" y2="182" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="340" y="184" width="300" height="48" rx="6" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="490" y="206" text-anchor="middle" font-size="13" fill="#3a3a3a">ইঞ্জিন ডিসপ্যাচ</text>
+  <text x="490" y="224" text-anchor="middle" font-size="11" fill="#555">Manager.Driver(name): লেজি + ক্যাশ</text>
+  <line x1="490" y1="232" x2="490" y2="252" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="340" y="254" width="300" height="48" rx="6" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="490" y="276" text-anchor="middle" font-size="13" fill="#3a3a3a">সার্চ নির্বাহ</text>
+  <text x="490" y="294" text-anchor="middle" font-size="11" fill="#555">engine.Search / Paginate (REST · SQL · মেমোরি)</text>
+  <line x1="490" y1="302" x2="490" y2="322" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="340" y="324" width="300" height="48" rx="6" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="490" y="346" text-anchor="middle" font-size="13" fill="#3a3a3a">প্রতিক্রিয়া পার্স (scout.Result)</text>
+  <text x="490" y="364" text-anchor="middle" font-size="11" fill="#555">Hits · Total · Aggregations · Raw</text>
+  <line x1="490" y1="372" x2="490" y2="392" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- সিদ্ধান্ত-রম্ব -->
+  <polygon points="490,394 620,426 490,458 360,426" fill="#ebe9e3" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="490" y="424" text-anchor="middle" font-size="13" fill="#3a3a3a">মডেল ফিরিয়ে ভরাট করতে হবে?</text>
+  <text x="490" y="442" text-anchor="middle" font-size="11" fill="#555">Get / Paginate / First</text>
+
+  <!-- না: সরাসরি রিটার্ন -->
+  <line x1="620" y1="426" x2="668" y2="426" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="644" y="416" text-anchor="middle" font-size="11" fill="#555">না</text>
+  <rect x="678" y="402" width="242" height="48" rx="6" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="799" y="424" text-anchor="middle" font-size="11" fill="#3a3a3a">সরাসরি ফেরত (মডেল লোড ছাড়া)</text>
+  <text x="799" y="442" text-anchor="middle" font-size="11" fill="#555">Keys · GetAggregations · PaginateRaw</text>
+
+  <!-- হ্যাঁ: ব্যাকফিল -->
+  <line x1="490" y1="458" x2="490" y2="486" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="500" y="478" font-size="11" fill="#555">হ্যাঁ</text>
+  <rect x="340" y="488" width="300" height="64" rx="6" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="490" y="510" text-anchor="middle" font-size="13" fill="#3a3a3a">মডেল ফিরিয়ে ভরাট</text>
+  <text x="490" y="530" text-anchor="middle" font-size="11" fill="#555">MapIDs → Source.ByIDs → attachMeta</text>
+  <text x="490" y="546" text-anchor="middle" font-size="11" fill="#555">KeyString সংযোজন · ইঞ্জিনের ক্রম বজায়</text>
+  <line x1="490" y1="552" x2="490" y2="572" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="340" y="574" width="300" height="44" rx="22" fill="#d8d4c8" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="490" y="600" text-anchor="middle" font-size="13" fill="#3a3a3a">রিটার্ন Models / ResultItem</text>
+</svg>

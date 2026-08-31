@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 580" font-family="'PingFang SC','Microsoft YaHei',sans-serif">
+  <title>go-scout Design Philosophy</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a4a4a"/>
+    </marker>
+  </defs>
+  <text x="480" y="28" text-anchor="middle" font-size="18" fill="#3a3a3a">go-scout Design Philosophy</text>
+
+  <!-- Panel A: Fluent Builder -->
+  <rect x="40" y="52" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="40" y="52" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="260" y="72" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a3a3a">Fluent Builder Carries Query Intent</text>
+  <text x="60" y="106" font-size="11" fill="#555">Search(ctx, query, cb) returns *Builder; chaining only accumulates state</text>
+  <text x="60" y="130" font-size="11" fill="#555">Only Get / First / Paginate / Cursor trigger an engine round-trip</text>
+  <text x="60" y="154" font-size="11" fill="#555">QueryCB modifies the query, CallbackCB inspects the engine request body,</text>
+  <text x="60" y="174" font-size="11" fill="#555">AddResultProcessor post-processes results</text>
+  <text x="60" y="206" font-size="11" fill="#d8d4c8">—</text>
+  <text x="60" y="222" font-size="11" fill="#555">Search fields: Options["fields"] → FullTextColumner → FieldNames</text>
+
+  <!-- Panel B: DSL intermediate representation -->
+  <rect x="480" y="52" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="480" y="52" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="700" y="72" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a3a3a">DSL Intermediate Representation</text>
+  <text x="500" y="106" font-size="11" fill="#555">Advanced conditions compile to bool-query JSON via engines/dsl.go</text>
+  <text x="500" y="130" font-size="11" fill="#555">Consumed directly by ES / OpenSearch; meilisearch / typesense /</text>
+  <text x="500" y="150" font-size="11" fill="#555">algolia / database each translate to their own syntax</text>
+  <text x="500" y="174" font-size="11" fill="#555">MapBooleanToBoolKey: and/or/not → filter/should/must_not</text>
+  <text x="500" y="198" font-size="11" fill="#555">One advanced-query API; engine differences stay in the translation layer</text>
+
+  <!-- Panel C: Engine interface isolation -->
+  <rect x="40" y="272" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="40" y="272" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="260" y="292" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a3a3a">Engine Interface Isolation</text>
+  <text x="60" y="326" font-size="11" fill="#555">Engine / AdvancedEngine only deal with docs &amp; results, never model types</text>
+  <text x="60" y="350" font-size="11" fill="#555">Unified scout.Result + Hit; MapIDs / Map backfill models</text>
+  <text x="60" y="374" font-size="11" fill="#555">Manager.Driver(name) lazy-creates &amp; caches; Extend new engines anytime</text>
+  <text x="60" y="398" font-size="11" fill="#555">attachMeta aligns by KeyString so filtered model sets stay in order</text>
+  <text x="60" y="422" font-size="11" fill="#555">Errors: unknown driver / unsupported op → scout.ErrNotSupported</text>
+
+  <!-- Panel D: Deliberate ponytail simplifications -->
+  <rect x="480" y="272" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="480" y="272" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="700" y="292" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a3a3a">Deliberate ponytail Simplifications</text>
+  <text x="500" y="326" font-size="11" fill="#555">In-process queue instead of Redis; MemorySource linear scan O(ids×models)</text>
+  <text x="500" y="350" font-size="11" fill="#555">algolia whereNotIns as a "0=1" no-op; v3/v4 single struct + flag</text>
+  <text x="500" y="374" font-size="11" fill="#555">Pure stdlib, zero deps; SQL identifier whitelist against injection</text>
+  <text x="500" y="398" font-size="11" fill="#555">Every simplification marked with a ponytail comment: limits &amp; upgrade path</text>
+  <text x="500" y="422" font-size="11" fill="#555">Upgrade path: Redis queue / index tables / per-engine structs</text>
+
+  <!-- Bottom flow -->
+  <rect x="40" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="120" y="536" text-anchor="middle" font-size="13" fill="#3a3a3a">Query Intent</text>
+  <line x1="204" y1="532" x2="248" y2="532" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="252" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="332" y="536" text-anchor="middle" font-size="13" fill="#3a3a3a">DSL IR</text>
+  <line x1="416" y1="532" x2="460" y2="532" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="464" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="544" y="536" text-anchor="middle" font-size="13" fill="#3a3a3a">Engine Adapter</text>
+  <line x1="628" y1="532" x2="672" y2="532" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="676" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="756" y="536" text-anchor="middle" font-size="13" fill="#3a3a3a">Result Normalization</text>
+</svg>

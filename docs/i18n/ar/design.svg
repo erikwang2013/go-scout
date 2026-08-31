@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 580" font-family="'Segoe UI',Tahoma,sans-serif">
+  <title>go-scout — منهج التصميم</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a4a4a"/>
+    </marker>
+  </defs>
+  <text x="480" y="28" text-anchor="middle" font-size="18" fill="#3a3a3a">go-scout — منهج التصميم</text>
+
+  <!-- اللوحة A: سلسلة Builder -->
+  <rect x="40" y="52" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="40" y="52" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="260" y="72" text-anchor="middle" font-size="13" font-weight="bold" fill="#3a3a3a">سلسلة Builder تحمل نية الاستعلام</text>
+  <text x="60" y="106" font-size="11" fill="#555">Search(ctx, query, cb) يعيد *Builder؛</text>
+  <text x="60" y="128" font-size="11" fill="#555">السلسلة تخزن الحالة فقط</text>
+  <text x="60" y="152" font-size="11" fill="#555">Get / First / Paginate / Cursor — تبادل واحد مع المحرك</text>
+  <text x="60" y="174" font-size="11" fill="#555">QueryCB يعدّل الاستعلام، CallbackCB — يأخذ الجسم،</text>
+  <text x="60" y="196" font-size="11" fill="#555">AddResultProcessor يعالج النتيجة لاحقًا</text>
+  <text x="60" y="222" font-size="11" fill="#555">تحليل حقول البحث: Options["fields"] ← FullTextColumner ← FieldNames</text>
+
+  <!-- اللوحة B: تمثيل DSL الوسيط -->
+  <rect x="480" y="52" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="480" y="52" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="700" y="72" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a3a3a">تمثيل DSL الوسيط</text>
+  <text x="500" y="106" font-size="11" fill="#555">تُجمَّع الشروط المتقدمة من engines/dsl.go إلى</text>
+  <text x="500" y="130" font-size="11" fill="#555">JSON استعلام bool؛ ES / OpenSearch يقبلانها مباشرة،</text>
+  <text x="500" y="150" font-size="11" fill="#555">بينما meilisearch / typesense / algolia / database</text>
+  <text x="500" y="174" font-size="11" fill="#555">تترجمها إلى صياغتها الخاصة؛ MapBooleanToBoolKey:</text>
+  <text x="500" y="198" font-size="11" fill="#555">and/or/not ← filter/should/must_not؛ الفروق تختفي في الترجمة</text>
+
+  <!-- اللوحة C: عزل واجهات المحركات -->
+  <rect x="40" y="272" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="40" y="272" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="260" y="292" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a3a3a">عزل واجهات المحركات</text>
+  <text x="60" y="326" font-size="11" fill="#555">Engine / AdvancedEngine: مستندات ونتائج، لا أنواع نماذج</text>
+  <text x="60" y="350" font-size="11" fill="#555">scout.Result + Hit مشتركان؛ MapIDs / Map تملأ النماذج</text>
+  <text x="60" y="374" font-size="11" fill="#555">Manager.Driver(name) — كسول + مخزن مؤقت؛ Extend يضيف محركًا</text>
+  <text x="60" y="398" font-size="11" fill="#555">attachMeta يطابق KeyString — تبقى المجموعة ثابتة</text>
+  <text x="60" y="422" font-size="11" fill="#555">أخطاء: محرك مجهول / عملية غير مدعومة ← scout.ErrNotSupported</text>
+
+  <!-- اللوحة D: تبسيط متعمد ponytail -->
+  <rect x="480" y="272" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
+  <rect x="480" y="272" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="700" y="292" text-anchor="middle" font-size="13" font-weight="bold" fill="#3a3a3a">تبسيط متعمد ponytail</text>
+  <text x="500" y="326" font-size="11" fill="#555">قائمة داخل العملية بدل Redis؛ MemorySource O(ids×models)</text>
+  <text x="500" y="350" font-size="11" fill="#555">Algolia whereNotIns — no-op "0=1"؛ بنية موحدة v3/v4 + علامة</text>
+  <text x="500" y="374" font-size="11" fill="#555">المكتبة القياسية فقط؛ قائمة بيضاء لمعرفات SQL</text>
+  <text x="500" y="398" font-size="11" fill="#555">كل تبسيط مُعلَّم بتعليق ponytail: الحدود ومسار الترقية</text>
+  <text x="500" y="422" font-size="11" fill="#555">مسار الترقية: قائمة Redis / جدول فهرس / بنية لكل محرك</text>
+
+  <!-- شريط التدفق السفلي -->
+  <rect x="40" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="120" y="536" text-anchor="middle" font-size="13" fill="#3a3a3a">نية الاستعلام</text>
+  <line x1="204" y1="532" x2="248" y2="532" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="252" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="332" y="536" text-anchor="middle" font-size="13" fill="#3a3a3a">تمثيل DSL</text>
+  <line x1="416" y1="532" x2="460" y2="532" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="464" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="544" y="536" text-anchor="middle" font-size="13" fill="#3a3a3a">تكييف المحرك</text>
+  <line x1="628" y1="532" x2="672" y2="532" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="676" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="756" y="536" text-anchor="middle" font-size="12" fill="#3a3a3a">تطبيع النتائج</text>
+</svg>
