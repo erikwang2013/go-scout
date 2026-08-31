@@ -147,17 +147,6 @@ func (e *XunSearchEngine) DeleteIndex(ctx context.Context, name string) (any, er
 	return nil, scout.ErrNotSupported
 }
 
-// GetAggregations is unsupported: the search daemon returns no aggregation
-// payload.
-func (e *XunSearchEngine) GetAggregations(ctx context.Context, b *scout.Builder) (map[string]any, error) {
-	return nil, scout.ErrNotSupported
-}
-
-// GetFacets is unsupported: the search daemon returns no facet payload.
-func (e *XunSearchEngine) GetFacets(ctx context.Context, b *scout.Builder) (map[string]any, error) {
-	return nil, scout.ErrNotSupported
-}
-
 // --- request building ---
 
 // index posts one command to the index daemon and returns the plain-text reply.
@@ -182,7 +171,7 @@ func (e *XunSearchEngine) index(ctx context.Context, cmd, project, data string) 
 // run issues one search-daemon query and parses the JSON response.
 func (e *XunSearchEngine) run(ctx context.Context, b *scout.Builder, limit, offset int) (*scout.Result, error) {
 	q := url.Values{
-		"q":        {b.Query},
+		"q":        {xsQuery(b)},
 		"project":  {b.GetIndex()},
 		"charset":  {e.charset},
 		"per_page": {fmt.Sprint(limit)},
@@ -191,6 +180,16 @@ func (e *XunSearchEngine) run(ctx context.Context, b *scout.Builder, limit, offs
 	for k, v := range b.GetOptions() {
 		if s, ok := v.(string); ok && k != "fields" {
 			q.Set(k, s)
+		}
+	}
+	// Advanced parity: the facet config rides along as facet/facet_size params,
+	// as the PHP engine's buildFacets reads the same config after searching.
+	if f, s := xsFacetParams(b); f != "" {
+		if q.Get("facet") == "" {
+			q.Set("facet", f)
+		}
+		if q.Get("facet_size") == "" {
+			q.Set("facet_size", s)
 		}
 	}
 	if out := b.InvokeCallback(ctx, q); out != nil {
@@ -241,6 +240,11 @@ func (e *XunSearchEngine) parse(raw map[string]any, b *scout.Builder) *scout.Res
 	res := Result(hits, total)
 	if t := xsInt(raw["cost"]); t > 0 {
 		res.Took = t
+	}
+	// Advanced parity: the daemon reports facet counts next to the docs when a
+	// facet param was sent; surface them under Aggregations["facets"].
+	if fc, ok := raw["facets"].(map[string]any); ok {
+		res.Aggregations = map[string]any{"facets": fc}
 	}
 	res.Raw = raw
 	for _, p := range b.GetResultProcessors() {

@@ -200,11 +200,20 @@ func TestXunSearchUnsupported(t *testing.T) {
 	if _, err := e.DeleteIndex(ctx, "x"); !errors.Is(err, scout.ErrNotSupported) {
 		t.Errorf("DeleteIndex = %v, want ErrNotSupported", err)
 	}
+}
+
+func TestXunSearchAdvancedEmpty(t *testing.T) {
+	e := NewXunSearch(scout.DefaultConfig())
+	ctx := context.Background()
 	b := newBuilder(t, nil)
-	if _, err := e.GetAggregations(ctx, b); !errors.Is(err, scout.ErrNotSupported) {
-		t.Errorf("GetAggregations = %v, want ErrNotSupported", err)
+	aggs, err := e.GetAggregations(ctx, b)
+	if err != nil || len(aggs) != 0 {
+		t.Errorf("GetAggregations = %v, %v", aggs, err)
 	}
-	if _, err := e.GetFacets(ctx, b); !errors.Is(err, scout.ErrNotSupported) {
-		t.Errorf("GetFacets = %v, want ErrNotSupported", err)
+	srv, _ := mtsCapture(t, `{"count":0,"docs":[]}`)
+	e.searchBase, e.client = srv.URL, srv.Client()
+	facets, err := e.GetFacets(ctx, b)
+	if err != nil || len(facets) != 0 {
+		t.Errorf("GetFacets = %v, %v", facets, err)
 	}
 }

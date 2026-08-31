@@ -106,7 +106,7 @@ func buildAdvancedCondition(cond scout.AdvancedWhere) map[string]any {
 	case "geo_bounding_box":
 		v := asMap(cond.Value)
 		return map[string]any{"geo_bounding_box": map[string]any{
-			field: map[string]any{"top_left": v["top_left"], "bottom_right": v["bottom_right"]},
+			field:  map[string]any{"top_left": v["top_left"], "bottom_right": v["bottom_right"]},
 			"type": anyStr(opts["type"], "memory"),
 		}}
 	case "exists":
@@ -153,11 +153,109 @@ func buildAdvancedCondition(cond scout.AdvancedWhere) map[string]any {
 		return map[string]any{"range": map[string]any{field: map[string]any{"lt": cond.Value}}}
 	case "lte", "<=":
 		return map[string]any{"range": map[string]any{field: map[string]any{"lte": cond.Value}}}
+	case "in":
+		return map[string]any{"terms": map[string]any{field: esAnyList(cond.Value)}}
+	case "not_in":
+		return map[string]any{"bool": map[string]any{
+			"must_not": []map[string]any{{"terms": map[string]any{field: esAnyList(cond.Value)}}},
+		}}
+	case "fuzzy":
+		return map[string]any{"fuzzy": map[string]any{field: map[string]any{
+			"value": cond.Value, "fuzziness": anyStr(opts["fuzziness"], "AUTO"), "boost": anyFloat(opts["boost"], 1.0),
+		}}}
+	case "match_phrase_prefix":
+		return map[string]any{"match_phrase_prefix": map[string]any{field: map[string]any{
+			"query": cond.Value, "slop": anyFloat(opts["slop"], 0),
+			"max_expansions": anyFloat(opts["max_expansions"], 50), "boost": anyFloat(opts["boost"], 1.0),
+		}}}
+	case "multi_match":
+		v := asMap(cond.Value)
+		q, f := v["query"], v["fields"]
+		if q == nil {
+			q = cond.Value
+		}
+		if f == nil {
+			f = []any{field}
+		}
+		return map[string]any{"multi_match": map[string]any{
+			"query": q, "fields": f,
+			"type": anyStr(opts["type"], "best_fields"), "operator": anyStr(opts["operator"], "or"),
+			"fuzziness": anyStr(opts["fuzziness"], "AUTO"), "boost": anyFloat(opts["boost"], 1.0),
+		}}
+	case "nested":
+		v := asMap(cond.Value)
+		q := v["query"]
+		if q == nil {
+			q = cond.Value
+		}
+		return map[string]any{"nested": map[string]any{
+			"path":       field,
+			"query":      buildQueryForNested(q),
+			"score_mode": anyStr(v["score_mode"], "avg"),
+		}}
+	case "has_child":
+		v := asMap(cond.Value)
+		q := v["query"]
+		if q == nil {
+			q = cond.Value
+		}
+		return map[string]any{"has_child": map[string]any{
+			"type": field, "query": buildQueryForNested(q),
+		}}
+	case "has_parent":
+		v := asMap(cond.Value)
+		q := v["query"]
+		if q == nil {
+			q = cond.Value
+		}
+		return map[string]any{"has_parent": map[string]any{
+			"parent_type": field, "query": buildQueryForNested(q),
+		}}
+	case "parent_id":
+		v := asMap(cond.Value)
+		id := v["id"]
+		if id == nil {
+			id = cond.Value
+		}
+		return map[string]any{"parent_id": map[string]any{"type": field, "id": id}}
 	default:
 		return map[string]any{"term": map[string]any{field: map[string]any{
 			"value": cond.Value, "boost": anyFloat(opts["boost"], 1.0),
 		}}}
 	}
+}
+
+// buildQueryForNested compiles a nested-condition list into a bool query,
+// mirroring the PHP engine's buildQueryForNested. Each entry carries
+// field/operator/value/boolean/options and is compiled by buildAdvancedCondition.
+func buildQueryForNested(v any) map[string]any {
+	boolQ := map[string]any{}
+	for _, c := range esAnyList(v) {
+		cm, ok := c.(map[string]any)
+		if !ok {
+			continue
+		}
+		field, _ := cm["field"].(string)
+		op, _ := cm["operator"].(string)
+		if field == "" || op == "" {
+			continue
+		}
+		boolean := anyStr(cm["boolean"], "must")
+		clause := buildAdvancedCondition(scout.AdvancedWhere{
+			Field:    field,
+			Operator: op,
+			Value:    cm["value"],
+			Boolean:  boolean,
+			Options:  asMap(cm["options"]),
+		})
+		if clause == nil {
+			continue
+		}
+		bucket := MapBooleanToBoolKey(boolean)
+		list, _ := boolQ[bucket].([]map[string]any)
+		boolQ[bucket] = append(list, clause)
+	}
+	return map[string]any{"bool": boolQ}
 }
 
 // buildRangeCondition emits a range clause with only valid bounds. Values that

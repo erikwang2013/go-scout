@@ -172,20 +172,6 @@ func (e *MeilisearchEngine) DeleteIndex(ctx context.Context, name string) (any, 
 	return nil, nil
 }
 
-// GetAggregations returns the facet distributions for a query.
-func (e *MeilisearchEngine) GetAggregations(ctx context.Context, b *scout.Builder) (map[string]any, error) {
-	res, err := e.Search(ctx, b)
-	if err != nil {
-		return nil, err
-	}
-	return res.Aggregations, nil
-}
-
-// GetFacets returns the facet distributions for a query.
-func (e *MeilisearchEngine) GetFacets(ctx context.Context, b *scout.Builder) (map[string]any, error) {
-	return e.GetAggregations(ctx, b)
-}
-
 // --- request building ---
 
 // meiliParams assembles the /search body. Builder options are merged first, so
@@ -207,7 +193,21 @@ func meiliParams(b *scout.Builder, limit, offset int) map[string]any {
 	body["limit"] = limit
 	body["offset"] = offset
 	body["attributesToRetrieve"] = retrieve
-	body["attributesToHighlight"] = b.SearchFields()
+	body["attributesToHighlight"] = meiliHighlightFields(b)
+	// Advanced parity: highlight/ranking params from options; the PHP engine
+	// sends the same defaults unconditionally, and these match the server's own.
+	if v, ok := b.GetOptions()["highlight_pre_tag"]; ok {
+		body["highlightPreTag"] = v
+	}
+	if v, ok := b.GetOptions()["highlight_post_tag"]; ok {
+		body["highlightPostTag"] = v
+	}
+	if v, ok := b.GetOptions()["show_matches_position"]; ok {
+		body["showMatchesPosition"] = v
+	}
+	if v, ok := b.GetOptions()["show_ranking_score"]; ok {
+		body["showRankingScore"] = v
+	}
 	if f := meiliFilters(b); f != "" {
 		body["filter"] = f
 	}
@@ -219,7 +219,7 @@ func meiliParams(b *scout.Builder, limit, offset int) map[string]any {
 	}
 	if v := meiliVector(b); v != nil {
 		body["vector"] = v
-		body["hybrid"] = map[string]any{"embedder": "default"}
+		body["hybrid"] = meiliHybrid(b)
 	}
 	return body
 }
@@ -261,194 +261,6 @@ func meiliFilters(b *scout.Builder) string {
 		parts = append(parts, f)
 	}
 	return strings.Join(parts, " AND ")
-}
-
-// meiliAdvanced translates one structured condition. Untranslatable operators
-// return "" and are dropped, matching the PHP fallback.
-func meiliAdvanced(c scout.AdvancedWhere) string {
-	field := c.Field
-	if field == "" {
-		return ""
-	}
-	val := c.Value
-	switch c.Operator {
-	case "range", "date_range":
-		return meiliRange(field, val)
-	case "geo_radius", "geo_distance":
-		g, _ := val.(map[string]any)
-		if g == nil {
-			return ""
-		}
-		return fmt.Sprintf("_geoRadius(%s, %s, %s)", meiliLit(g["lat"]), meiliLit(g["lng"]), meiliLit(g["radius"]))
-	case "geo_bounding_box":
-		g, _ := val.(map[string]any)
-		if g == nil {
-			return ""
-		}
-		tl, _ := g["top_left"].(map[string]any)
-		br, _ := g["bottom_right"].(map[string]any)
-		return fmt.Sprintf("_geoBoundingBox([%s, %s, %s, %s])",
-			meiliLit(tl["lat"]), meiliLit(tl["lng"]), meiliLit(br["lat"]), meiliLit(br["lng"]))
-	case ">":
-		return fmt.Sprintf("%s > %s", field, meiliLit(val))
-	case ">=":
-		return fmt.Sprintf("%s >= %s", field, meiliLit(val))
-	case "<":
-		return fmt.Sprintf("%s < %s", field, meiliLit(val))
-	case "<=":
-		return fmt.Sprintf("%s <= %s", field, meiliLit(val))
-	case "!=":
-		return fmt.Sprintf("%s != %s", field, meiliLit(val))
-	case "exists":
-		return field + " EXISTS"
-	case "missing":
-		return field + " NOT EXISTS"
-	case "null":
-		return field + " IS NULL"
-	case "not_null":
-		return field + " IS NOT NULL"
-	case "empty":
-		return field + " IS EMPTY"
-	case "not_empty":
-		return field + " IS NOT EMPTY"
-	case "contains":
-		return fmt.Sprintf("%s CONTAINS %s", field, meiliLit(val))
-	case "starts_with":
-		return fmt.Sprintf("%s STARTS WITH %s", field, meiliLit(val))
-	case "ends_with":
-		return fmt.Sprintf("%s ENDS WITH %s", field, meiliLit(val))
-	case "regex":
-		return fmt.Sprintf("%s MATCHES %s", field, meiliLit(val))
-	case "in":
-		return fmt.Sprintf("%s IN [%s]", field, meiliList(meiliAnyList(val)))
-	case "not_in":
-		return fmt.Sprintf("%s NOT IN [%s]", field, meiliList(meiliAnyList(val)))
-	case "fulltext":
-		// ponytail: Meili filters can't express a full-text clause; the terms
-		// already ride along in q. Emit an explicit filter when that is needed.
-		return ""
-	default: // "=", "==", "eq", "match", and anything unrecognised
-		return fmt.Sprintf("%s = %s", field, meiliLit(val))
-	}
-}
-
-// meiliRange renders range/date_range bounds; only gte/gt/lte/lt are honoured.
-func meiliRange(field string, val any) string {
-	m, _ := val.(map[string]any)
-	if m == nil {
-		return ""
-	}
-	bounds, ok := m["range"].(map[string]any)
-	if !ok {
-		bounds = m
-	}
-	op := map[string]string{"gte": ">=", "gt": ">", "lte": "<=", "lt": "<"}
-	var parts []string
-	for _, k := range []string{"gte", "gt", "lte", "lt"} {
-		if v, ok := bounds[k]; ok {
-			parts = append(parts, fmt.Sprintf("%s %s %s", field, op[k], meiliLit(v)))
-		}
-	}
-	if len(parts) == 0 {
-		return ""
-	}
-	return strings.Join(parts, " AND ")
-}
-
-// meiliSorts renders orders plus advanced sorts as Meilisearch sort entries.
-func meiliSorts(b *scout.Builder) []string {
-	var out []string
-	for _, o := range b.GetOrders() {
-		out = append(out, meiliDir(o.Column, o.Direction))
-	}
-	for _, s := range b.GetSorts() {
-		switch s.Type {
-		case "", "field":
-			continue // already covered by GetOrders
-		case "vector_similarity":
-			// ponytail: Meili has no _vector_distance sort; the vector already
-			// drives ranking via hybrid. Skip unless per-field distance sorts are needed.
-		case "geo_distance":
-			lat, lng := 0.0, 0.0
-			if s.Location != nil {
-				lat, lng = s.Location["lat"], s.Location["lng"]
-			}
-			out = append(out, fmt.Sprintf("_geoPoint(%s, %s):%s", meiliLit(lat), meiliLit(lng), meiliD(s.Direction)))
-		case "random":
-			out = append(out, "_random:asc")
-		default:
-			if s.Field != "" {
-				out = append(out, meiliDir(s.Field, s.Direction))
-			}
-		}
-	}
-	return out
-}
-
-// meiliFacetFields unions aggregation and facet names for facetsBy.
-func meiliFacetFields(b *scout.Builder) []string {
-	seen := map[string]bool{}
-	var out []string
-	add := func(name string) {
-		if name != "" && !seen[name] {
-			seen[name] = true
-			out = append(out, name)
-		}
-	}
-	for name := range b.GetAggregationConfig() {
-		add(name)
-	}
-	for name := range b.GetFacetConfig() {
-		add(name)
-	}
-	sort.Strings(out)
-	return out
-}
-
-// meiliVector returns the query vector, or nil when none is configured.
-func meiliVector(b *scout.Builder) []float64 {
-	vs := b.GetVectorSearch()
-	if vs == nil {
-		return nil
-	}
-	if v, ok := vs["vector"].([]float64); ok && len(v) > 0 {
-		return v
-	}
-	return nil
-}
-
-// --- response parsing ---
-
-// parse converts a raw Meilisearch search response into a scout.Result. The
-// model's key column is read from the document body (default "id").
-func (e *MeilisearchEngine) parse(raw map[string]any, b *scout.Builder) *scout.Result {
-	key := scout.KeyNameOf(b.Model)
-	var hits []map[string]any
-	for _, h := range meiliAnyList(raw["hits"]) {
-		doc, ok := h.(map[string]any)
-		if !ok {
-			continue
-		}
-		hits = append(hits, map[string]any{
-			"_id":           doc[key],
-			"_score":        meiliNum(doc, "_rankingScore"),
-			"_source":       doc,
-			"highlight":     doc["_formatted"],
-			"_vector_score": meiliNum(doc, "_vectorDistance"),
-		})
-	}
-	res := Result(hits, meiliTotal(raw))
-	if m, ok := raw["facetDistribution"].(map[string]any); ok {
-		res.Aggregations = m
-	}
-	if t := meiliInt(raw["processingTimeMs"]); t > 0 {
-		res.Took = t
-	}
-	res.Raw = raw
-	for _, p := range b.GetResultProcessors() {
-		res = p(res)
-	}
-	return res
 }
 
 // --- helpers ---

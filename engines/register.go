@@ -40,6 +40,9 @@ func Register(m *scout.EngineManager) {
 	})
 
 	m.Extend("elasticsearch", func(cfg *scout.Config) scout.Engine { return NewElasticSearch(cfg) })
+	// The PHP plugin ships an AdvancedElasticsearchEngine; its features live on
+	// the same Go engine, so this is an explicit alias like advanced_opensearch.
+	m.Extend("advanced_elasticsearch", func(cfg *scout.Config) scout.Engine { return NewElasticSearch(cfg) })
 	m.Extend("opensearch", func(cfg *scout.Config) scout.Engine { return NewOpenSearch(cfg) })
 	// The PHP plugin resolves "opensearch" straight to its Advanced engine,
 	// which implements the full advanced builder API. Keep an explicit alias.
@@ -64,7 +67,7 @@ func Register(m *scout.EngineManager) {
 func Drivers() []string {
 	return []string{
 		"null", "collection", "database",
-		"elasticsearch", "opensearch", "advanced_opensearch",
+		"elasticsearch", "advanced_elasticsearch", "opensearch", "advanced_opensearch",
 		"meilisearch", "advanced_meilisearch",
 		"typesense", "advanced_typesense",
 		"algolia", "algolia3", "algolia4",

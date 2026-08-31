@@ -178,6 +178,11 @@ func esRun(ctx context.Context, client *http.Client, base, name string, b *scout
 		}
 	}
 	path := base + "/" + url.PathEscape(b.GetIndex()) + "/_search"
+	if sid, ok := b.GetOptions()["scroll_id"].(string); ok && sid != "" {
+		// ponytail: PHP reads the X-Scroll-Id request header; Go has no ambient
+		// request, so the builder option carries the scroll id instead.
+		path += "?scroll=" + url.QueryEscape(sid)
+	}
 	raw, err := DoJSON(ctx, client, http.MethodPost, path, nil, body)
 	if err != nil {
 		return nil, fmt.Errorf("scout: %s search: %w", name, err)
@@ -211,11 +216,85 @@ func esBody(b *scout.Builder, limit, offset int) map[string]any {
 	}
 	if hl := buildHighlight(b); hl != nil {
 		body["highlight"] = hl
+	} else if hf := b.GetOptions()["highlight_fields"]; hf != nil {
+		// Advanced parity: the PHP engine's getHighlightFields option.
+		body["highlight"] = map[string]any{"fields": esHighlightFields(hf)}
 	}
 	if s := buildSuggest(b); s != nil {
 		body["suggest"] = s
 	}
+	// Advanced parity: _source projection options, mirroring getSourceFields.
+	if src := esSource(b); src != nil {
+		body["_source"] = src
+	}
+	// Advanced parity: KNN vector search, mirroring the PHP plugin's
+	// addVectorSearch: the OpenSearch field-keyed form is lifted to the top
+	// level as {"knn": {"<field>": {"vector": [...], "k": n}}}. Not verified
+	// against a live Elasticsearch 8 cluster.
+	if knn := esKnn(b); knn != nil {
+		if q, ok := body["query"].(map[string]any); ok {
+			if _, hasMust := asMap(q["bool"])["must"]; hasMust {
+				body["query"] = map[string]any{"bool": map[string]any{
+					"should":               []any{knn, q},
+					"minimum_should_match": 1,
+				}}
+			} else {
+				body["query"] = knn
+			}
+		} else {
+			body["query"] = knn
+		}
+		if inc, ok := asMap(b.GetVectorSearch()["options"])["include_score"].(bool); !ok || inc {
+			body["_source"] = esScoreSource(esSource(b))
+		}
+	}
 	return body
+}
+
+// esKnn renders the top-level knn clause for a vector search, mirroring the
+// PHP engine's addVectorSearch.
+func esKnn(b *scout.Builder) map[string]any {
+	vs := b.GetVectorSearch()
+	if vs == nil {
+		return nil
+	}
+	vector, ok := vs["vector"].([]float64)
+	if !ok || len(vector) == 0 {
+		return nil
+	}
+	field, _ := vs["field"].(string)
+	if field == "" {
+		field = "vector"
+	}
+	opts := asMap(vs["options"])
+	clause := map[string]any{
+		"vector": vector,
+		"k":      anyFloat(opts["k"], 10),
+	}
+	if f, ok := opts["filter"]; ok {
+		clause["filter"] = f
+	}
+	return map[string]any{"knn": map[string]any{field: clause}}
+}
+
+// esScoreSource appends the KNN score fields to the _source clause, mirroring
+// the PHP engine's include_score handling: a plain list gains the fields, an
+// object gains them under includes.
+func esScoreSource(src any) any {
+	switch s := src.(type) {
+	case nil:
+		return []any{"*", "_score", "_knn_score"}
+	case []any:
+		return append(s, "_score", "_knn_score")
+	case map[string]any:
+		inc, _ := s["includes"].([]any)
+		if inc == nil {
+			inc = []any{"*"}
+		}
+		s["includes"] = append(inc, "_score", "_knn_score")
+		return s
+	}
+	return src
 }
 
 // esParse converts a raw _search response into a scout.Result.
@@ -231,6 +310,20 @@ func esParse(raw map[string]any, b *scout.Builder) *scout.Result {
 		doc, _ := hm["_source"].(map[string]any)
 		if doc == nil {
 			doc = map[string]any{}
+		}
+		// Advanced parity: PHP's processAdvancedResults folds highlight and
+		// nested extras back into the document.
+		if hl, ok := hm["highlight"]; ok {
+			doc["_highlight"] = hl
+		}
+		if ih, ok := hm["inner_hits"]; ok {
+			doc["_inner_hits"] = ih
+		}
+		if mq, ok := hm["matched_queries"]; ok {
+			doc["_matched_queries"] = mq
+		}
+		if b.GetVectorSearch() != nil {
+			doc["_vector_score"] = esNum(hm["_score"])
 		}
 		id := hm["_id"]
 		if id == nil {
@@ -284,6 +377,49 @@ func esMap(ctx context.Context, b *scout.Builder, results *scout.Result) ([]scou
 		return nil, err
 	}
 	return orderByIDPos(ids, models), nil
+}
+
+// esSource renders the _source clause from the builder options, mirroring the
+// PHP engine's getSourceFields: an explicit "_source" wins, then
+// "_source_excludes", then "_source_includes".
+func esSource(b *scout.Builder) any {
+	if src, ok := b.GetOptions()["_source"]; ok {
+		return esFieldList(src)
+	}
+	if ex, ok := b.GetOptions()["_source_excludes"]; ok {
+		return map[string]any{"excludes": esFieldList(ex)}
+	}
+	if inc, ok := b.GetOptions()["_source_includes"]; ok {
+		return map[string]any{"includes": esFieldList(inc)}
+	}
+	return nil
+}
+
+// esFieldList normalizes a field option: an array passes through, a comma
+// string is split.
+func esFieldList(v any) []any {
+	if a, ok := v.([]any); ok {
+		return a
+	}
+	if s, ok := v.(string); ok {
+		parts := strings.Split(s, ",")
+		out := make([]any, len(parts))
+		for i, p := range parts {
+			out[i] = strings.TrimSpace(p)
+		}
+		return out
+	}
+	return []any{fmt.Sprint(v)}
+}
+
+// esHighlightFields renders the highlight_fields option into ES's
+// {"fields": {name: {}}} shape.
+func esHighlightFields(v any) map[string]any {
+	fields := map[string]any{}
+	for _, f := range esFieldList(v) {
+		fields[fmt.Sprint(f)] = map[string]any{}
+	}
+	return fields
 }
 
 func esAnyList(v any) []any {

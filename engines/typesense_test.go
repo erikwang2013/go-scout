@@ -208,15 +208,14 @@ func TestTypesenseSearchParams(t *testing.T) {
 	if qb != "price,title" && qb != "title,price" {
 		t.Errorf("query_by = %v", body["query_by"])
 	}
-	nearest, ok := body["nearest"].(map[string]any)
-	if !ok {
-		t.Fatalf("nearest = %v", body["nearest"])
-	}
-	if !reflect.DeepEqual(nearest["vector"], []any{0.1, 0.2}) || nearest["flat_search"] != false {
-		t.Errorf("nearest = %v", nearest)
+	if body["vector_query"] != "embedding:[0.1,0.2]" {
+		t.Errorf("vector_query = %v", body["vector_query"])
 	}
 	if body["k"] != 5.0 {
 		t.Errorf("k = %v", body["k"])
+	}
+	if body["location_field"] != "location" || body["location_value"] != "1,2,3km" {
+		t.Errorf("geo = %v / %v", body["location_field"], body["location_value"])
 	}
 }
 

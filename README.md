@@ -1,7 +1,7 @@
 # go-scout
 
 > 用 Go 编写的搜索同步库 —— Laravel Scout 的 Go 移植（基于 PHP 插件 [webman-scout](https://github.com/shopwwi/webman-scout)）。
-> Go 1.24 · 纯标准库实现，零第三方依赖 · 版本 v1.0.0
+> Go 1.24 · 纯标准库实现，零第三方依赖 · 版本 v1.1.0
 
 ## 项目简介
 
@@ -238,4 +238,70 @@ go run ./cmd/scout delete-all-indexes           # 删除全部索引
 
 ## 许可与说明
 
-本项目为对 PHP 插件 webman/laravel-scout 的 Go 移植，类结构、驱动命名与行为语义保持一致；简化取舍均在源码中以 `ponytail:` 注释标明（进程内队列、内存数据源线性扫描、Algolia `"0=1"` 无操作等）。
+本项目为对 PHP 插件 webman-scout 的 Go 移植，类结构、驱动命名与行为语义保持一致；简化取舍均在源码中以 `ponytail:` 注释标明（进程内队列、内存数据源线性扫描、Algolia `"0=1"` 无操作等）。
+
+## 打赏（Donate）
+
+感谢支持！你的打赏将帮助项目持续维护与发展。欢迎支持：
+
+<p align="center">
+<table>
+<tr>
+<td align="center">
+<b>微信（WeChat Pay）</b><br/>
+<img src="docs/weixinpay.png" width="130" height="130" alt="微信收款码"/>
+</td>
+<td align="center">
+<b>支付宝（Alipay）</b><br/>
+<img src="docs/alipay.png" width="130" height="130" alt="支付宝收款码"/>
+</td>
+</tr>
+</table>
+</p>
+
+### 虚拟币打赏（Crypto Donate）
+
+支持以下主网，转账时请核对收款地址与对应主网：
+
+| 主网 | 钱包地址 | 收款码 |
+|---|---|---|
+| BNB Smart Chain (BEP20) | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="docs/coin/1.jpg" width="100" height="100" alt="BNB Smart Chain (BEP20) 收款码"/> |
+| Tron (TRC20) | `TEdDHWLajt1XvqtPDWmQctdrJaC3pzZZzz` | <img src="docs/coin/2.jpg" width="100" height="100" alt="Tron (TRC20) 收款码"/> |
+| Ethereum (ERC20) | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="docs/coin/3.jpg" width="100" height="100" alt="Ethereum (ERC20) 收款码"/> |
+| Aptos | `0x836e3780edfc3f7b2372b39e2a1a3a5d7adfaccd96c726f21cfde1b50dd68030` | <img src="docs/coin/4.jpg" width="100" height="100" alt="Aptos 收款码"/> |
+| Plasma | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="docs/coin/5.jpg" width="100" height="100" alt="Plasma 收款码"/> |
+| Polygon POS | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="docs/coin/6.jpg" width="100" height="100" alt="Polygon POS 收款码"/> |
+| Solana | `2hfhboHdmdrYsY25XfQSsEWxq5ip4EQsR7f4AzSRMUyr` | <img src="docs/coin/7.jpg" width="100" height="100" alt="Solana 收款码"/> |
+| The Open Network (TON) | `UQB9kFQohzmXUir9QSSZq01iwl9aQZIDdBpNmDklljRtCoGK` | <img src="docs/coin/8.jpg" width="100" height="100" alt="The Open Network (TON) 收款码"/> |
+| Arbitrum One | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="docs/coin/9.jpg" width="100" height="100" alt="Arbitrum One 收款码"/> |
+| AVAX C-Chain | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="docs/coin/10.jpg" width="100" height="100" alt="AVAX C-Chain 收款码"/> |
+
+### 全球转账（银行汇款）
+
+**收款人信息**
+
+- 收款人姓名：WANG KEXUN
+- 收款账户号码：881015918251
+
+**收款银行**
+
+- ZA Bank SWIFT Code：`AABLHKHHXXX`
+- 银行名称：ZA Bank Limited
+- 银行编号：387
+- 银行地址：`Core F, Cyberport 3, 100 Cyberport Road, Hong Kong`
+
+**跨境汇款代理银行（如需）**
+
+> 此为跨境汇款代理银行（中转银行）信息，非收款银行信息。请向汇款银行查询是否需要提供跨境汇款代理银行信息。
+
+- 汇入港元、人民币及美元时，代理银行为 Citibank：
+  - 银行名称：Citibank N.A. Hong Kong
+  - SWIFT Code：`CITIHKHXXXX`
+  - 银行编号：006
+  - 分行名称：Hong Kong Branch
+  - 分行编号：391
+  - 银行地址：`Citibank Tower, Citibank Plaza, 3 Garden Road, Central, Hong Kong`
+- 汇入其他币种时，代理银行为 BNY Mellon：
+  - 银行名称：THE BANK OF NEW YORK MELLON
+  - SWIFT Code：`IRVTUS3NXXX`
+  - 银行地址：`THE BANK OF NEW YORK MELLON, 240 GREENWICH STREET, NEW YORK, United States`
