@@ -61,7 +61,7 @@ func (e *AlgoliaEngine) Name() string { return "algolia" }
 
 func (e *AlgoliaEngine) headers() map[string]string {
 	return map[string]string{
-		e.header:                    e.key,
+		e.header:                   e.key,
 		"X-Algolia-Application-Id": e.appID,
 	}
 }
@@ -348,9 +348,9 @@ func (e *AlgoliaEngine) parse(raw map[string]any, b *scout.Builder) *scout.Resul
 			continue
 		}
 		hits = append(hits, map[string]any{
-			"_id":     doc["objectID"],
-			"_score":  meiliNum(doc, "_score"),
-			"_source": doc,
+			"_id":       doc["objectID"],
+			"_score":    meiliNum(doc, "_score"),
+			"_source":   doc,
 			"highlight": doc["_highlightResult"],
 		})
 	}

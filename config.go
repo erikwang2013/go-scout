@@ -27,10 +27,10 @@ func DefaultConfig() *Config {
 	cfg := &Config{
 		prefix: envOr("SCOUT_PREFIX", ""),
 		raw: map[string]any{
-			"enable": true,
-			"driver": driver,
-			"prefix": envOr("SCOUT_PREFIX", ""),
-			"queue":  envBool("SCOUT_QUEUE"),
+			"enable":       true,
+			"driver":       driver,
+			"prefix":       envOr("SCOUT_PREFIX", ""),
+			"queue":        envBool("SCOUT_QUEUE"),
 			"after_commit": false,
 			"chunk": map[string]any{
 				"searchable":   envInt("SCOUT_CHUNK_SEARCHABLE", 500),

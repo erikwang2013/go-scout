@@ -59,7 +59,9 @@ type FullTextOptionser interface{ FullTextOptions() map[string]any }
 type PrefixColumner interface{ PrefixColumns() []string }
 
 // MakeSearchableUser filters/transforms the model set before indexing (trait: makeSearchableUsing).
-type MakeSearchableUser interface{ MakeSearchableUsing(models []ScoutModel) []ScoutModel }
+type MakeSearchableUser interface {
+	MakeSearchableUsing(models []ScoutModel) []ScoutModel
+}
 
 // PerPageer sets the default page size (trait: getPerPage).
 type PerPageer interface{ GetPerPage() int }

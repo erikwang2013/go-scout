@@ -133,7 +133,10 @@ func (b *Builder) Where(field string, value any) *Builder { b.Wheres[field] = va
 func (b *Builder) WhereIn(field string, values []any) *Builder { b.WhereIns[field] = values; return b }
 
 // WhereNotIn adds a NOT IN constraint.
-func (b *Builder) WhereNotIn(field string, values []any) *Builder { b.WhereNotIns[field] = values; return b }
+func (b *Builder) WhereNotIn(field string, values []any) *Builder {
+	b.WhereNotIns[field] = values
+	return b
+}
 
 // WithTrashed includes soft-deleted records.
 func (b *Builder) WithTrashed() *Builder { delete(b.Wheres, "__soft_deleted"); return b }
@@ -360,10 +363,14 @@ func (b *Builder) GetFacetConfig() map[string]map[string]any { return b.facets }
 func (b *Builder) GetResultProcessors() []func(*Result) *Result { return b.resultProcessors }
 
 // GetCallback returns the engine-specific query modifier.
-func (b *Builder) GetCallback() func(ctx context.Context, b *Builder, params any) any { return b.Callback }
+func (b *Builder) GetCallback() func(ctx context.Context, b *Builder, params any) any {
+	return b.Callback
+}
 
 // GetQueryCallback returns the model-loading query modifier.
-func (b *Builder) GetQueryCallback() func(ctx context.Context, b *Builder) error { return b.QueryCallback }
+func (b *Builder) GetQueryCallback() func(ctx context.Context, b *Builder) error {
+	return b.QueryCallback
+}
 
 // GetAfterRawSearchCallback returns the raw result callback.
 func (b *Builder) GetAfterRawSearchCallback() func(*Result) *Result { return b.AfterRawSearchCallback }

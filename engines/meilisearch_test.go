@@ -20,10 +20,12 @@ type stubModel struct {
 	Title string
 }
 
-func (m *stubModel) ScoutKey() any                    { return m.ID }
-func (m *stubModel) TableName() string                { return "products" }
-func (m *stubModel) ToSearchableArray() map[string]any { return map[string]any{"title": m.Title, "price": 10.0} }
-func (m *stubModel) ShouldBeSearchable() bool         { return true }
+func (m *stubModel) ScoutKey() any     { return m.ID }
+func (m *stubModel) TableName() string { return "products" }
+func (m *stubModel) ToSearchableArray() map[string]any {
+	return map[string]any{"title": m.Title, "price": 10.0}
+}
+func (m *stubModel) ShouldBeSearchable() bool { return true }
 
 type stubSource map[any]*stubModel
 

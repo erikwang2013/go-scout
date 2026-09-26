@@ -328,7 +328,7 @@ func (b *Builder) hitItems(raw *Result) []ResultItem {
 // pagination variants where no hydration occurs.
 type documentModel struct{ doc map[string]any }
 
-func (d documentModel) ScoutKey() any { return d.doc["_id"] }
+func (d documentModel) ScoutKey() any     { return d.doc["_id"] }
 func (d documentModel) TableName() string { return "raw" }
 func (d documentModel) ToSearchableArray() map[string]any {
 	out := map[string]any{}
