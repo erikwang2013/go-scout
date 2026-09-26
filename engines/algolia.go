@@ -221,8 +221,16 @@ func (e *AlgoliaEngine) GetFacets(ctx context.Context, b *scout.Builder) (map[st
 
 // --- request building ---
 
+// base is the API endpoint: algolia.host (ALGOLIA_HOST) when set — a proxy or an
+// Algolia-compatible endpoint — otherwise the app's own cluster. An empty value
+// falls back too, since Config.String returns a stored "" rather than the
+// default once the key exists.
 func (e *AlgoliaEngine) base() string {
-	return strings.TrimRight(e.cfg.String("algolia.host", "https://"+e.appID+".algolia.net"), "/")
+	host := strings.TrimRight(e.cfg.String("algolia.host", ""), "/")
+	if host == "" {
+		host = "https://" + e.appID + ".algolia.net"
+	}
+	return host
 }
 
 // algoliaDocuments turns models into Algolia objects, each carrying its

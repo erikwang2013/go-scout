@@ -9,7 +9,7 @@
 # go-scout
 
 > Go ভাষায় লেখা সার্চ-সিঙ্ক লাইব্রেরি — Laravel Scout-এর Go পোর্ট (PHP প্লাগইন [webman-scout](https://github.com/shopwwi/webman-scout) ভিত্তিক)।
-> Go 1.24 · শুধুমাত্র স্ট্যান্ডার্ড লাইব্রেরি, শূন্য থার্ড-পার্টি ডিপেন্ডেন্সি · সংস্করণ v1.3.1
+> Go 1.24 · শুধুমাত্র স্ট্যান্ডার্ড লাইব্রেরি, শূন্য থার্ড-পার্টি ডিপেন্ডেন্সি · সংস্করণ v1.4.0
 
 **Languages / 语言**: [中文](../../../README.md) · [English](../en/README.md) · [한국어](../ko/README.md) · [Русский](../ru/README.md) · [Deutsch](../de/README.md) · [Français](../fr/README.md) · [Español](../es/README.md) · [Português](../pt/README.md) · [हिन्दी](../hi/README.md) · [العربية](../ar/README.md) · [বাংলা](./README.md) · [Bahasa Indonesia](../id/README.md) · [日本語](../ja/README.md)
 
@@ -192,7 +192,7 @@ go get github.com/erikwang2013/go-scout
 | elasticsearch | `ELASTICSEARCH_HOST` (`http://127.0.0.1:9200`, hosts তালিকার প্রথম উপাদান) + `elasticsearch.auth` (user/password) |
 | opensearch | `OPENSEARCH_HTTP_HOST` (`https://127.0.0.1:6205`), `OPENSEARCH_USERNAME` / `OPENSEARCH_PASSWORD` (`admin`/`admin`), `OPENSEARCH_SSL_VERIFICATION` (ডিফল্ট TLS জাচ বন্ধ), `OPENSEARCH_TIMEOUT` (`30` সেকেন্ড), `OPENSEARCH_CONNECTION_TIMEOUT` (`10`) |
 | xunsearch | `XUNSEARCH_INDEX_HOST` (`http://127.0.0.1`) + `XUNSEARCH_INDEX_PORT` (`8383`), `XUNSEARCH_SEARCH_HOST` (`http://127.0.0.1`) + `XUNSEARCH_SEARCH_PORT` (`8384`), `XUNSEARCH_DEFAULT_INDEX` (`default`), `XUNSEARCH_CHARSET` (`utf-8`), `XUNSEARCH_CONFIG_PATH` (খালি = উপরের হোস্ট; সেট থাকলে `<পাথ>/<ইনডেক্স>.ini` থেকে প্রকল্পের নাম, ডেমন ও charset), `XUNSEARCH_BATCH_SIZE` (`100`) |
-| algolia | `ALGOLIA_APP_ID`, `ALGOLIA_SECRET` (অনুপস্থিত থাকলে ইঞ্জিন কনস্ট্রাক্টর panic করে) |
+| algolia | `ALGOLIA_APP_ID`, `ALGOLIA_SECRET` (না থাকলে ইঞ্জিন তৈরির সময় panic), `ALGOLIA_HOST` (ঐচ্ছিক; ডিফল্ট `https://<appID>.algolia.net`, প্রক্সি বা সামঞ্জস্যপূর্ণ এন্ডপয়েন্টে নির্দেশ করা যায়) |
 
 `database` ড্রাইভারকে DB সংযোগ ও ডায়ালেক্টও লাগে:
 

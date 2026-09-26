@@ -9,7 +9,7 @@
 # go-scout
 
 > Go में लिखा गया सर्च-सिंक लाइब्रेरी — Laravel Scout का Go पोर्ट (PHP प्लगइन [webman-scout](https://github.com/shopwwi/webman-scout) पर आधारित)।
-> Go 1.24 · केवल मानक लाइब्रेरी, शून्य थर्ड-पार्टी निर्भरता · संस्करण v1.3.1
+> Go 1.24 · केवल मानक लाइब्रेरी, शून्य थर्ड-पार्टी निर्भरता · संस्करण v1.4.0
 
 **Languages / 语言**: [中文](../../../README.md) · [English](../en/README.md) · [한국어](../ko/README.md) · [Русский](../ru/README.md) · [Deutsch](../de/README.md) · [Français](../fr/README.md) · [Español](../es/README.md) · [Português](../pt/README.md) · [हिन्दी](./README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Bahasa Indonesia](../id/README.md) · [日本語](../ja/README.md)
 
@@ -192,7 +192,7 @@ go get github.com/erikwang2013/go-scout
 | elasticsearch | `ELASTICSEARCH_HOST` (`http://127.0.0.1:9200`, hosts सूची का पहला तत्व) + `elasticsearch.auth` (user/password) |
 | opensearch | `OPENSEARCH_HTTP_HOST` (`https://127.0.0.1:6205`), `OPENSEARCH_USERNAME` / `OPENSEARCH_PASSWORD` (`admin`/`admin`), `OPENSEARCH_SSL_VERIFICATION` (डिफ़ॉल्ट रूप से TLS जाँच बंद), `OPENSEARCH_TIMEOUT` (`30` सेकंड), `OPENSEARCH_CONNECTION_TIMEOUT` (`10`) |
 | xunsearch | `XUNSEARCH_INDEX_HOST` (`http://127.0.0.1`) + `XUNSEARCH_INDEX_PORT` (`8383`), `XUNSEARCH_SEARCH_HOST` (`http://127.0.0.1`) + `XUNSEARCH_SEARCH_PORT` (`8384`), `XUNSEARCH_DEFAULT_INDEX` (`default`), `XUNSEARCH_CHARSET` (`utf-8`), `XUNSEARCH_CONFIG_PATH` (खाली = ऊपर के होस्ट; सेट होने पर `<पथ>/<इंडेक्स>.ini` से प्रोजेक्ट नाम, डेमन और charset), `XUNSEARCH_BATCH_SIZE` (`100`) |
-| algolia | `ALGOLIA_APP_ID`, `ALGOLIA_SECRET` (अनुपस्थित होने पर इंजन कंस्ट्रक्टर panic करता है) |
+| algolia | `ALGOLIA_APP_ID`, `ALGOLIA_SECRET` (न हों तो इंजन बनाते समय panic), `ALGOLIA_HOST` (वैकल्पिक; डिफ़ॉल्ट `https://<appID>.algolia.net`, प्रॉक्सी या संगत एंडपॉइंट के लिए) |
 
 `database` ड्राइवर को DB कनेक्शन और डायलेक्ट भी चाहिए:
 

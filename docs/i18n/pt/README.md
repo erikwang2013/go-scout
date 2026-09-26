@@ -9,7 +9,7 @@
 # go-scout
 
 > Biblioteca de sincronização de busca escrita em Go — um port de Laravel Scout para Go (baseado no plugin PHP [webman-scout](https://github.com/shopwwi/webman-scout)).
-> Go 1.24 · implementação 100 % com a biblioteca padrão, zero dependências de terceiros · versão v1.3.1
+> Go 1.24 · implementação 100 % com a biblioteca padrão, zero dependências de terceiros · versão v1.4.0
 
 **Languages / 语言**: [中文](../../../README.md) · [English](../en/README.md) · [한국어](../ko/README.md) · [Русский](../ru/README.md) · [Deutsch](../de/README.md) · [Français](../fr/README.md) · [Español](../es/README.md) · [Português](./README.md) · [हिन्दी](../hi/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Bahasa Indonesia](../id/README.md) · [日本語](../ja/README.md)
 
@@ -192,7 +192,7 @@ Específicas de cada mecanismo (a chave `engine.key` da árvore de configuraçã
 | elasticsearch | `ELASTICSEARCH_HOST` (`http://127.0.0.1:9200`, primeira entrada da lista de hosts) + `elasticsearch.auth` (user/password) |
 | opensearch | `OPENSEARCH_HTTP_HOST` (`https://127.0.0.1:6205`), `OPENSEARCH_USERNAME` / `OPENSEARCH_PASSWORD` (`admin`/`admin`), `OPENSEARCH_SSL_VERIFICATION` (verificação TLS omitida por padrão), `OPENSEARCH_TIMEOUT` (`30` segundos), `OPENSEARCH_CONNECTION_TIMEOUT` (`10`) |
 | xunsearch | `XUNSEARCH_INDEX_HOST` (`http://127.0.0.1`) + `XUNSEARCH_INDEX_PORT` (`8383`), `XUNSEARCH_SEARCH_HOST` (`http://127.0.0.1`) + `XUNSEARCH_SEARCH_PORT` (`8384`), `XUNSEARCH_DEFAULT_INDEX` (`default`), `XUNSEARCH_CHARSET` (`utf-8`), `XUNSEARCH_CONFIG_PATH` (vazio = os hosts acima; definido, `<caminho>/<índice>.ini` fornece o nome do projeto, os daemons e o charset), `XUNSEARCH_BATCH_SIZE` (`100`) |
-| algolia | `ALGOLIA_APP_ID`, `ALGOLIA_SECRET` (panic ao construir o mecanismo se faltarem) |
+| algolia | `ALGOLIA_APP_ID`, `ALGOLIA_SECRET` (sem eles o construtor entra em pânico), `ALGOLIA_HOST` (opcional; padrão `https://<appID>.algolia.net`, aponte para um proxy ou endpoint compatível) |
 
 O driver `database` também exige injetar a conexão e o dialeto do banco de dados:
 

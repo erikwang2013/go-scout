@@ -42,6 +42,7 @@ func DefaultConfig() *Config {
 			"algolia": map[string]any{
 				"id":             envOr("ALGOLIA_APP_ID", ""),
 				"secret":         envOr("ALGOLIA_SECRET", ""),
+				"host":           envOr("ALGOLIA_HOST", ""),
 				"headers":        map[string]any{},
 				"index-settings": map[string]any{},
 			},

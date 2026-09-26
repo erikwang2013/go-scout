@@ -9,7 +9,7 @@
 # go-scout
 
 > Go で書かれた検索同期ライブラリ — Laravel Scout の Go 移植版（PHP プラグイン [webman-scout](https://github.com/shopwwi/webman-scout) をベース）。
-> Go 1.24 · 純粋な標準ライブラリのみ、サードパーティ依存ゼロ · バージョン v1.3.1
+> Go 1.24 · 純粋な標準ライブラリのみ、サードパーティ依存ゼロ · バージョン v1.4.0
 
 **Languages / 语言**: [中文](../../../README.md) · [English](../en/README.md) · [한국어](../ko/README.md) · [Русский](../ru/README.md) · [Deutsch](../de/README.md) · [Français](../fr/README.md) · [Español](../es/README.md) · [Português](../pt/README.md) · [हिन्दी](../hi/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Bahasa Indonesia](../id/README.md) · [日本語](./README.md)
 
@@ -192,7 +192,7 @@ go get github.com/erikwang2013/go-scout
 | elasticsearch | `ELASTICSEARCH_HOST`（`http://127.0.0.1:9200`、hosts リストの先頭）+ `elasticsearch.auth`（user/password） |
 | opensearch | `OPENSEARCH_HTTP_HOST`（`https://127.0.0.1:6205`）、`OPENSEARCH_USERNAME` / `OPENSEARCH_PASSWORD`（`admin`/`admin`）、`OPENSEARCH_SSL_VERIFICATION`（デフォルトで TLS 検証をスキップ）、`OPENSEARCH_TIMEOUT`（`30` 秒）、`OPENSEARCH_CONNECTION_TIMEOUT`（`10`） |
 | xunsearch | `XUNSEARCH_INDEX_HOST`（`http://127.0.0.1`）+ `XUNSEARCH_INDEX_PORT`（`8383`）、`XUNSEARCH_SEARCH_HOST`（`http://127.0.0.1`）+ `XUNSEARCH_SEARCH_PORT`（`8384`）、`XUNSEARCH_DEFAULT_INDEX`（`default`）、`XUNSEARCH_CHARSET`（`utf-8`）、`XUNSEARCH_CONFIG_PATH`（空 = 上記のホスト/ポート。設定時は `<パス>/<インデックス名>.ini` からプロジェクト名・デーモン・文字セットを取得）、`XUNSEARCH_BATCH_SIZE`（`100`） |
-| algolia | `ALGOLIA_APP_ID`、`ALGOLIA_SECRET`（欠けているとエンジン構築時に panic） |
+| algolia | `ALGOLIA_APP_ID`、`ALGOLIA_SECRET`（未設定だとエンジン構築時に panic）、`ALGOLIA_HOST`（任意。既定は `https://<appID>.algolia.net`、プロキシや互換エンドポイントを指定可能） |
 
 `database` ドライバはさらに、注入されたデータベース接続と方言が必要です：
 

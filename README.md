@@ -9,7 +9,7 @@
 # go-scout
 
 > 用 Go 编写的搜索同步库 —— Laravel Scout 的 Go 移植（基于 PHP 插件 [webman-scout](https://github.com/shopwwi/webman-scout)）。
-> Go 1.24 · 纯标准库实现，零第三方依赖 · 版本 v1.3.1
+> Go 1.24 · 纯标准库实现，零第三方依赖 · 版本 v1.4.0
 
 **Languages / 语言**: [中文](README.md) · [English](docs/i18n/en/README.md) · [한국어](docs/i18n/ko/README.md) · [Русский](docs/i18n/ru/README.md) · [Deutsch](docs/i18n/de/README.md) · [Français](docs/i18n/fr/README.md) · [Español](docs/i18n/es/README.md) · [Português](docs/i18n/pt/README.md) · [हिन्दी](docs/i18n/hi/README.md) · [العربية](docs/i18n/ar/README.md) · [বাংলা](docs/i18n/bn/README.md) · [Bahasa Indonesia](docs/i18n/id/README.md) · [日本語](docs/i18n/ja/README.md)
 
@@ -203,7 +203,7 @@ go get github.com/erikwang2013/go-scout
 | elasticsearch | `ELASTICSEARCH_HOST`（`http://127.0.0.1:9200`，取 hosts 列表首项）+ `elasticsearch.auth`（user/password） |
 | opensearch | `OPENSEARCH_HTTP_HOST`（`https://127.0.0.1:6205`）、`OPENSEARCH_USERNAME` / `OPENSEARCH_PASSWORD`（`admin`/`admin`）、`OPENSEARCH_SSL_VERIFICATION`（默认跳过 TLS 校验）、`OPENSEARCH_TIMEOUT`（`30` 秒）、`OPENSEARCH_CONNECTION_TIMEOUT`（`10`） |
 | xunsearch | `XUNSEARCH_INDEX_HOST`（`http://127.0.0.1`）+ `XUNSEARCH_INDEX_PORT`（`8383`）、`XUNSEARCH_SEARCH_HOST`（`http://127.0.0.1`）+ `XUNSEARCH_SEARCH_PORT`（`8384`）、`XUNSEARCH_DEFAULT_INDEX`（`default`）、`XUNSEARCH_CHARSET`（`utf-8`）、`XUNSEARCH_CONFIG_PATH`（空 = 用上面的主机与端口；设置后按 `<路径>/<索引名>.ini` 取项目名、守护进程与字符集）、`XUNSEARCH_BATCH_SIZE`（`100`） |
-| algolia | `ALGOLIA_APP_ID`、`ALGOLIA_SECRET`（缺失时构造引擎直接 panic） |
+| algolia | `ALGOLIA_APP_ID`、`ALGOLIA_SECRET`（缺失时构造引擎直接 panic）、`ALGOLIA_HOST`（可选，默认 `https://<appID>.algolia.net`，可指向代理或兼容端点） |
 
 `database` 驱动还需注入数据库连接与方言：
 

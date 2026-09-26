@@ -9,7 +9,7 @@
 # go-scout
 
 > A search synchronization library written in Go — a Go port of Laravel Scout (based on the PHP plugin [webman-scout](https://github.com/shopwwi/webman-scout)).
-> Go 1.24 · pure standard library, zero third-party dependencies · version v1.3.1
+> Go 1.24 · pure standard library, zero third-party dependencies · version v1.4.0
 
 **Languages / 语言**: [中文](../../../README.md) · [English](./README.md) · [한국어](../ko/README.md) · [Русский](../ru/README.md) · [Deutsch](../de/README.md) · [Français](../fr/README.md) · [Español](../es/README.md) · [Português](../pt/README.md) · [हिन्दी](../hi/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Bahasa Indonesia](../id/README.md) · [日本語](../ja/README.md)
 
@@ -192,7 +192,7 @@ Engine-specific (config-tree keys `engine.key` match the env names, e.g. `opense
 | elasticsearch | `ELASTICSEARCH_HOST` (`http://127.0.0.1:9200`, first entry of the hosts list) + `elasticsearch.auth` (user/password) |
 | opensearch | `OPENSEARCH_HTTP_HOST` (`https://127.0.0.1:6205`), `OPENSEARCH_USERNAME` / `OPENSEARCH_PASSWORD` (`admin`/`admin`), `OPENSEARCH_SSL_VERIFICATION` (TLS verification skipped by default), `OPENSEARCH_TIMEOUT` (`30` seconds), `OPENSEARCH_CONNECTION_TIMEOUT` (`10`) |
 | xunsearch | `XUNSEARCH_INDEX_HOST` (`http://127.0.0.1`) + `XUNSEARCH_INDEX_PORT` (`8383`), `XUNSEARCH_SEARCH_HOST` (`http://127.0.0.1`) + `XUNSEARCH_SEARCH_PORT` (`8384`), `XUNSEARCH_DEFAULT_INDEX` (`default`), `XUNSEARCH_CHARSET` (`utf-8`), `XUNSEARCH_CONFIG_PATH` (empty = the hosts above; when set, `<path>/<index>.ini` supplies the project name, daemons and charset), `XUNSEARCH_BATCH_SIZE` (`100`) |
-| algolia | `ALGOLIA_APP_ID`, `ALGOLIA_SECRET` (constructing the engine panics when missing) |
+| algolia | `ALGOLIA_APP_ID`, `ALGOLIA_SECRET` (constructing the engine panics when missing), `ALGOLIA_HOST` (optional; defaults to `https://<appID>.algolia.net`, point it at a proxy or compatible endpoint) |
 
 The `database` driver also needs a database connection and dialect injected:
 

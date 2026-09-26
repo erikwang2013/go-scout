@@ -9,7 +9,7 @@
 # go-scout
 
 > Pustaka sinkronisasi pencarian yang ditulis dalam Go — port Laravel Scout ke Go (berbasis plugin PHP [webman-scout](https://github.com/shopwwi/webman-scout)).
-> Go 1.24 · 100 % implementasi pustaka standar, tanpa dependensi pihak ketiga · versi v1.3.1
+> Go 1.24 · 100 % implementasi pustaka standar, tanpa dependensi pihak ketiga · versi v1.4.0
 
 **Languages / 语言**: [中文](../../../README.md) · [English](../en/README.md) · [한국어](../ko/README.md) · [Русский](../ru/README.md) · [Deutsch](../de/README.md) · [Français](../fr/README.md) · [Español](../es/README.md) · [Português](../pt/README.md) · [हिन्दी](../hi/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Bahasa Indonesia](./README.md) · [日本語](../ja/README.md)
 
@@ -192,7 +192,7 @@ Khusus per mesin (kunci `engine.key` pada pohon konfigurasi sama dengan nama var
 | elasticsearch | `ELASTICSEARCH_HOST` (`http://127.0.0.1:9200`, entri pertama daftar host) + `elasticsearch.auth` (user/password) |
 | opensearch | `OPENSEARCH_HTTP_HOST` (`https://127.0.0.1:6205`), `OPENSEARCH_USERNAME` / `OPENSEARCH_PASSWORD` (`admin`/`admin`), `OPENSEARCH_SSL_VERIFICATION` (verifikasi TLS dilewati secara default), `OPENSEARCH_TIMEOUT` (`30` detik), `OPENSEARCH_CONNECTION_TIMEOUT` (`10`) |
 | xunsearch | `XUNSEARCH_INDEX_HOST` (`http://127.0.0.1`) + `XUNSEARCH_INDEX_PORT` (`8383`), `XUNSEARCH_SEARCH_HOST` (`http://127.0.0.1`) + `XUNSEARCH_SEARCH_PORT` (`8384`), `XUNSEARCH_DEFAULT_INDEX` (`default`), `XUNSEARCH_CHARSET` (`utf-8`), `XUNSEARCH_CONFIG_PATH` (kosong = host di atas; bila diisi, `<path>/<index>.ini` memberi nama proyek, daemon, dan charset), `XUNSEARCH_BATCH_SIZE` (`100`) |
-| algolia | `ALGOLIA_APP_ID`, `ALGOLIA_SECRET` (panic saat membangun mesin jika tidak ada) |
+| algolia | `ALGOLIA_APP_ID`, `ALGOLIA_SECRET` (tanpanya konstruktor engine panic), `ALGOLIA_HOST` (opsional; default `https://<appID>.algolia.net`, arahkan ke proxy atau endpoint kompatibel) |
 
 Driver `database` juga memerlukan injeksi koneksi dan dialek basis data:
 

@@ -9,7 +9,7 @@
 # go-scout
 
 > Библиотека синхронизации поиска на Go — порт Laravel Scout для Go (на основе PHP-плагина [webman-scout](https://github.com/shopwwi/webman-scout)).
-> Go 1.24 · чистая реализация только на стандартной библиотеке, ноль сторонних зависимостей · версия v1.3.1
+> Go 1.24 · чистая реализация только на стандартной библиотеке, ноль сторонних зависимостей · версия v1.4.0
 
 **Languages / 语言**: [中文](../../../README.md) · [English](../en/README.md) · [한국어](../ko/README.md) · [Русский](./README.md) · [Deutsch](../de/README.md) · [Français](../fr/README.md) · [Español](../es/README.md) · [Português](../pt/README.md) · [हिन्दी](../hi/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Bahasa Indonesia](../id/README.md) · [日本語](../ja/README.md)
 
@@ -192,7 +192,7 @@ go get github.com/erikwang2013/go-scout
 | elasticsearch | `ELASTICSEARCH_HOST` (`http://127.0.0.1:9200`, берётся первый элемент списка hosts) + `elasticsearch.auth` (user/password) |
 | opensearch | `OPENSEARCH_HTTP_HOST` (`https://127.0.0.1:6205`), `OPENSEARCH_USERNAME` / `OPENSEARCH_PASSWORD` (`admin`/`admin`), `OPENSEARCH_SSL_VERIFICATION` (по умолчанию проверка TLS отключена), `OPENSEARCH_TIMEOUT` (`30` секунд), `OPENSEARCH_CONNECTION_TIMEOUT` (`10`) |
 | xunsearch | `XUNSEARCH_INDEX_HOST` (`http://127.0.0.1`) + `XUNSEARCH_INDEX_PORT` (`8383`), `XUNSEARCH_SEARCH_HOST` (`http://127.0.0.1`) + `XUNSEARCH_SEARCH_PORT` (`8384`), `XUNSEARCH_DEFAULT_INDEX` (`default`), `XUNSEARCH_CHARSET` (`utf-8`), `XUNSEARCH_CONFIG_PATH` (пусто = хосты выше; если задан, `<путь>/<индекс>.ini` даёт имя проекта, демоны и кодировку), `XUNSEARCH_BATCH_SIZE` (`100`) |
-| algolia | `ALGOLIA_APP_ID`, `ALGOLIA_SECRET` (при отсутствии конструктор движка вызывает panic) |
+| algolia | `ALGOLIA_APP_ID`, `ALGOLIA_SECRET` (без них конструктор движка паникует), `ALGOLIA_HOST` (необязательно; по умолчанию `https://<appID>.algolia.net`, можно указать прокси или совместимый эндпоинт) |
 
 Драйверу `database` также нужно передать подключение к БД и диалект:
 

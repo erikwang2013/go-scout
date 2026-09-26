@@ -9,7 +9,7 @@
 # go-scout
 
 > مكتبة مزامنة بحث مكتوبة بلغة Go — منفذ Go لـ Laravel Scout (استنادًا إلى إضافة PHP [webman-scout](https://github.com/shopwwi/webman-scout)).
-> Go 1.24 · المكتبة القياسية فقط، بدون أي اعتماديات خارجية · الإصدار v1.3.1
+> Go 1.24 · المكتبة القياسية فقط، بدون أي اعتماديات خارجية · الإصدار v1.4.0
 
 **Languages / 语言**: [中文](../../../README.md) · [English](../en/README.md) · [한국어](../ko/README.md) · [Русский](../ru/README.md) · [Deutsch](../de/README.md) · [Français](../fr/README.md) · [Español](../es/README.md) · [Português](../pt/README.md) · [हिन्दी](../hi/README.md) · [العربية](./README.md) · [বাংলা](../bn/README.md) · [Bahasa Indonesia](../id/README.md) · [日本語](../ja/README.md)
 
@@ -208,7 +208,7 @@ go get github.com/erikwang2013/go-scout
 | elasticsearch | `ELASTICSEARCH_HOST` (`http://127.0.0.1:9200`، العنصر الأول في قائمة hosts) + `elasticsearch.auth` (user/password) |
 | opensearch | `OPENSEARCH_HTTP_HOST` (`https://127.0.0.1:6205`)، `OPENSEARCH_USERNAME` / `OPENSEARCH_PASSWORD` (`admin`/`admin`)، `OPENSEARCH_SSL_VERIFICATION` (تعطيل التحقق من TLS افتراضيًا)، `OPENSEARCH_TIMEOUT` (`30` ثانية)، `OPENSEARCH_CONNECTION_TIMEOUT` (`10`) |
 | xunsearch | `XUNSEARCH_INDEX_HOST` (`http://127.0.0.1`) + `XUNSEARCH_INDEX_PORT` (`8383`)، `XUNSEARCH_SEARCH_HOST` (`http://127.0.0.1`) + `XUNSEARCH_SEARCH_PORT` (`8384`)، `XUNSEARCH_DEFAULT_INDEX` (`default`)، `XUNSEARCH_CHARSET` (`utf-8`)، `XUNSEARCH_CONFIG_PATH` (فارغ = المضيفان أعلاه؛ وعند تعيينه يوفّر `<المسار>/<الفهرس>.ini` اسم المشروع والخوادم والترميز)، `XUNSEARCH_BATCH_SIZE` (`100`) |
-| algolia | `ALGOLIA_APP_ID`، `ALGOLIA_SECRET` (عند غيابهما ينهار مُنشئ المحرك مع panic) |
+| algolia | `ALGOLIA_APP_ID` و`ALGOLIA_SECRET` (بدونهما يُطلَق panic عند إنشاء المحرك)، `ALGOLIA_HOST` (اختياري؛ الافتراضي `https://<appID>.algolia.net`، ويمكن توجيهه إلى وسيط أو نقطة متوافقة) |
 
 </div>
 

@@ -2,8 +2,6 @@ package engines
 
 import (
 	"context"
-	"net/http"
-	"net/url"
 	"testing"
 	"time"
 
@@ -112,24 +110,31 @@ func TestAlgoliaIdentifyHeaders(t *testing.T) {
 	})
 }
 
+// ALGOLIA_HOST points the engine at a proxy or a self-hosted Algolia-compatible
+// endpoint; unset (or empty) it stays on the app's own cluster.
+func TestAlgoliaBaseURL(t *testing.T) {
+	t.Setenv("ALGOLIA_APP_ID", "APPID")
+	t.Setenv("ALGOLIA_SECRET", "ADMINKEY")
+	if got := newAlgolia(scout.DefaultConfig()).base(); got != "https://APPID.algolia.net" {
+		t.Errorf("default base = %q", got)
+	}
+	t.Setenv("ALGOLIA_HOST", "http://127.0.0.1:9999/")
+	if got := newAlgolia(scout.DefaultConfig()).base(); got != "http://127.0.0.1:9999" {
+		t.Errorf("ALGOLIA_HOST base = %q, want the trailing slash trimmed", got)
+	}
+}
+
 // The identity has to reach the wire, not just the header map: run a real search
 // against a stub server and read what the engine actually sent.
-//
-// The engine's base URL is derived from the app id (algolia.host is read by
-// base() but DefaultConfig has no key for it), so the test rewrites the outgoing
-// request onto the stub instead of moving the engine.
 func TestAlgoliaIdentifyOnTheWire(t *testing.T) {
 	srv, rec := mtsCapture(t, `{"hits":[],"nbHits":0}`)
 	t.Setenv("ALGOLIA_APP_ID", "APPID")
 	t.Setenv("ALGOLIA_SECRET", "ADMINKEY")
+	t.Setenv("ALGOLIA_HOST", srv.URL)
 	t.Setenv("SCOUT_IDENTIFY", "1")
-	target, err := url.Parse(srv.URL)
-	if err != nil {
-		t.Fatal(err)
-	}
 
 	e := newAlgolia(scout.DefaultConfig())
-	e.client = &http.Client{Transport: rewriteTo{target: target}}
+	e.client = srv.Client()
 	ctx := scout.WithClientIP(scout.WithUser(context.Background(), 7), "8.8.8.8")
 	if _, err := e.Search(ctx, newBuilder(t, nil)); err != nil {
 		t.Fatal(err)
@@ -143,15 +148,4 @@ func TestAlgoliaIdentifyOnTheWire(t *testing.T) {
 	if got := rec.header.Get("X-Algolia-API-Key"); got != "ADMINKEY" {
 		t.Errorf("wire auth lost: %q", got)
 	}
-}
-
-// rewriteTo sends every request to target, keeping path and headers.
-type rewriteTo struct{ target *url.URL }
-
-func (rw rewriteTo) RoundTrip(r *http.Request) (*http.Response, error) {
-	out := r.Clone(r.Context())
-	u := *r.URL
-	u.Scheme, u.Host = rw.target.Scheme, rw.target.Host
-	out.URL = &u
-	return http.DefaultTransport.RoundTrip(out)
 }

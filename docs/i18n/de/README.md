@@ -9,7 +9,7 @@
 # go-scout
 
 > Eine in Go geschriebene Such-Synchronisierungs-Bibliothek — ein Go-Port von Laravel Scout (basiert auf dem PHP-Plugin [webman-scout](https://github.com/shopwwi/webman-scout)).
-> Go 1.24 · reine Standardbibliothek, null Drittanbieter-Abhängigkeiten · Version v1.3.1
+> Go 1.24 · reine Standardbibliothek, null Drittanbieter-Abhängigkeiten · Version v1.4.0
 
 **Languages / 语言**: [中文](../../../README.md) · [English](../en/README.md) · [한국어](../ko/README.md) · [Русский](../ru/README.md) · [Deutsch](./README.md) · [Français](../fr/README.md) · [Español](../es/README.md) · [Português](../pt/README.md) · [हिन्दी](../hi/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Bahasa Indonesia](../id/README.md) · [日本語](../ja/README.md)
 
@@ -192,7 +192,7 @@ Engine-spezifisch (Konfigurationsbaum-Pfade `engine.key` entsprechen den Env-Nam
 | elasticsearch | `ELASTICSEARCH_HOST` (`http://127.0.0.1:9200`, erster Eintrag der Hosts-Liste) + `elasticsearch.auth` (user/password) |
 | opensearch | `OPENSEARCH_HTTP_HOST` (`https://127.0.0.1:6205`), `OPENSEARCH_USERNAME` / `OPENSEARCH_PASSWORD` (`admin`/`admin`), `OPENSEARCH_SSL_VERIFICATION` (TLS-Prüfung standardmäßig übersprungen), `OPENSEARCH_TIMEOUT` (`30` Sekunden), `OPENSEARCH_CONNECTION_TIMEOUT` (`10`) |
 | xunsearch | `XUNSEARCH_INDEX_HOST` (`http://127.0.0.1`) + `XUNSEARCH_INDEX_PORT` (`8383`), `XUNSEARCH_SEARCH_HOST` (`http://127.0.0.1`) + `XUNSEARCH_SEARCH_PORT` (`8384`), `XUNSEARCH_DEFAULT_INDEX` (`default`), `XUNSEARCH_CHARSET` (`utf-8`), `XUNSEARCH_CONFIG_PATH` (leer = die Hosts oben; gesetzt: `<Pfad>/<Index>.ini` liefert Projektname, Daemons und Charset), `XUNSEARCH_BATCH_SIZE` (`100`) |
-| algolia | `ALGOLIA_APP_ID`, `ALGOLIA_SECRET` (fehlen sie, panict die Engine-Konstruktion) |
+| algolia | `ALGOLIA_APP_ID`, `ALGOLIA_SECRET` (ohne sie panikt der Konstruktor), `ALGOLIA_HOST` (optional; Standard `https://<appID>.algolia.net`, zeigt auf einen Proxy oder kompatiblen Endpunkt) |
 
 Der `database`-Treiber benötigt zusätzlich eine injizierte Datenbankverbindung und Dialekt:
 

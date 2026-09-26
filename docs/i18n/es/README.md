@@ -9,7 +9,7 @@
 # go-scout
 
 > Librería de sincronización de búsquedas escrita en Go — un port de Laravel Scout a Go (basado en el plugin PHP [webman-scout](https://github.com/shopwwi/webman-scout)).
-> Go 1.24 · implementación 100 % con la biblioteca estándar, cero dependencias de terceros · versión v1.3.1
+> Go 1.24 · implementación 100 % con la biblioteca estándar, cero dependencias de terceros · versión v1.4.0
 
 **Languages / 语言**: [中文](../../../README.md) · [English](../en/README.md) · [한국어](../ko/README.md) · [Русский](../ru/README.md) · [Deutsch](../de/README.md) · [Français](../fr/README.md) · [Español](./README.md) · [Português](../pt/README.md) · [हिन्दी](../hi/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Bahasa Indonesia](../id/README.md) · [日本語](../ja/README.md)
 
@@ -192,7 +192,7 @@ Específicas de cada motor (la ruta `engine.key` del árbol de configuración ti
 | elasticsearch | `ELASTICSEARCH_HOST` (`http://127.0.0.1:9200`, primera entrada de la lista hosts) + `elasticsearch.auth` (user/password) |
 | opensearch | `OPENSEARCH_HTTP_HOST` (`https://127.0.0.1:6205`), `OPENSEARCH_USERNAME` / `OPENSEARCH_PASSWORD` (`admin`/`admin`), `OPENSEARCH_SSL_VERIFICATION` (verificación TLS omitida por defecto), `OPENSEARCH_TIMEOUT` (`30` segundos), `OPENSEARCH_CONNECTION_TIMEOUT` (`10`) |
 | xunsearch | `XUNSEARCH_INDEX_HOST` (`http://127.0.0.1`) + `XUNSEARCH_INDEX_PORT` (`8383`), `XUNSEARCH_SEARCH_HOST` (`http://127.0.0.1`) + `XUNSEARCH_SEARCH_PORT` (`8384`), `XUNSEARCH_DEFAULT_INDEX` (`default`), `XUNSEARCH_CHARSET` (`utf-8`), `XUNSEARCH_CONFIG_PATH` (vacío = los hosts de arriba; si se define, `<ruta>/<índice>.ini` aporta el nombre del proyecto, los demonios y el charset), `XUNSEARCH_BATCH_SIZE` (`100`) |
-| algolia | `ALGOLIA_APP_ID`, `ALGOLIA_SECRET` (panic al construir el motor si faltan) |
+| algolia | `ALGOLIA_APP_ID`, `ALGOLIA_SECRET` (sin ellos el constructor entra en pánico), `ALGOLIA_HOST` (opcional; por defecto `https://<appID>.algolia.net`, para apuntar a un proxy o endpoint compatible) |
 
 El controlador `database` también requiere inyectar la conexión y el dialecto de la base de datos :
 

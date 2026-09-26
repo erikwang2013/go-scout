@@ -9,7 +9,7 @@
 # go-scout
 
 > Bibliothèque de synchronisation de recherche écrite en Go — un portage Go de Laravel Scout (basé sur le plugin PHP [webman-scout](https://github.com/shopwwi/webman-scout)).
-> Go 1.24 · implémentation 100 % bibliothèque standard, zéro dépendance tierce · version v1.3.1
+> Go 1.24 · implémentation 100 % bibliothèque standard, zéro dépendance tierce · version v1.4.0
 
 **Languages / 语言**: [中文](../../../README.md) · [English](../en/README.md) · [한국어](../ko/README.md) · [Русский](../ru/README.md) · [Deutsch](../de/README.md) · [Français](./README.md) · [Español](../es/README.md) · [Português](../pt/README.md) · [हिन्दी](../hi/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Bahasa Indonesia](../id/README.md) · [日本語](../ja/README.md)
 
@@ -192,7 +192,7 @@ Spécifiques à chaque moteur (le chemin `engine.key` dans l'arbre de configurat
 | elasticsearch | `ELASTICSEARCH_HOST` (`http://127.0.0.1:9200`, première entrée de la liste hosts) + `elasticsearch.auth` (user/password) |
 | opensearch | `OPENSEARCH_HTTP_HOST` (`https://127.0.0.1:6205`), `OPENSEARCH_USERNAME` / `OPENSEARCH_PASSWORD` (`admin`/`admin`), `OPENSEARCH_SSL_VERIFICATION` (vérification TLS ignorée par défaut), `OPENSEARCH_TIMEOUT` (`30` secondes), `OPENSEARCH_CONNECTION_TIMEOUT` (`10`) |
 | xunsearch | `XUNSEARCH_INDEX_HOST` (`http://127.0.0.1`) + `XUNSEARCH_INDEX_PORT` (`8383`), `XUNSEARCH_SEARCH_HOST` (`http://127.0.0.1`) + `XUNSEARCH_SEARCH_PORT` (`8384`), `XUNSEARCH_DEFAULT_INDEX` (`default`), `XUNSEARCH_CHARSET` (`utf-8`), `XUNSEARCH_CONFIG_PATH` (vide = les hôtes ci-dessus ; renseigné, `<chemin>/<index>.ini` fournit le nom du projet, les démons et le charset), `XUNSEARCH_BATCH_SIZE` (`100`) |
-| algolia | `ALGOLIA_APP_ID`, `ALGOLIA_SECRET` (panic à la construction du moteur si absent) |
+| algolia | `ALGOLIA_APP_ID`, `ALGOLIA_SECRET` (leur absence fait paniquer le constructeur), `ALGOLIA_HOST` (facultatif ; par défaut `https://<appID>.algolia.net`, à pointer vers un proxy ou un endpoint compatible) |
 
 Le pilote `database` requiert aussi l'injection de la connexion et du dialecte de la base de données :
 
