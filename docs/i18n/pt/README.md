@@ -1,7 +1,13 @@
+<p align="center">
+  <img src="../../logo.svg" alt="go-scout · mascote Scouty (corpo inteiro)" width="460"/>
+</p>
+
 # go-scout
 
 > Biblioteca de sincronização de busca escrita em Go — um port de Laravel Scout para Go (baseado no plugin PHP [webman-scout](https://github.com/shopwwi/webman-scout)).
-> Go 1.24 · implementação 100 % com a biblioteca padrão, zero dependências de terceiros · versão v1.2.0
+> Go 1.24 · implementação 100 % com a biblioteca padrão, zero dependências de terceiros · versão v1.3.0
+
+**Languages / 语言**: [中文](../../../README.md) · [English](../en/README.md) · [한국어](../ko/README.md) · [Русский](../ru/README.md) · [Deutsch](../de/README.md) · [Français](../fr/README.md) · [Español](../es/README.md) · [Português](./README.md) · [हिन्दी](../hi/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Bahasa Indonesia](../id/README.md) · [日本語](../ja/README.md)
 
 ## Apresentação do projeto
 
@@ -29,15 +35,30 @@ Mecanismos integrados (pacote `engines`):
 - **algolia** — consultas REST, versões v3 / v4
 - **xunsearch** — protocolo de daemon HTTP (lado de indexação + lado de busca)
 
-Com os aliases `advanced_*`, `engines.Register` registra ao todo 15 nomes de drivers (ver [engines/register.go](engines/register.go)).
+Com os aliases `advanced_*`, `engines.Register` registra ao todo 16 nomes de drivers (ver [engines/register.go](../../../engines/register.go)).
+
+## Mascote do projeto · Scouty
+
+<p align="center">
+  <img src="../../mascot.svg" alt="go-scout · mascote Scouty" width="200"/>
+</p>
+
+**Scouty** é o batedor do go-scout: uma pequena sonda com óculos de lupa e lenço de escoteiro. Ele é desenhado a partir do que a biblioteca realmente faz — cada peça corresponde a uma camada do código:
+
+- **Óculos de lupa** — a camada de consulta `scout.Builder`: `Where`, `OrderBy`, vetores e condições geográficas são compilados nessa lente.
+- **Antena e arcos de sinal** — `EngineManager`: uma consulta, 16 nomes de driver; `Driver(name)` é criado e cacheado sob demanda.
+- **Lenço de escoteiro** — `ModelObserver`: `Saved` / `Deleted` / `Restored` sincronizam sozinhos; o nó é o evento do `EventBus`.
+- **Cartões de documento na mão** — o documento após `ToSearchableArray()`; o chip colorido é a chave primária (`KeyString`).
+
+Scouty também mora no código: `scout.MascotName` / `scout.MascotSVG` / `scout.MascotASCII` em [mascot.go](../../../mascot.go); `go run ./cmd/scout mascot` no terminal (`-svg` para vetor); [docs/logo.svg](../../../docs/logo.svg) para o logotipo. O `mascot_test.go` mantém o SVG embutido idêntico a `docs/mascot.svg` e valida todos os SVGs em `docs/`, incluindo os 12 conjuntos traduzidos.
 
 ## Design da arquitetura
 
-![Diagrama de arquitetura em camadas](docs/i18n/pt/arch.svg)
+![Diagrama de arquitetura em camadas](./arch.svg)
 
 Cinco camadas de baixo para cima, com responsabilidades cada vez mais estreitas:
 
-1. **Camada de modelos** — os modelos de negócio implementam `scout.ScoutModel` (`ScoutKey`, `ToSearchableArray`, `ShouldBeSearchable`, `TableName`, etc., ver [model.go](model.go)); os dados são fornecidos por meio da interface `scout.Source[T]` (`All` / `ByIDs` / `Count`), com `scout.NewMemorySource` integrado. As interfaces opcionais como `SoftDeleter`, `FullTextColumner`, `PrefixColumner` são implementadas conforme a necessidade.
+1. **Camada de modelos** — os modelos de negócio implementam `scout.ScoutModel` (`ScoutKey`, `ToSearchableArray`, `ShouldBeSearchable`, `TableName`, etc., ver [model.go](../../../model.go)); os dados são fornecidos por meio da interface `scout.Source[T]` (`All` / `ByIDs` / `Count`), com `scout.NewMemorySource` integrado. As interfaces opcionais como `SoftDeleter`, `FullTextColumner`, `PrefixColumner` são implementadas conforme a necessidade.
 2. **Camada de sincronização** — `scout.ModelObserver` captura os eventos de salvar/excluir/restaurar dos modelos; `scout.EventBus` publica os eventos `scout.models_imported`, `scout.models_flushed`; `scout.Queue` oferece uma fila assíncrona em processo (buffer de 4096), com fallback síncrono se a fila não estiver disponível.
 3. **Camada de consulta** — `scout.Builder` acumula o estado da consulta por encadeamento (`Where`, `OrderBy`, `Take`, `WithTrashed`…), os métodos de execução de `builder_search.go` (`Get` / `First` / `Paginate` / `Cursor` / `Keys`) disparam uma ida e volta ao mecanismo, e o resultado é normalizado em `scout.Result` / `PaginationResult`.
 4. **Camada de adaptação de mecanismos** — a interface `Engine` (`Search`, `Paginate`, `Update`, `Delete`, `Map`, `Flush`, `CreateIndex`, `DeleteIndex`…) e a interface estendida `AdvancedEngine` (`AdvancedSearch`, `GetAggregations`, `GetFacets`) isolam as diferenças entre mecanismos atrás da interface; `scout.Manager` registra via `Extend` e cria preguiçosamente e armazena em cache os drivers via `Driver(name)`.
@@ -45,19 +66,19 @@ Cinco camadas de baixo para cima, com responsabilidades cada vez mais estreitas:
 
 ## Funcionalidades
 
-![Diagrama de funcionalidades](docs/i18n/pt/features.svg)
+![Diagrama de funcionalidades](./features.svg)
 
 - **Encadeamento de construção de consultas** — API fluida do `scout.Builder`: `Query` / `Where` / `WhereIn` / `WhereNotIn` / `OrderBy` / `OrderByDesc` / `Latest` / `Oldest` / `Take` / `Skip`; condições avançadas `VectorSearch` / `WhereRange` / `WhereGeoDistance` / `FulltextSearch` / `OrderByVectorSimilarity` / `OrderByGeoDistance`; injeção de callbacks `QueryCB` / `CallbackCB` / `AddResultProcessor`. Ordem de resolução dos campos de busca: `Options["fields"]` → `FullTextColumner` → `FieldNames`.
-- **Representação intermediária DSL** — [engines/dsl.go](engines/dsl.go) compila as condições avançadas em JSON de bool query (`multi_match`, `term`, `range`, `geo_distance`, `wildcard`, `regexp`, etc.), consumido diretamente por Elasticsearch / OpenSearch; `MapBooleanToBoolKey` mapeia and/or/not para `filter` / `should` / `must_not`.
+- **Representação intermediária DSL** — [engines/dsl.go](../../../engines/dsl.go) compila as condições avançadas em JSON de bool query (`multi_match`, `term`, `range`, `geo_distance`, `wildcard`, `regexp`, etc.), consumido diretamente por Elasticsearch / OpenSearch; `MapBooleanToBoolKey` mapeia and/or/not para `filter` / `should` / `must_not`.
 - **Paginação e cursor** — `Paginate` / `PaginateRaw` / `SimplePaginate` / `Cursor` (iteração preguiçosa via canal com buffer); `PaginationResult` oferece `LastPage` / `HasMorePages` / `AppendQuery`; `Result.As[T]` e a função genérica de pacote `scout.GetAs[T]` recuperam os modelos sem asserção de tipos.
 - **Soft delete** — os documentos indexados recebem os metadados `__soft_deleted` (0/1); filtragem de consultas com `OnlyTrashed` / `WithTrashed`; o mecanismo database usa a coluna `deleted_at`.
 - **Fila assíncrona** — fila em processo (canal `chan` com buffer de 4096 + goroutines de trabalho), ativada com `SCOUT_QUEUE=1`; fallback síncrono com aviso se a fila não estiver disponível; `MakeAllSearchable` importa em lotes (`chunk`, 500 itens por padrão).
 - **Eventos e observadores** — `ModelObserver` escuta `Saved` / `Deleted` / `Restored` e sincroniza automaticamente; `EventBus` publica `scout.models_imported`, `scout.models_flushed`; `WithoutSyncingToSearch` desativa temporariamente a sincronização.
-- **Registro multi-mecanismo** — `Manager.Extend` + `engines.Register` registram 15 nomes de drivers, criados preguiçosamente e armazenados em cache; um driver desconhecido retorna `scout.ErrNotSupported`; trocar de mecanismo exige apenas a configuração `SCOUT_DRIVER`.
+- **Registro multi-mecanismo** — `Manager.Extend` + `engines.Register` registram 16 nomes de drivers, criados preguiçosamente e armazenados em cache; um driver desconhecido retorna `scout.ErrNotSupported`; trocar de mecanismo exige apenas a configuração `SCOUT_DRIVER`.
 
 ## Filosofia de design
 
-![Diagrama da filosofia de design](docs/i18n/pt/design.svg)
+![Diagrama da filosofia de design](./design.svg)
 
 - **O Builder encadeado carrega a intenção da consulta** — `Search(ctx, query, cb)` retorna um `*scout.Builder`; o encadeamento apenas acumula estado, somente `Get` / `First` / `Paginate` / `Cursor` disparam uma ida ao mecanismo; modificar a consulta, interceptar o corpo da requisição HTTP e pós-processar os resultados passam todos por callbacks, sem que o mecanismo precise se preocupar.
 - **Representação intermediária DSL** — as condições avançadas são compiladas em JSON de bool query, consumido diretamente por ES / OpenSearch; Meilisearch / Typesense / Algolia / database traduzem cada um de seu lado; as diferenças entre mecanismos ficam confinadas na camada de tradução.
@@ -66,7 +87,7 @@ Cinco camadas de baixo para cima, com responsabilidades cada vez mais estreitas:
 
 ## Ciclo de vida
 
-![Diagrama do ciclo de vida da busca](docs/i18n/pt/lifecycle.svg)
+![Diagrama do ciclo de vida da busca](./lifecycle.svg)
 
 **Caminho de busca**: `Searchable(model, source).Search(ctx, query, cb)` constrói um `*scout.Builder` → `Manager.Driver(name)` despacha para o mecanismo (criação preguiçosa e cache) → `engine.Search` / `Paginate` (REST / SQL / memória) → análise em `scout.Result` (Hits · Total · Aggregations · Raw) → se for necessário preencher os modelos (`Get` / `Paginate` / `First`): `MapIDs` → `Source.ByIDs` → `attachMeta` (alinhamento via `KeyString`, preservação da ordem retornada pelo mecanismo) → retorno de `ResultItem` / `PaginationResult`; `Keys` / `GetAggregations` / `PaginateRaw` retornam diretamente sem carregar os modelos.
 
@@ -76,46 +97,60 @@ Cinco camadas de baixo para cima, com responsabilidades cada vez mais estreitas:
 
 ```
 go-scout/
-├── go.mod                  # Definição do módulo: github.com/erikwang2013/go-scout · go 1.24.1 · zero dependências
-├── .gitignore              # Ignora arquivos de IDE / caches / chaves
-├── scout.go                # Fachada Scout: montagem e factories de Config / Manager / Events / Queue / Observer
-├── config.go               # Árvore de configuração: DefaultConfig + sobrescrita por env vars + acesso dot-path
-├── engine.go               # Interfaces Engine / AdvancedEngine + tipos Result / Hit / PaginationResult
-├── manager.go              # EngineManager: registro Extend, criação preguiçosa e cache de Driver, motor null padrão
-├── builder.go              # Estrutura Builder + encadeamento de condições (Where / OrderBy / Take / avançadas)
-├── builder_search.go       # Execução de consultas: Raw / Get / First / Paginate / Cursor / GetAs[T]
-├── searchable.go           # Searchable: vínculo model-fonte, import/export completo, metadados de soft delete
-├── observer.go             # ModelObserver: sincronização automática Saved / Deleted / Restored
-├── events.go               # EventBus: pub-sub síncrono thread-safe + eventos de import / purge
-├── queue.go                # Queue: fila assíncrona em processo (chan 4096) + fallback síncrono
-├── model.go                # Interface ScoutModel + interfaces de extensão opcionais + helpers KeyName/KeyString…
-├── source.go               # Interface Source[T] + MemorySource (varredura linear)
-├── exceptions.go           # Sistema de erros ErrNotSupported / ErrScout
-├── cmd/scout/main.go       # Programa de demonstração CLI: 7 subcomandos import / flush / index / queue-import…
+├── go.mod                      # Definição do módulo: github.com/erikwang2013/go-scout · go 1.24.1 · zero dependências
+├── .gitignore                  # Ignora arquivos de IDE / caches / chaves
+├── scout.go                    # Fachada Scout: montagem e factories de Config / Manager / Events / Queue / Observer
+├── config.go                   # Árvore de configuração: DefaultConfig + sobrescrita por env vars + acesso dot-path
+├── engine.go                   # Interfaces Engine / AdvancedEngine + tipos Result / Hit / PaginationResult
+├── manager.go                  # EngineManager: registro Extend, criação preguiçosa e cache de Driver, motor null padrão
+├── builder.go                  # Estrutura Builder + encadeamento de condições (Where / OrderBy / Take / avançadas)
+├── builder_search.go           # Execução de consultas: Raw / Get / First / Paginate / Cursor / GetAs[T]
+├── searchable.go               # Searchable: vínculo model-fonte, import/export completo, metadados de soft delete
+├── observer.go                 # ModelObserver: sincronização automática Saved / Deleted / Restored
+├── events.go                   # EventBus: pub-sub síncrono thread-safe + eventos de import / purge
+├── queue.go                    # Queue: fila assíncrona em processo (chan 4096) + fallback síncrono
+├── model.go                    # Interface ScoutModel + interfaces de extensão opcionais + helpers KeyName/KeyString…
+├── source.go                   # Interface Source[T] + MemorySource (varredura linear)
+├── exceptions.go               # Sistema de erros ErrNotSupported / ErrScout
+├── mascot.go                   # Mascote Scouty: MascotName / MascotSVG / MascotASCII
+├── mascot_test.go              # SVG embutido vs docs/mascot.svg + todos os SVGs em docs/
+├── cmd/scout/main.go           # Programa de demonstração CLI: 8 subcomandos import / flush / index / queue-import…
 ├── engines/
-│   ├── engine.go           # Cliente HTTP (autenticação, skip da verificação TLS) + helpers compartilhados DoJSON/DoBytes
-│   ├── register.go         # SetDatabase + Register registram 15 nomes de drivers + Drivers()
-│   ├── dsl.go              # Representação intermediária DSL: bool query / ordenação / agregações / facetas / highlight
-│   ├── null.go             # NullEngine: implementação vazia
-│   ├── collection.go       # CollectionEngine: busca em memória (correspondência de substring case-insensitive)
-│   ├── database.go         # DatabaseEngine: a tabela serve de índice SQL (LIKE/ILIKE + tsvector do pgsql)
-│   ├── elasticsearch.go    # ElasticsearchEngine + helpers es* compartilhados com OpenSearch
-│   ├── opensearch.go       # OpenSearchEngine (o driver base também é um mecanismo avançado)
-│   ├── meilisearch.go      # MeilisearchEngine: filtros / ordenação / híbrido vetorial / facetas
-│   ├── typesense.go        # TypesenseEngine: filter_by / agregações / agrupamento / busca de vizinhos
-│   ├── algolia.go          # AlgoliaEngine: estrutura única v3/v4 + flag de versão
-│   └── xunsearch.go        # XunSearchEngine: daemon de indexação + daemon de busca
+│   ├── engine.go               # Cliente HTTP (autenticação, skip da verificação TLS) + helpers compartilhados DoJSON/DoBytes
+│   ├── register.go             # SetDatabase + Register registram 16 nomes de drivers + Drivers()
+│   ├── dsl.go                  # Representação intermediária DSL: bool query / ordenação / agregações / facetas / highlight
+│   ├── null.go                 # NullEngine: implementação vazia
+│   ├── collection.go           # CollectionEngine: busca em memória (correspondência de substring case-insensitive)
+│   ├── database.go             # DatabaseEngine: a tabela serve de índice SQL (LIKE/ILIKE + tsvector do pgsql)
+│   ├── elasticsearch.go        # ElasticsearchEngine + helpers es* compartilhados com OpenSearch
+│   ├── opensearch.go           # OpenSearchEngine (o driver base também é um mecanismo avançado)
+│   ├── meilisearch.go          # MeilisearchEngine: filtros / ordenação / híbrido vetorial / facetas
+│   ├── meilisearch_advanced.go # Mecanismo avançado Meilisearch: extensões de busca vetorial / híbrida
+│   ├── typesense.go            # TypesenseEngine: filter_by / agregações / agrupamento / busca de vizinhos
+│   ├── typesense_advanced.go   # Mecanismo avançado Typesense: parâmetros de busca / agregações / vetores
+│   ├── algolia.go              # AlgoliaEngine: estrutura única v3/v4 + flag de versão
+│   ├── xunsearch.go            # XunSearchEngine: daemon de indexação + daemon de busca
+│   └── xunsearch_advanced.go   # Mecanismo avançado XunSearch: condições avançadas / facetas
 ├── docs/
-│   ├── arch.svg            # Diagrama de arquitetura em camadas
-│   ├── features.svg        # Diagrama de funcionalidades
-│   ├── design.svg          # Diagrama da filosofia de design
-│   └── lifecycle.svg       # Diagrama do ciclo de vida da busca
+│   ├── arch.svg                # Diagrama de arquitetura em camadas
+│   ├── features.svg            # Diagrama de funcionalidades
+│   ├── design.svg              # Diagrama da filosofia de design
+│   ├── logo.svg                # Imagem principal: Scouty completo + go-scout
+│   ├── mascot.svg              # Mascote Scouty (mesmo desenho embutido em mascot.go)
+│   ├── alipay.png              # QR code do Alipay (referenciado pela seção de doações)
+│   ├── weixinpay.png           # QR code do WeChat Pay (referenciado pela seção de doações)
+│   ├── coin/                   # QR codes de doação por rede (10 jpg)
+│   └── lifecycle.svg           # Diagrama do ciclo de vida da busca
 └── engines/
-    ├── collection_test.go  # Testes de comportamento do mecanismo em memória (filtros / ordenação / paginação / preenchimento)
-    ├── database_test.go    # Geração e asserções de SQL (assertSQL com correspondência exata)
-    ├── meilisearch_test.go # Testes de consulta/análise do Meilisearch (stubs httptest)
-    ├── typesense_test.go   # Testes de consulta/análise do Typesense (criação automática de coleção no 404)
-    └── null_test.go        # Testes do comportamento vazio do NullEngine
+    ├── algolia_test.go         # Testes de literais de filtro do Algolia (algoliaLit / algoliaFilters)
+    ├── elasticsearch_test.go   # Testes de requisição e parse do Elasticsearch (stubs httptest)
+    ├── opensearch_test.go      # Testes de requisição e parse do OpenSearch (stubs httptest)
+    ├── xunsearch_test.go       # Testes do protocolo do daemon XunSearch (stubs httptest)
+    ├── collection_test.go      # Testes de comportamento do mecanismo em memória (filtros / ordenação / paginação / preenchimento)
+    ├── database_test.go        # Geração e asserções de SQL (assertSQL com correspondência exata)
+    ├── meilisearch_test.go     # Testes de consulta/análise do Meilisearch (stubs httptest)
+    ├── typesense_test.go       # Testes de consulta/análise do Typesense (criação automática de coleção no 404)
+    └── null_test.go            # Testes do comportamento vazio do NullEngine
 ```
 
 ## Início rápido / Guia de uso
@@ -138,6 +173,7 @@ Zero dependências de terceiros, pronto para usar a partir do import.
 | `SCOUT_PREFIX` | vazio | Prefixo de índice |
 | `SCOUT_QUEUE` | desativada | Definir como 1 para ativar a fila assíncrona |
 | `SCOUT_SOFT_DELETE` | desativado | Metadados de soft delete gravados junto ao documento no índice |
+| `SCOUT_IDENTIFY` | desativado | Árvore de configuração `identify`: informa ao mecanismo quem está pesquisando (algolia) |
 | `SCOUT_CHUNK_SEARCHABLE` / `SCOUT_CHUNK_UNSEARCHABLE` | `500` | Tamanho dos lotes de import/remoção em massa |
 | `SCOUT_BULK_SIZE` | `100` | Tamanho de escrita em massa (opensearch) |
 
@@ -146,10 +182,10 @@ Específicas de cada mecanismo (a chave `engine.key` da árvore de configuraçã
 | Mecanismo | Variável de ambiente (padrão) |
 |---|---|
 | meilisearch | `MEILISEARCH_HOST` (`http://127.0.0.1:7700`), `MEILISEARCH_KEY` |
-| typesense | `TYPESENSE_HOST` (`127.0.0.1`), `TYPESENSE_PORT` (`8108`), `TYPESENSE_PROTOCOL` (`http`), `TYPESENSE_API_KEY` (`xyz`), `TYPESENSE_IMPORT_ACTION` (`upsert`), `TYPESENSE_MAX_TOTAL_RESULTS` (`1000`) |
+| typesense | `TYPESENSE_HOST` (`127.0.0.1`), `TYPESENSE_PORT` (`8108`), `TYPESENSE_PROTOCOL` (`http`), `TYPESENSE_API_KEY` (`xyz`), `TYPESENSE_IMPORT_ACTION` (`upsert`), `TYPESENSE_MAX_TOTAL_RESULTS` (`1000`), `TYPESENSE_CONNECTION_TIMEOUT` (`2`) |
 | elasticsearch | `ELASTICSEARCH_HOST` (`http://127.0.0.1:9200`, primeira entrada da lista de hosts) + `elasticsearch.auth` (user/password) |
-| opensearch | `OPENSEARCH_HTTP_HOST` (`https://127.0.0.1:6205`), `OPENSEARCH_USERNAME` / `OPENSEARCH_PASSWORD` (`admin`/`admin`), `OPENSEARCH_SSL_VERIFICATION` (verificação TLS omitida por padrão), `OPENSEARCH_TIMEOUT` (`30` segundos) |
-| xunsearch | `XUNSEARCH_INDEX_HOST` (`127.0.0.1`) + `XUNSEARCH_INDEX_PORT` (`8383`), `XUNSEARCH_SEARCH_HOST` + `XUNSEARCH_SEARCH_PORT` (`8384`), `XUNSEARCH_DEFAULT_INDEX` (`default`), `XUNSEARCH_CHARSET` (`utf-8`) |
+| opensearch | `OPENSEARCH_HTTP_HOST` (`https://127.0.0.1:6205`), `OPENSEARCH_USERNAME` / `OPENSEARCH_PASSWORD` (`admin`/`admin`), `OPENSEARCH_SSL_VERIFICATION` (verificação TLS omitida por padrão), `OPENSEARCH_TIMEOUT` (`30` segundos), `OPENSEARCH_CONNECTION_TIMEOUT` (`10`) |
+| xunsearch | `XUNSEARCH_INDEX_HOST` (`http://127.0.0.1`) + `XUNSEARCH_INDEX_PORT` (`8383`), `XUNSEARCH_SEARCH_HOST` (`http://127.0.0.1`) + `XUNSEARCH_SEARCH_PORT` (`8384`), `XUNSEARCH_DEFAULT_INDEX` (`default`), `XUNSEARCH_CHARSET` (`utf-8`), `XUNSEARCH_CONFIG_PATH`, `XUNSEARCH_BATCH_SIZE` (`100`) |
 | algolia | `ALGOLIA_APP_ID`, `ALGOLIA_SECRET` (panic ao construir o mecanismo se faltarem) |
 
 O driver `database` também exige injetar a conexão e o dialeto do banco de dados:
@@ -234,6 +270,7 @@ go run ./cmd/scout queue-import --chunk 3 --min 1 --max 100 --workers 4  # 按�
 go run ./cmd/scout sync-index-settings --driver meilisearch  # 同步索引设置（需引擎实现 UpdateIndexSettings）
 go run ./cmd/scout delete-index posts           # 删除单个索引
 go run ./cmd/scout delete-all-indexes           # 删除全部索引
+go run ./cmd/scout mascot                         # imprimir o mascote (-svg para vetor)
 ```
 
 ## Licença e notas
@@ -249,11 +286,11 @@ Obrigado pelo seu apoio! Sua doação ajudará a manter e fazer evoluir o projet
 <tr>
 <td align="center">
 <b>WeChat Pay</b><br/>
-<img src="docs/weixinpay.png" width="130" height="130" alt="Código QR do WeChat Pay"/>
+<img src="../../../docs/weixinpay.png" width="130" height="130" alt="Código QR do WeChat Pay"/>
 </td>
 <td align="center">
 <b>Alipay</b><br/>
-<img src="docs/alipay.png" width="130" height="130" alt="Código QR do Alipay"/>
+<img src="../../../docs/alipay.png" width="130" height="130" alt="Código QR do Alipay"/>
 </td>
 </tr>
 </table>
@@ -265,16 +302,16 @@ As seguintes redes são suportadas; verifique bem o endereço de recebimento e a
 
 | Rede | Endereço da carteira | Código QR |
 |---|---|---|
-| BNB Smart Chain (BEP20) | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="docs/coin/1.jpg" width="100" height="100" alt="Código QR do BNB Smart Chain (BEP20)"/> |
-| Tron (TRC20) | `TEdDHWLajt1XvqtPDWmQctdrJaC3pzZZzz` | <img src="docs/coin/2.jpg" width="100" height="100" alt="Código QR do Tron (TRC20)"/> |
-| Ethereum (ERC20) | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="docs/coin/3.jpg" width="100" height="100" alt="Código QR do Ethereum (ERC20)"/> |
-| Aptos | `0x836e3780edfc3f7b2372b39e2a1a3a5d7adfaccd96c726f21cfde1b50dd68030` | <img src="docs/coin/4.jpg" width="100" height="100" alt="Código QR do Aptos"/> |
-| Plasma | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="docs/coin/5.jpg" width="100" height="100" alt="Código QR do Plasma"/> |
-| Polygon POS | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="docs/coin/6.jpg" width="100" height="100" alt="Código QR do Polygon POS"/> |
-| Solana | `2hfhboHdmdrYsY25XfQSsEWxq5ip4EQsR7f4AzSRMUyr` | <img src="docs/coin/7.jpg" width="100" height="100" alt="Código QR do Solana"/> |
-| The Open Network (TON) | `UQB9kFQohzmXUir9QSSZq01iwl9aQZIDdBpNmDklljRtCoGK` | <img src="docs/coin/8.jpg" width="100" height="100" alt="Código QR do The Open Network (TON)"/> |
-| Arbitrum One | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="docs/coin/9.jpg" width="100" height="100" alt="Código QR do Arbitrum One"/> |
-| AVAX C-Chain | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="docs/coin/10.jpg" width="100" height="100" alt="Código QR do AVAX C-Chain"/> |
+| BNB Smart Chain (BEP20) | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="../../../docs/coin/1.jpg" width="100" height="100" alt="Código QR do BNB Smart Chain (BEP20)"/> |
+| Tron (TRC20) | `TEdDHWLajt1XvqtPDWmQctdrJaC3pzZZzz` | <img src="../../../docs/coin/2.jpg" width="100" height="100" alt="Código QR do Tron (TRC20)"/> |
+| Ethereum (ERC20) | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="../../../docs/coin/3.jpg" width="100" height="100" alt="Código QR do Ethereum (ERC20)"/> |
+| Aptos | `0x836e3780edfc3f7b2372b39e2a1a3a5d7adfaccd96c726f21cfde1b50dd68030` | <img src="../../../docs/coin/4.jpg" width="100" height="100" alt="Código QR do Aptos"/> |
+| Plasma | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="../../../docs/coin/5.jpg" width="100" height="100" alt="Código QR do Plasma"/> |
+| Polygon POS | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="../../../docs/coin/6.jpg" width="100" height="100" alt="Código QR do Polygon POS"/> |
+| Solana | `2hfhboHdmdrYsY25XfQSsEWxq5ip4EQsR7f4AzSRMUyr` | <img src="../../../docs/coin/7.jpg" width="100" height="100" alt="Código QR do Solana"/> |
+| The Open Network (TON) | `UQB9kFQohzmXUir9QSSZq01iwl9aQZIDdBpNmDklljRtCoGK` | <img src="../../../docs/coin/8.jpg" width="100" height="100" alt="Código QR do The Open Network (TON)"/> |
+| Arbitrum One | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="../../../docs/coin/9.jpg" width="100" height="100" alt="Código QR do Arbitrum One"/> |
+| AVAX C-Chain | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="../../../docs/coin/10.jpg" width="100" height="100" alt="Código QR do AVAX C-Chain"/> |
 
 ### Transferência internacional (transferência bancária)
 

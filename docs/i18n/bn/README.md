@@ -1,7 +1,13 @@
+<p align="center">
+  <img src="../../logo.svg" alt="go-scout · মাসকট Scouty (সম্পূর্ণ)" width="460"/>
+</p>
+
 # go-scout
 
 > Go ভাষায় লেখা সার্চ-সিঙ্ক লাইব্রেরি — Laravel Scout-এর Go পোর্ট (PHP প্লাগইন [webman-scout](https://github.com/shopwwi/webman-scout) ভিত্তিক)।
-> Go 1.24 · শুধুমাত্র স্ট্যান্ডার্ড লাইব্রেরি, শূন্য থার্ড-পার্টি ডিপেন্ডেন্সি · সংস্করণ v1.2.0
+> Go 1.24 · শুধুমাত্র স্ট্যান্ডার্ড লাইব্রেরি, শূন্য থার্ড-পার্টি ডিপেন্ডেন্সি · সংস্করণ v1.3.0
+
+**Languages / 语言**: [中文](../../../README.md) · [English](../en/README.md) · [한국어](../ko/README.md) · [Русский](../ru/README.md) · [Deutsch](../de/README.md) · [Français](../fr/README.md) · [Español](../es/README.md) · [Português](../pt/README.md) · [हिन्दी](../hi/README.md) · [العربية](../ar/README.md) · [বাংলা](./README.md) · [Bahasa Indonesia](../id/README.md) · [日本語](../ja/README.md)
 
 ## প্রকল্প পরিচিতি
 
@@ -29,15 +35,30 @@ go-scout "মডেল ও সার্চ ইঞ্জিনের মধ্য
 - **algolia** — REST কোয়েরি, দুটি সংস্করণ: v3 / v4
 - **xunsearch** — HTTP ডেমন প্রোটোকল (ইনডেক্স অংশ ও সার্চ অংশ)
 
-`engines.Register` যোগে `advanced_*` উপনাম মিলিয়ে মোট ১৫টি ড্রাইভার নাম নিবন্ধিত হয় (দেখুন [engines/register.go](engines/register.go))।
+`engines.Register` যোগে `advanced_*` উপনাম মিলিয়ে মোট ১৬টি ড্রাইভার নাম নিবন্ধিত হয় (দেখুন [engines/register.go](../../../engines/register.go))।
+
+## প্রকল্পের মাসকট · Scouty
+
+<p align="center">
+  <img src="../../mascot.svg" alt="go-scout · মাসকট Scouty" width="200"/>
+</p>
+
+**Scouty** হলো go-scout-এর খোঁজার স্কাউট: বিবর্ধক চশমা আর স্কাউট গলবন্ধনী পরা ছোট্ট একটি প্রোব। লাইব্রেরিটি আসলে যা করে তা থেকেই তাকে আঁকা হয়েছে — প্রতিটি অঙ্গ কোডের একটি স্তরের সঙ্গে মেলে:
+
+- **বিবর্ধক চশমা** — `scout.Builder` কুয়েরি স্তর: `Where`, `OrderBy`, ভেক্টর ও ভৌগোলিক শর্ত সবই এই লেন্সে কম্পাইল হয়।
+- **অ্যান্টেনা ও সিগন্যাল আর্ক** — `EngineManager`: একটি কুয়েরি, ১৬টি ড্রাইভার নাম; `Driver(name)` অলসভাবে তৈরি ও ক্যাশ হয়।
+- **স্কাউট গলবন্ধনী** — `ModelObserver`: `Saved` / `Deleted` / `Restored` নিজেই সিঙ্ক হয়; গিঁটটি `EventBus` ইভেন্ট।
+- **হাতে ধরা ডকুমেন্ট কার্ড** — `ToSearchableArray()`-এর পরের ডকুমেন্ট; কার্ডের কোণের রঙিন চিপটি প্রাইমারি কি (`KeyString`)।
+
+Scouty কোডেও থাকে: [mascot.go](../../../mascot.go)-তে `scout.MascotName` / `scout.MascotSVG` / `scout.MascotASCII`; টার্মিনালে `go run ./cmd/scout mascot` (`-svg` দিলে ভেক্টর); লোগো [docs/logo.svg](../../../docs/logo.svg)। `mascot_test.go` নিশ্চিত করে এমবেড করা SVG `docs/mascot.svg`-এর সঙ্গে অভিন্ন, এবং `docs/`-এর সব SVG (১২টি ভাষার সেটসহ) বৈধ।
 
 ## আর্কিটেকচার ডিজাইন
 
-![আর্কিটেকচার স্তর চিত্র](docs/i18n/bn/arch.svg)
+![আর্কিটেকচার স্তর চিত্র](./arch.svg)
 
 নিচ থেকে উপরে পাঁচটি স্তর, প্রতিটি স্তরে দায়িত্ব সংকুচিত হয়:
 
-1. **মডেল স্তর** — বিজনেস মডেল `scout.ScoutModel` বাস্তবায়ন করে (`ScoutKey`, `ToSearchableArray`, `ShouldBeSearchable`, `TableName` ইত্যাদি, দেখুন [model.go](model.go)); ডেটা ইন্টারফেস `scout.Source[T]` (`All` / `ByIDs` / `Count`) থেকে আসে, অন্তর্নির্মিত `scout.NewMemorySource` সহ। `SoftDeleter`, `FullTextColumner`, `PrefixColumner`-এর মতো ঐচ্ছিক ইন্টারফেস প্রয়োজনমতো বাস্তবায়িত হয়।
+1. **মডেল স্তর** — বিজনেস মডেল `scout.ScoutModel` বাস্তবায়ন করে (`ScoutKey`, `ToSearchableArray`, `ShouldBeSearchable`, `TableName` ইত্যাদি, দেখুন [model.go](../../../model.go)); ডেটা ইন্টারফেস `scout.Source[T]` (`All` / `ByIDs` / `Count`) থেকে আসে, অন্তর্নির্মিত `scout.NewMemorySource` সহ। `SoftDeleter`, `FullTextColumner`, `PrefixColumner`-এর মতো ঐচ্ছিক ইন্টারফেস প্রয়োজনমতো বাস্তবায়িত হয়।
 2. **সিঙ্ক স্তর** — `scout.ModelObserver` মডেলের save/delete/restore ইভেন্ট ধরে; `scout.EventBus` ইভেন্ট `scout.models_imported`, `scout.models_flushed` প্রকাশ করে; `scout.Queue` ইন-প্রসেস অ্যাসিংক কিউ দেয় (বাফার 4096), কিউ না থাকলে সিঙ্ক ফলব্যাক।
 3. **কোয়েরি স্তর** — `scout.Builder` চেইনের মাধ্যমে কোয়েরির অবস্থা জমা করে (`Where`, `OrderBy`, `Take`, `WithTrashed`…); `builder_search.go`-র নির্বাহ পদ্ধতি (`Get` / `First` / `Paginate` / `Cursor` / `Keys`) ইঞ্জিনের সঙ্গে একবার এক্সচেঞ্জ চালায়, ফলাফল `scout.Result` / `PaginationResult`-এ স্বাভাবিক হয়।
 4. **ইঞ্জিন অভিযোজন স্তর** — ইন্টারফেস `Engine` (`Search`, `Paginate`, `Update`, `Delete`, `Map`, `Flush`, `CreateIndex`, `DeleteIndex`…) এবং অ্যাডভান্সড ইন্টারফেস `AdvancedEngine` (`AdvancedSearch`, `GetAggregations`, `GetFacets`) ইঞ্জিনের পার্থক্য ইন্টারফেসের আড়ালে রাখে; `scout.Manager` এগুলো `Extend` দিয়ে নিবন্ধিত করে, `Driver(name)` লেজি-ভাবে ড্রাইভার তৈরি করে ক্যাশ করে।
@@ -45,19 +66,19 @@ go-scout "মডেল ও সার্চ ইঞ্জিনের মধ্য
 
 ## বৈশিষ্ট্যসমূহ
 
-![বৈশিষ্ট্য চিত্র](docs/i18n/bn/features.svg)
+![বৈশিষ্ট্য চিত্র](./features.svg)
 
 - **কোয়েরি নির্মাণ চেইন** — `scout.Builder`-এর ফ্লো-স্টাইল API: `Query` / `Where` / `WhereIn` / `WhereNotIn` / `OrderBy` / `OrderByDesc` / `Latest` / `Oldest` / `Take` / `Skip`; অ্যাডভান্সড শর্ত `VectorSearch` / `WhereRange` / `WhereGeoDistance` / `FulltextSearch` / `OrderByVectorSimilarity` / `OrderByGeoDistance`; কলব্যাক ইনজেকশন `QueryCB` / `CallbackCB` / `AddResultProcessor`। সার্চ ফিল্ড পার্স ক্রম: `Options["fields"]` → `FullTextColumner` → `FieldNames`।
-- **DSL মধ্যবর্তী উপস্থাপনা** — [engines/dsl.go](engines/dsl.go) অ্যাডভান্সড শর্তগুলোকে এক অভিন্ন bool-কোয়েরি JSON-এ কম্পাইল করে (`multi_match`, `term`, `range`, `geo_distance`, `wildcard`, `regexp` ইত্যাদি), যা Elasticsearch / OpenSearch সরাসরি গ্রহণ করে; `MapBooleanToBoolKey` and/or/not-কে `filter` / `should` / `must_not`-এ ম্যাপ করে।
+- **DSL মধ্যবর্তী উপস্থাপনা** — [engines/dsl.go](../../../engines/dsl.go) অ্যাডভান্সড শর্তগুলোকে এক অভিন্ন bool-কোয়েরি JSON-এ কম্পাইল করে (`multi_match`, `term`, `range`, `geo_distance`, `wildcard`, `regexp` ইত্যাদি), যা Elasticsearch / OpenSearch সরাসরি গ্রহণ করে; `MapBooleanToBoolKey` and/or/not-কে `filter` / `should` / `must_not`-এ ম্যাপ করে।
 - **পেজিনেশন ও কার্সর** — `Paginate` / `PaginateRaw` / `SimplePaginate` / `Cursor` (বাফার্ড চ্যানেল থেকে লেজি ট্র্যাভার্সাল); `PaginationResult`-এ `LastPage` / `HasMorePages` / `AppendQuery`; `Result.As[T]` এবং প্যাকেজ-স্তরের জেনেরিক `scout.GetAs[T]` টাইপ-অ্যাসারশন ছাড়াই মডেল আনে।
 - **সফট ডিলিট** — ডকুমেন্টসহ ইনডেক্সে `__soft_deleted` মেটাডেটা (0/1) লেখা হয়; কোয়েরি ফিল্টার `OnlyTrashed` / `WithTrashed`; database ইঞ্জিন `deleted_at` কলাম ব্যবহার করে।
 - **অ্যাসিংক কিউ** — ইন-প্রসেস কিউ (`chan` বাফার 4096 + ওয়ার্কার গোরুটিন), `SCOUT_QUEUE=1` চালু করে; কিউ না থাকলে সতর্কতাসহ সিঙ্ক ফলব্যাক; `MakeAllSearchable` চাঙ্কে ইমপোর্ট করে (ডিফল্ট ৫০০ প্রতি চাঙ্ক)।
 - **ইভেন্ট ও অবজার্ভার** — `ModelObserver` `Saved` / `Deleted` / `Restored` শুনে স্বয়ংক্রিয় সিঙ্ক করে; `EventBus` `scout.models_imported`, `scout.models_flushed` প্রকাশ করে; `WithoutSyncingToSearch` সাময়িকভাবে সিঙ্ক বন্ধ করে।
-- **মাল্টি-ইঞ্জিন নিবন্ধন** — `Manager.Extend` + `engines.Register` ১৫টি ড্রাইভার নাম নিবন্ধিত করে; ড্রাইভার লেজি তৈরি ও ক্যাশ হয়; অজানা ড্রাইভারে `scout.ErrNotSupported` পাওয়া যায়; ইঞ্জিন বদলানো = শুধু `SCOUT_DRIVER` কনফিগ বদলানো।
+- **মাল্টি-ইঞ্জিন নিবন্ধন** — `Manager.Extend` + `engines.Register` ১৬টি ড্রাইভার নাম নিবন্ধিত করে; ড্রাইভার লেজি তৈরি ও ক্যাশ হয়; অজানা ড্রাইভারে `scout.ErrNotSupported` পাওয়া যায়; ইঞ্জিন বদলানো = শুধু `SCOUT_DRIVER` কনফিগ বদলানো।
 
 ## ডিজাইন দৃষ্টিভঙ্গি
 
-![ডিজাইন দৃষ্টিভঙ্গি চিত্র](docs/i18n/bn/design.svg)
+![ডিজাইন দৃষ্টিভঙ্গি চিত্র](./design.svg)
 
 - **চেইন Builder কোয়েরির অভিপ্রায় বহন করে** — `Search(ctx, query, cb)` `*scout.Builder` ফেরত দেয়; চেইন কেবল অবস্থা জমা করে, ইঞ্জিনের সঙ্গে এক্সচেঞ্জ হয় `Get` / `First` / `Paginate` / `Cursor`-এ; কোয়েরি বদলানো, ইঞ্জিনের রিকোয়েস্ট বডি পাওয়া ও ফলাফল পোস্ট-প্রসেস করা — সব কলব্যাকে, ইঞ্জিন এ সম্পর্কে জানে না।
 - **DSL মধ্যবর্তী উপস্থাপনা** — অ্যাডভান্সড শর্ত এক অভিন্ন bool-কোয়েরি JSON-এ কম্পাইল হয়; ES / OpenSearch সরাসরি গ্রহণ করে, আর Meilisearch / Typesense / Algolia / database নিজস্ব সিনট্যাক্সে অনুবাদ করে — ইঞ্জিনের পার্থক্য অনুবাদ স্তরে লুকিয়ে থাকে।
@@ -66,7 +87,7 @@ go-scout "মডেল ও সার্চ ইঞ্জিনের মধ্য
 
 ## জীবনচক্র
 
-![সার্চ জীবনচক্র চিত্র](docs/i18n/bn/lifecycle.svg)
+![সার্চ জীবনচক্র চিত্র](./lifecycle.svg)
 
 **সার্চ পথ**: `Searchable(model, source).Search(ctx, query, cb)` `*scout.Builder` তৈরি করে → `Manager.Driver(name)` ইঞ্জিন নির্ধারণ করে (লেজি নির্মাণ + ক্যাশ) → `engine.Search` / `Paginate` (REST / SQL / মেমোরি) → `scout.Result`-এ পার্স (Hits · Total · Aggregations · Raw) → মডেল ফিরিয়ে ভরাট করতে হলে (`Get` / `Paginate` / `First`): `MapIDs` → `Source.ByIDs` → `attachMeta` (`KeyString` সংযোজন, ইঞ্জিনের ক্রম বজায় থাকে) → `ResultItem` / `PaginationResult` ফেরত; `Keys` / `GetAggregations` / `PaginateRaw` মডেল লোড না করেই সরাসরি ফেরত দেয়।
 
@@ -76,46 +97,60 @@ go-scout "মডেল ও সার্চ ইঞ্জিনের মধ্য
 
 ```
 go-scout/
-├── go.mod                  # মডিউল: github.com/erikwang2013/go-scout · go 1.24.1 · শূন্য ডিপেন্ডেন্সি
-├── .gitignore              # IDE / ক্যাশ / কী-ফাইলের বর্জন
-├── scout.go                # Scout ফ্যাসাড: Config / Manager / Events / Queue / Observer-এর সমাবেশ ও ফ্যাক্টরি
-├── config.go               # কনফিগ ট্রি: DefaultConfig + এনভায়রনমেন্ট-ভেরিয়েবল ওভাররাইড + dot-path ভ্যালু
-├── engine.go               # Engine / AdvancedEngine ইন্টারফেস + Result / Hit / PaginationResult টাইপ
-├── manager.go              # EngineManager: Extend রেজিস্ট্রেশন, Driver লেজি-ক্রিয়েশন ক্যাশ, ডিফল্ট null ইঞ্জিন
-├── builder.go              # Builder কাঠামো + চেইন শর্ত (Where / OrderBy / Take / অ্যাডভান্সড শর্ত)
-├── builder_search.go       # কোয়েরি নির্বাহ: Raw / Get / First / Paginate / Cursor / GetAs[T]
-├── searchable.go           # Searchable: মডেল-ডেটা-সোর্স বাইন্ডিং, পূর্ণ ইমপোর্ট/এক্সপোর্ট, সফট-ডিলিট মেটাডেটা
-├── observer.go             # ModelObserver: Saved / Deleted / Restored-এ স্বয়ংক্রিয় সিঙ্ক
-├── events.go               # EventBus: থ্রেড-নিরাপদ পাব-সাব + ইমপোর্ট/ফ্লাশ ইভেন্ট
-├── queue.go                # Queue: ইন-প্রসেস অ্যাসিংক কিউ (chan 4096) + সিঙ্ক ফলব্যাক
-├── model.go                # ScoutModel ইন্টারফেস + ঐচ্ছিক এক্সটেনশন ইন্টারফেস + KeyName/KeyString হেল্পার
-├── source.go               # Source[T] ইন্টারফেস + MemorySource (রৈখিক স্ক্যান)
-├── exceptions.go           # ত্রুটি সিস্টেম ErrNotSupported / ErrScout
-├── cmd/scout/main.go       # CLI ডেমো: import / flush / index / queue-import ইত্যাদি মোট ৭টি উপকমান্ড
+├── go.mod                      # মডিউল: github.com/erikwang2013/go-scout · go 1.24.1 · শূন্য ডিপেন্ডেন্সি
+├── .gitignore                  # IDE / ক্যাশ / কী-ফাইলের বর্জন
+├── scout.go                    # Scout ফ্যাসাড: Config / Manager / Events / Queue / Observer-এর সমাবেশ ও ফ্যাক্টরি
+├── config.go                   # কনফিগ ট্রি: DefaultConfig + এনভায়রনমেন্ট-ভেরিয়েবল ওভাররাইড + dot-path ভ্যালু
+├── engine.go                   # Engine / AdvancedEngine ইন্টারফেস + Result / Hit / PaginationResult টাইপ
+├── manager.go                  # EngineManager: Extend রেজিস্ট্রেশন, Driver লেজি-ক্রিয়েশন ক্যাশ, ডিফল্ট null ইঞ্জিন
+├── builder.go                  # Builder কাঠামো + চেইন শর্ত (Where / OrderBy / Take / অ্যাডভান্সড শর্ত)
+├── builder_search.go           # কোয়েরি নির্বাহ: Raw / Get / First / Paginate / Cursor / GetAs[T]
+├── searchable.go               # Searchable: মডেল-ডেটা-সোর্স বাইন্ডিং, পূর্ণ ইমপোর্ট/এক্সপোর্ট, সফট-ডিলিট মেটাডেটা
+├── observer.go                 # ModelObserver: Saved / Deleted / Restored-এ স্বয়ংক্রিয় সিঙ্ক
+├── events.go                   # EventBus: থ্রেড-নিরাপদ পাব-সাব + ইমপোর্ট/ফ্লাশ ইভেন্ট
+├── queue.go                    # Queue: ইন-প্রসেস অ্যাসিংক কিউ (chan 4096) + সিঙ্ক ফলব্যাক
+├── model.go                    # ScoutModel ইন্টারফেস + ঐচ্ছিক এক্সটেনশন ইন্টারফেস + KeyName/KeyString হেল্পার
+├── source.go                   # Source[T] ইন্টারফেস + MemorySource (রৈখিক স্ক্যান)
+├── exceptions.go               # ত্রুটি সিস্টেম ErrNotSupported / ErrScout
+├── mascot.go                   # মাসকট Scouty: MascotName / MascotSVG / MascotASCII
+├── mascot_test.go              # এমবেড করা SVG বনাম docs/mascot.svg + docs/-এর সব SVG যাচাই
+├── cmd/scout/main.go           # CLI ডেমো: import / flush / index / queue-import ইত্যাদি মোট ৭টি উপকমান্ড
 ├── engines/
-│   ├── engine.go           # HTTP ক্লায়েন্ট (auth, TLS স্কিপ) + সাঁঝা হেল্পার DoJSON/DoBytes
-│   ├── register.go         # SetDatabase + Register — ১৫টি ড্রাইভার নাম নিবন্ধিত করে + Drivers()
-│   ├── dsl.go              # DSL মধ্যবর্তী উপস্থাপনা: bool কোয়েরি / সর্ট / এগ্রিগেশন / ফ্যাসেট / হাইলাইট
-│   ├── null.go             # NullEngine: খালি ইমপ্লিমেন্টেশন
-│   ├── collection.go       # CollectionEngine: মেমোরি সার্চ (কেস-অসংবেদনশীল সাবস্ট্রিং ম্যাচ)
-│   ├── database.go         # DatabaseEngine: টেবিল = ইনডেক্স SQL (LIKE/ILIKE + pgsql-এ tsvector)
-│   ├── elasticsearch.go    # ElasticsearchEngine + OpenSearch-এর সাথে সাঁঝা es* হেল্পার
-│   ├── opensearch.go       # OpenSearchEngine (বেস ড্রাইভারই অ্যাডভান্সড ইঞ্জিন)
-│   ├── meilisearch.go      # MeilisearchEngine: ফিল্টার / সর্ট / ভেক্টর-হাইব্রিড / ফ্যাসেট
-│   ├── typesense.go        # TypesenseEngine: filter_by / এগ্রিগেশন / গ্রুপিং / নিয়ারেস্ট-নেবার সার্চ
-│   ├── algolia.go          # AlgoliaEngine: v3/v4 একই কাঠামো + ভার্সন ফ্ল্যাগ
-│   └── xunsearch.go        # XunSearchEngine: ইনডেক্স ডেমন + সার্চ ডেমন
+│   ├── engine.go               # HTTP ক্লায়েন্ট (auth, TLS স্কিপ) + সাঁঝা হেল্পার DoJSON/DoBytes
+│   ├── register.go             # SetDatabase + Register — ১৬টি ড্রাইভার নাম নিবন্ধিত করে + Drivers()
+│   ├── dsl.go                  # DSL মধ্যবর্তী উপস্থাপনা: bool কোয়েরি / সর্ট / এগ্রিগেশন / ফ্যাসেট / হাইলাইট
+│   ├── null.go                 # NullEngine: খালি ইমপ্লিমেন্টেশন
+│   ├── collection.go           # CollectionEngine: মেমোরি সার্চ (কেস-অসংবেদনশীল সাবস্ট্রিং ম্যাচ)
+│   ├── database.go             # DatabaseEngine: টেবিল = ইনডেক্স SQL (LIKE/ILIKE + pgsql-এ tsvector)
+│   ├── elasticsearch.go        # ElasticsearchEngine + OpenSearch-এর সাথে সাঁঝা es* হেল্পার
+│   ├── opensearch.go           # OpenSearchEngine (বেস ড্রাইভারই অ্যাডভান্সড ইঞ্জিন)
+│   ├── meilisearch.go          # MeilisearchEngine: ফিল্টার / সর্ট / ভেক্টর-হাইব্রিড / ফ্যাসেট
+│   ├── meilisearch_advanced.go # Meilisearch অ্যাডভান্সড ইঞ্জিন: ভেক্টর / হাইব্রিড সার্চ এক্সটেনশন
+│   ├── typesense.go            # TypesenseEngine: filter_by / এগ্রিগেশন / গ্রুপিং / নিয়ারেস্ট-নেবার সার্চ
+│   ├── typesense_advanced.go   # Typesense অ্যাডভান্সড ইঞ্জিন: সার্চ প্যারামিটার / অ্যাগ্রিগেশন / ভেক্টর
+│   ├── algolia.go              # AlgoliaEngine: v3/v4 একই কাঠামো + ভার্সন ফ্ল্যাগ
+│   ├── xunsearch.go            # XunSearchEngine: ইনডেক্স ডেমন + সার্চ ডেমন
+│   └── xunsearch_advanced.go   # XunSearch অ্যাডভান্সড ইঞ্জিন: অ্যাডভান্সড শর্ত / ফ্যাসেট
 ├── docs/
-│   ├── arch.svg            # আর্কিটেকচার স্তর চিত্র
-│   ├── features.svg        # বৈশিষ্ট্য চিত্র
-│   ├── design.svg          # ডিজাইন দৃষ্টিভঙ্গি চিত্র
-│   └── lifecycle.svg       # সার্চ জীবনচক্র চিত্র
+│   ├── arch.svg                # আর্কিটেকচার স্তর চিত্র
+│   ├── features.svg            # বৈশিষ্ট্য চিত্র
+│   ├── design.svg              # ডিজাইন দৃষ্টিভঙ্গি চিত্র
+│   ├── logo.svg                # মূল ছবি: সম্পূর্ণ Scouty + go-scout ওয়ার্ডমার্ক
+│   ├── mascot.svg              # মাসকট Scouty (একই ছবি mascot.go-তে এমবেড করা)
+│   ├── alipay.png              # Alipay পেমেন্ট QR কোড (দান অংশ থেকে উল্লেখিত)
+│   ├── weixinpay.png           # WeChat Pay পেমেন্ট QR কোড (দান অংশ থেকে উল্লেখিত)
+│   ├── coin/                   # প্রতি-চেইন দান QR কোড (১০টি jpg)
+│   └── lifecycle.svg           # সার্চ জীবনচক্র চিত্র
 └── engines/
-    ├── collection_test.go  # ইন-মেমোরি ইঞ্জিন আচরণ টেস্ট (ফিল্টার / সর্ট / পেজিনেশন / ব্যাকফিল)
-    ├── database_test.go    # SQL জেনারেশন ও পরীক্ষা (assertSQL সঠিক মিল)
-    ├── meilisearch_test.go # Meilisearch অনুরোধ/পার্স টেস্ট (httptest স্টাব)
-    ├── typesense_test.go   # Typesense অনুরোধ/পার্স টেস্ট (404-এ অটো-কালেকশনসহ)
-    └── null_test.go        # NullEngine খালি-আচরণ টেস্ট
+    ├── algolia_test.go         # Algolia ফিল্টার লিটারেল টেস্ট (algoliaLit / algoliaFilters)
+    ├── elasticsearch_test.go   # Elasticsearch রিকোয়েস্ট/পার্স টেস্ট (httptest স্টাব)
+    ├── opensearch_test.go      # OpenSearch রিকোয়েস্ট/পার্স টেস্ট (httptest স্টাব)
+    ├── xunsearch_test.go       # XunSearch ডেমন প্রোটোকল টেস্ট (httptest স্টাব)
+    ├── collection_test.go      # ইন-মেমোরি ইঞ্জিন আচরণ টেস্ট (ফিল্টার / সর্ট / পেজিনেশন / ব্যাকফিল)
+    ├── database_test.go        # SQL জেনারেশন ও পরীক্ষা (assertSQL সঠিক মিল)
+    ├── meilisearch_test.go     # Meilisearch অনুরোধ/পার্স টেস্ট (httptest স্টাব)
+    ├── typesense_test.go       # Typesense অনুরোধ/পার্স টেস্ট (404-এ অটো-কালেকশনসহ)
+    └── null_test.go            # NullEngine খালি-আচরণ টেস্ট
 ```
 
 ## দ্রুত শুরু/ব্যবহার নির্দেশিকা
@@ -138,6 +173,7 @@ go get github.com/erikwang2013/go-scout
 | `SCOUT_PREFIX` | খালি | ইনডেক্স উপসর্গ |
 | `SCOUT_QUEUE` | বন্ধ | `1` অ্যাসিংক কিউ চালু করে |
 | `SCOUT_SOFT_DELETE` | বন্ধ | সফট-ডিলিট মেটাডেটা ডকুমেন্টসহ ইনডেক্সে লেখা হয় |
+| `SCOUT_IDENTIFY` | বন্ধ | কনফিগ ট্রি `identify`: ইঞ্জিনকে জানায় কে খুঁজছে (algolia) |
 | `SCOUT_CHUNK_SEARCHABLE` / `SCOUT_CHUNK_UNSEARCHABLE` | `500` | বাল্ক ইমপোর্ট/ডিলিটের চাঙ্ক আকার |
 | `SCOUT_BULK_SIZE` | `100` | বাল্ক রাইট আকার (opensearch) |
 
@@ -146,10 +182,10 @@ go get github.com/erikwang2013/go-scout
 | ইঞ্জিন | এনভায়রনমেন্ট ভেরিয়েবল (ডিফল্ট মান) |
 |---|---|
 | meilisearch | `MEILISEARCH_HOST` (`http://127.0.0.1:7700`), `MEILISEARCH_KEY` |
-| typesense | `TYPESENSE_HOST` (`127.0.0.1`), `TYPESENSE_PORT` (`8108`), `TYPESENSE_PROTOCOL` (`http`), `TYPESENSE_API_KEY` (`xyz`), `TYPESENSE_IMPORT_ACTION` (`upsert`), `TYPESENSE_MAX_TOTAL_RESULTS` (`1000`) |
+| typesense | `TYPESENSE_HOST` (`127.0.0.1`), `TYPESENSE_PORT` (`8108`), `TYPESENSE_PROTOCOL` (`http`), `TYPESENSE_API_KEY` (`xyz`), `TYPESENSE_IMPORT_ACTION` (`upsert`), `TYPESENSE_MAX_TOTAL_RESULTS` (`1000`), `TYPESENSE_CONNECTION_TIMEOUT` (`2`) |
 | elasticsearch | `ELASTICSEARCH_HOST` (`http://127.0.0.1:9200`, hosts তালিকার প্রথম উপাদান) + `elasticsearch.auth` (user/password) |
-| opensearch | `OPENSEARCH_HTTP_HOST` (`https://127.0.0.1:6205`), `OPENSEARCH_USERNAME` / `OPENSEARCH_PASSWORD` (`admin`/`admin`), `OPENSEARCH_SSL_VERIFICATION` (ডিফল্ট TLS জাচ বন্ধ), `OPENSEARCH_TIMEOUT` (`30` সেকেন্ড) |
-| xunsearch | `XUNSEARCH_INDEX_HOST` (`127.0.0.1`) + `XUNSEARCH_INDEX_PORT` (`8383`), `XUNSEARCH_SEARCH_HOST` + `XUNSEARCH_SEARCH_PORT` (`8384`), `XUNSEARCH_DEFAULT_INDEX` (`default`), `XUNSEARCH_CHARSET` (`utf-8`) |
+| opensearch | `OPENSEARCH_HTTP_HOST` (`https://127.0.0.1:6205`), `OPENSEARCH_USERNAME` / `OPENSEARCH_PASSWORD` (`admin`/`admin`), `OPENSEARCH_SSL_VERIFICATION` (ডিফল্ট TLS জাচ বন্ধ), `OPENSEARCH_TIMEOUT` (`30` সেকেন্ড), `OPENSEARCH_CONNECTION_TIMEOUT` (`10`) |
+| xunsearch | `XUNSEARCH_INDEX_HOST` (`http://127.0.0.1`) + `XUNSEARCH_INDEX_PORT` (`8383`), `XUNSEARCH_SEARCH_HOST` (`http://127.0.0.1`) + `XUNSEARCH_SEARCH_PORT` (`8384`), `XUNSEARCH_DEFAULT_INDEX` (`default`), `XUNSEARCH_CHARSET` (`utf-8`), `XUNSEARCH_CONFIG_PATH`, `XUNSEARCH_BATCH_SIZE` (`100`) |
 | algolia | `ALGOLIA_APP_ID`, `ALGOLIA_SECRET` (অনুপস্থিত থাকলে ইঞ্জিন কনস্ট্রাক্টর panic করে) |
 
 `database` ড্রাইভারকে DB সংযোগ ও ডায়ালেক্টও লাগে:
@@ -234,6 +270,7 @@ go run ./cmd/scout queue-import --chunk 3 --min 1 --max 100 --workers 4  # 按�
 go run ./cmd/scout sync-index-settings --driver meilisearch  # 同步索引设置（需引擎实现 UpdateIndexSettings）
 go run ./cmd/scout delete-index posts           # 删除单个索引
 go run ./cmd/scout delete-all-indexes           # 删除全部索引
+go run ./cmd/scout mascot                         # মাসকট প্রিন্ট করুন (-svg দিলে ভেক্টর)
 ```
 
 ## লাইসেন্স ও টীকা
@@ -249,11 +286,11 @@ go run ./cmd/scout delete-all-indexes           # 删除全部索引
 <tr>
 <td align="center">
 <b>微信（WeChat Pay）</b><br/>
-<img src="docs/weixinpay.png" width="130" height="130" alt="WeChat পেমেন্ট QR কোড"/>
+<img src="../../../docs/weixinpay.png" width="130" height="130" alt="WeChat পেমেন্ট QR কোড"/>
 </td>
 <td align="center">
 <b>支付宝（Alipay）</b><br/>
-<img src="docs/alipay.png" width="130" height="130" alt="Alipay পেমেন্ট QR কোড"/>
+<img src="../../../docs/alipay.png" width="130" height="130" alt="Alipay পেমেন্ট QR কোড"/>
 </td>
 </tr>
 </table>
@@ -265,16 +302,16 @@ go run ./cmd/scout delete-all-indexes           # 删除全部索引
 
 | নেটওয়ার্ক | ওয়ালেট ঠিকানা | QR কোড |
 |---|---|---|
-| BNB Smart Chain (BEP20) | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="docs/coin/1.jpg" width="100" height="100" alt="BNB Smart Chain (BEP20) QR কোড"/> |
-| Tron (TRC20) | `TEdDHWLajt1XvqtPDWmQctdrJaC3pzZZzz` | <img src="docs/coin/2.jpg" width="100" height="100" alt="Tron (TRC20) QR কোড"/> |
-| Ethereum (ERC20) | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="docs/coin/3.jpg" width="100" height="100" alt="Ethereum (ERC20) QR কোড"/> |
-| Aptos | `0x836e3780edfc3f7b2372b39e2a1a3a5d7adfaccd96c726f21cfde1b50dd68030` | <img src="docs/coin/4.jpg" width="100" height="100" alt="Aptos QR কোড"/> |
-| Plasma | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="docs/coin/5.jpg" width="100" height="100" alt="Plasma QR কোড"/> |
-| Polygon POS | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="docs/coin/6.jpg" width="100" height="100" alt="Polygon POS QR কোড"/> |
-| Solana | `2hfhboHdmdrYsY25XfQSsEWxq5ip4EQsR7f4AzSRMUyr` | <img src="docs/coin/7.jpg" width="100" height="100" alt="Solana QR কোড"/> |
-| The Open Network (TON) | `UQB9kFQohzmXUir9QSSZq01iwl9aQZIDdBpNmDklljRtCoGK` | <img src="docs/coin/8.jpg" width="100" height="100" alt="The Open Network (TON) QR কোড"/> |
-| Arbitrum One | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="docs/coin/9.jpg" width="100" height="100" alt="Arbitrum One QR কোড"/> |
-| AVAX C-Chain | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="docs/coin/10.jpg" width="100" height="100" alt="AVAX C-Chain QR কোড"/> |
+| BNB Smart Chain (BEP20) | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="../../../docs/coin/1.jpg" width="100" height="100" alt="BNB Smart Chain (BEP20) QR কোড"/> |
+| Tron (TRC20) | `TEdDHWLajt1XvqtPDWmQctdrJaC3pzZZzz` | <img src="../../../docs/coin/2.jpg" width="100" height="100" alt="Tron (TRC20) QR কোড"/> |
+| Ethereum (ERC20) | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="../../../docs/coin/3.jpg" width="100" height="100" alt="Ethereum (ERC20) QR কোড"/> |
+| Aptos | `0x836e3780edfc3f7b2372b39e2a1a3a5d7adfaccd96c726f21cfde1b50dd68030` | <img src="../../../docs/coin/4.jpg" width="100" height="100" alt="Aptos QR কোড"/> |
+| Plasma | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="../../../docs/coin/5.jpg" width="100" height="100" alt="Plasma QR কোড"/> |
+| Polygon POS | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="../../../docs/coin/6.jpg" width="100" height="100" alt="Polygon POS QR কোড"/> |
+| Solana | `2hfhboHdmdrYsY25XfQSsEWxq5ip4EQsR7f4AzSRMUyr` | <img src="../../../docs/coin/7.jpg" width="100" height="100" alt="Solana QR কোড"/> |
+| The Open Network (TON) | `UQB9kFQohzmXUir9QSSZq01iwl9aQZIDdBpNmDklljRtCoGK` | <img src="../../../docs/coin/8.jpg" width="100" height="100" alt="The Open Network (TON) QR কোড"/> |
+| Arbitrum One | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="../../../docs/coin/9.jpg" width="100" height="100" alt="Arbitrum One QR কোড"/> |
+| AVAX C-Chain | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="../../../docs/coin/10.jpg" width="100" height="100" alt="AVAX C-Chain QR কোড"/> |
 
 ### আন্তর্জাতিক ব্যাংক ট্রান্সফার (ব্যাংক রেমিট্যান্স)
 

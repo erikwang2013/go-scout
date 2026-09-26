@@ -32,7 +32,7 @@
   <rect x="40" y="272" width="440" height="200" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
   <rect x="40" y="272" width="440" height="30" rx="8" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
   <text x="260" y="292" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a3a3a">Isolasi antarmuka mesin</text>
-  <text x="60" y="326" font-size="10" fill="#555">Engine / AdvancedEngine hanya bicara dokumen & hasil</text>
+  <text x="60" y="326" font-size="10" fill="#555">Engine / AdvancedEngine hanya bicara dokumen &amp; hasil</text>
   <text x="60" y="350" font-size="10" fill="#555">scout.Result + Hit terpadu; MapIDs / Map mengisi model</text>
   <text x="60" y="374" font-size="10" fill="#555">Manager.Driver(name) lazy + cache; Extend kapan saja</text>
   <text x="60" y="398" font-size="10" fill="#555">attachMeta menyelaraskan via KeyString; tanpa misalignment</text>
@@ -45,7 +45,7 @@
   <text x="500" y="326" font-size="10" fill="#555">Antrean dalam proses, bukan Redis; MemorySource O(ids×models)</text>
   <text x="500" y="350" font-size="10" fill="#555">algolia whereNotIns no-op "0=1"; v3/v4 tunggal + bendera</text>
   <text x="500" y="374" font-size="10" fill="#555">Hanya stdlib; identifikasi SQL di daftar putih</text>
-  <text x="500" y="398" font-size="10" fill="#555">Batas & jalur perbaikan ditandai ponytail</text>
+  <text x="500" y="398" font-size="10" fill="#555">Batas &amp; jalur perbaikan ditandai ponytail</text>
   <text x="500" y="422" font-size="10" fill="#555">Perbaikan: antrean Redis / tabel indeks / struktur per mesin</text>
 
   <!-- Alur bawah -->
@@ -60,4 +60,20 @@
   <line x1="628" y1="532" x2="672" y2="532" stroke="#4a4a4a" stroke-width="2" marker-end="url(#arrow)"/>
   <rect x="676" y="510" width="160" height="44" rx="22" fill="#e3e0d6" stroke="#4a4a4a" stroke-width="2"/>
   <text x="756" y="536" text-anchor="middle" font-size="12" fill="#3a3a3a">Hasil ternormalisasi</text>
+  <!-- go-scout 项目宠物小侦 / mascot signature -->
+  <g transform="translate(22,2) scale(0.24)">
+    <g fill="none" stroke="#2f6f6a" stroke-width="3.5" stroke-linecap="round">
+      <path d="M 136.8 31.1 A 22 22 0 0 1 150.9 45.2"/>
+      <path d="M 140.5 19.7 A 34 34 0 0 1 162.3 41.5" opacity=".7"/>
+      <path d="M 144.2 8.3 A 46 46 0 0 1 173.7 37.8" opacity=".45"/>
+    </g>
+    <line x1="130" y1="82" x2="130" y2="58" stroke="#4a4a4a" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="130" cy="52" r="8" fill="#2f6f6a" stroke="#4a4a4a" stroke-width="3"/>
+    <circle cx="127.4" cy="49.4" r="2.4" fill="#ffffff" opacity=".9"/>
+    <circle cx="130" cy="130" r="50" fill="#dbe8e5" stroke="#4a4a4a" stroke-width="7"/>
+    <path d="M 96.2 117.7 A 36 36 0 0 1 117.7 96.2" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" opacity=".9"/>
+    <circle cx="114" cy="132" r="7" fill="#3a3a3a"/>
+    <circle cx="146" cy="132" r="7" fill="#3a3a3a"/>
+    <path d="M 118 152 Q 130 162 142 152" fill="none" stroke="#3a3a3a" stroke-width="3.5" stroke-linecap="round"/>
+  </g>
 </svg>

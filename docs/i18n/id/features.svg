@@ -52,7 +52,7 @@
   <!-- Kartu 7 : pendaftaran multi-mesin -->
   <rect x="40" y="448" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
   <text x="60" y="474" font-size="14" font-weight="bold" fill="#3a3a3a">Pendaftaran multi-mesin (EngineManager)</text>
-  <text x="60" y="496" font-size="10" fill="#555">Extend + engines.Register: 15 driver</text>
+  <text x="60" y="496" font-size="10" fill="#555">Extend + engines.Register: 16 driver</text>
   <text x="60" y="516" font-size="10" fill="#555">Driver lazy + cache; tidak dikenal → ErrNotSupported</text>
   <text x="60" y="536" font-size="10" fill="#555">Ganti mesin cukup dengan SCOUT_DRIVER</text>
 
@@ -60,10 +60,26 @@
   <rect x="480" y="448" width="440" height="112" rx="8" fill="#f4f3ee" stroke="#4a4a4a" stroke-width="2"/>
   <text x="500" y="474" font-size="14" font-weight="bold" fill="#3a3a3a">Pencarian lanjutan (AdvancedEngine)</text>
   <text x="500" y="496" font-size="10" fill="#555">AdvancedSearch · GetAggregations · GetFacets</text>
-  <text x="500" y="516" font-size="10" fill="#555">Kemiripan vektor · rentang · filter & urutan geo</text>
+  <text x="500" y="516" font-size="10" fill="#555">Kemiripan vektor · rentang · filter &amp; urutan geo</text>
   <text x="500" y="536" font-size="10" fill="#555">Agregasi (Aggregate) + facet (Facet) + highlight</text>
 
   <!-- Footer -->
   <rect x="40" y="582" width="880" height="36" rx="8" fill="#ebe9e3" stroke="#4a4a4a" stroke-width="2"/>
   <text x="480" y="605" text-anchor="middle" font-size="12" fill="#3a3a3a">100 % pustaka standar · tanpa dependensi · Go 1.24 · port dari webman/laravel-scout</text>
+  <!-- go-scout 项目宠物小侦 / mascot signature -->
+  <g transform="translate(22,2) scale(0.24)">
+    <g fill="none" stroke="#2f6f6a" stroke-width="3.5" stroke-linecap="round">
+      <path d="M 136.8 31.1 A 22 22 0 0 1 150.9 45.2"/>
+      <path d="M 140.5 19.7 A 34 34 0 0 1 162.3 41.5" opacity=".7"/>
+      <path d="M 144.2 8.3 A 46 46 0 0 1 173.7 37.8" opacity=".45"/>
+    </g>
+    <line x1="130" y1="82" x2="130" y2="58" stroke="#4a4a4a" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="130" cy="52" r="8" fill="#2f6f6a" stroke="#4a4a4a" stroke-width="3"/>
+    <circle cx="127.4" cy="49.4" r="2.4" fill="#ffffff" opacity=".9"/>
+    <circle cx="130" cy="130" r="50" fill="#dbe8e5" stroke="#4a4a4a" stroke-width="7"/>
+    <path d="M 96.2 117.7 A 36 36 0 0 1 117.7 96.2" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" opacity=".9"/>
+    <circle cx="114" cy="132" r="7" fill="#3a3a3a"/>
+    <circle cx="146" cy="132" r="7" fill="#3a3a3a"/>
+    <path d="M 118 152 Q 130 162 142 152" fill="none" stroke="#3a3a3a" stroke-width="3.5" stroke-linecap="round"/>
+  </g>
 </svg>

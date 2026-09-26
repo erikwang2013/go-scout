@@ -1,7 +1,13 @@
+<p align="center">
+  <img src="../../logo.svg" alt="go-scout · マスコット Scouty（全身）" width="460"/>
+</p>
+
 # go-scout
 
 > Go で書かれた検索同期ライブラリ — Laravel Scout の Go 移植版（PHP プラグイン [webman-scout](https://github.com/shopwwi/webman-scout) をベース）。
-> Go 1.24 · 純粋な標準ライブラリのみ、サードパーティ依存ゼロ · バージョン v1.2.0
+> Go 1.24 · 純粋な標準ライブラリのみ、サードパーティ依存ゼロ · バージョン v1.3.0
+
+**Languages / 语言**: [中文](../../../README.md) · [English](../en/README.md) · [한국어](../ko/README.md) · [Русский](../ru/README.md) · [Deutsch](../de/README.md) · [Français](../fr/README.md) · [Español](../es/README.md) · [Português](../pt/README.md) · [हिन्दी](../hi/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Bahasa Indonesia](../id/README.md) · [日本語](./README.md)
 
 ## プロジェクト概要
 
@@ -29,15 +35,30 @@ go-scout は「モデルと検索エンジンの同期」という問題を解�
 - **algolia** — REST クエリ、v3 / v4 対応
 - **xunsearch** — HTTP デーモンプロトコル（索引サーバー + 検索サーバー）
 
-`advanced_*` エイリアスを含め、`engines.Register` は合計 15 個のドライバ名を登録します（[engines/register.go](engines/register.go) 参照）。
+`advanced_*` エイリアスを含め、`engines.Register` は合計 16 個のドライバ名を登録します（[engines/register.go](../../../engines/register.go) 参照）。
+
+## プロジェクトのマスコット · Scouty
+
+<p align="center">
+  <img src="../../mascot.svg" alt="go-scout · マスコットの Scouty" width="200"/>
+</p>
+
+**Scouty（小侦）** は go-scout の探索係。虫めがねのゴーグルとスカウトスカーフを身につけた小さな探査体で、このライブラリが実際にやっていることから描かれています。パーツはそれぞれコードの層に対応します：
+
+- **虫めがねのゴーグル** — `scout.Builder`（クエリ層）。`Where` / `OrderBy` / ベクトル / 地理条件はすべてこのレンズにコンパイルされます。
+- **アンテナと電波** — `EngineManager` の多重配信。1 回のクエリに 16 のドライバ名、`Driver(name)` は遅延生成してキャッシュされます。
+- **スカウトスカーフ** — `ModelObserver`。`Saved` / `Deleted` / `Restored` が自動同期し、結び目が `EventBus` のイベントです。
+- **手に持った文書カード** — `ToSearchableArray()` 後のドキュメント。カード隅の色チップが主キー（`KeyString`）です。
+
+Scouty はコードにも住んでいます：[mascot.go](../../../mascot.go) の `scout.MascotName` / `scout.MascotSVG` / `scout.MascotASCII`、ターミナルでは `go run ./cmd/scout mascot`（`-svg` でベクター版）、ロゴは [docs/logo.svg](../../../docs/logo.svg)。`mascot_test.go` が内蔵 SVG と `docs/mascot.svg` の一致、および `docs/` 配下の全 SVG（12 言語ぶんを含む）の整形式性を検証します。
 
 ## アーキテクチャ
 
-![アーキテクチャ層の図](docs/i18n/ja/arch.svg)
+![アーキテクチャ層の図](./arch.svg)
 
 下から上へ 5 つの層に分かれ、層ごとに責務を分担しています：
 
-1. **モデル層** — ビジネスモデルが `scout.ScoutModel`（`ScoutKey`、`ToSearchableArray`、`ShouldBeSearchable`、`TableName` など。[model.go](model.go) 参照）を実装します。データは `scout.Source[T]` インターフェース（`All` / `ByIDs` / `Count`）が供給し、組み込み実装として `scout.NewMemorySource` を提供。`SoftDeleter`、`FullTextColumner`、`PrefixColumner` などのオプションの拡張インターフェースは必要に応じて実装します。
+1. **モデル層** — ビジネスモデルが `scout.ScoutModel`（`ScoutKey`、`ToSearchableArray`、`ShouldBeSearchable`、`TableName` など。[model.go](../../../model.go) 参照）を実装します。データは `scout.Source[T]` インターフェース（`All` / `ByIDs` / `Count`）が供給し、組み込み実装として `scout.NewMemorySource` を提供。`SoftDeleter`、`FullTextColumner`、`PrefixColumner` などのオプションの拡張インターフェースは必要に応じて実装します。
 2. **同期層** — `scout.ModelObserver` がモデルの保存・削除・復元イベントを捕捉し、`scout.EventBus` が `scout.models_imported` / `scout.models_flushed` イベントを発行、`scout.Queue` がプロセス内非同期キュー（バッファ 4096）を提供します。キューが無い場合は同期フォールバックします。
 3. **クエリ層** — `scout.Builder` がチェーン API（`Where`、`OrderBy`、`Take`、`WithTrashed`…）でクエリ状態を蓄積します。`builder_search.go` の実行メソッド（`Get` / `First` / `Paginate` / `Cursor` / `Keys`）がエンジンへの往復をちょうど 1 回だけ行い、結果を `scout.Result` / `PaginationResult` に正規化します。
 4. **エンジンアダプタ層** — `Engine` インターフェース（`Search`、`Paginate`、`Update`、`Delete`、`Map`、`Flush`、`CreateIndex`、`DeleteIndex`…）と拡張インターフェース `AdvancedEngine`（`AdvancedSearch`、`GetAggregations`、`GetFacets`）がエンジン差異をインターフェースの背後に隔離。`scout.Manager` は `Extend` でドライバを登録し、`Driver(name)` で遅延生成・キャッシュします。
@@ -45,19 +66,19 @@ go-scout は「モデルと検索エンジンの同期」という問題を解�
 
 ## 機能
 
-![機能の図](docs/i18n/ja/features.svg)
+![機能の図](./features.svg)
 
 - **クエリビルダーチェーン** — `scout.Builder` の Fluent API：`Query` / `Where` / `WhereIn` / `WhereNotIn` / `OrderBy` / `OrderByDesc` / `Latest` / `Oldest` / `Take` / `Skip`、高度な条件 `VectorSearch` / `WhereRange` / `WhereGeoDistance` / `FulltextSearch` / `OrderByVectorSimilarity` / `OrderByGeoDistance`、コールバック注入 `QueryCB` / `CallbackCB` / `AddResultProcessor`。検索フィールドの解決順序：`Options["fields"]` → `FullTextColumner` → `FieldNames`。
-- **DSL 中間表現** — [engines/dsl.go](engines/dsl.go) が高度な条件を統一的な bool クエリ JSON（`multi_match`、`term`、`range`、`geo_distance`、`wildcard`、`regexp` など）にコンパイルし、Elasticsearch / OpenSearch が直接消費。`MapBooleanToBoolKey` が and/or/not を `filter` / `should` / `must_not` に変換します。
+- **DSL 中間表現** — [engines/dsl.go](../../../engines/dsl.go) が高度な条件を統一的な bool クエリ JSON（`multi_match`、`term`、`range`、`geo_distance`、`wildcard`、`regexp` など）にコンパイルし、Elasticsearch / OpenSearch が直接消費。`MapBooleanToBoolKey` が and/or/not を `filter` / `should` / `must_not` に変換します。
 - **ページネーションとカーソル** — `Paginate` / `PaginateRaw` / `SimplePaginate` / `Cursor`（バッファ付きチャネルでの遅延イテレーション）；`PaginationResult` は `LastPage` / `HasMorePages` / `AppendQuery` を提供。`Result.As[T]` とパッケージレベル汎用関数 `scout.GetAs[T]` で型アサーションなしにモデルを取得できます。
 - **ソフトデリート** — インデックスドキュメントに `__soft_deleted` メタデータ（0/1）を付与。`OnlyTrashed` / `WithTrashed` でクエリをフィルタ。database エンジンは `deleted_at` カラムを使用します。
 - **非同期キュー** — プロセス内キュー（`chan` バッファ 4096 + ワーカー goroutine）、`SCOUT_QUEUE=1` で有効化。キューが無い場合は警告付きで同期フォールバック。`MakeAllSearchable` はチャンク単位でインポート（デフォルト 500 件/チャンク）。
 - **イベントとオブザーバー** — `ModelObserver` が `Saved` / `Deleted` / `Restored` を監視して自動同期。`EventBus` が `scout.models_imported` / `scout.models_flushed` を発行。`WithoutSyncingToSearch` で一時的に同期を無効化できます。
-- **マルチエンジン登録** — `Manager.Extend` + `engines.Register` で 15 個のドライバ名を登録。ドライバは遅延生成されキャッシュされ、未知のドライバは `scout.ErrNotSupported` を返します。エンジン切り替えは `SCOUT_DRIVER` の変更だけです。
+- **マルチエンジン登録** — `Manager.Extend` + `engines.Register` で 16 個のドライバ名を登録。ドライバは遅延生成されキャッシュされ、未知のドライバは `scout.ErrNotSupported` を返します。エンジン切り替えは `SCOUT_DRIVER` の変更だけです。
 
 ## 設計思想
 
-![設計思想の図](docs/i18n/ja/design.svg)
+![設計思想の図](./design.svg)
 
 - **チェーン Builder がクエリ意図を担う** — `Search(ctx, query, cb)` は `*scout.Builder` を返し、チェーンは状態を蓄積するだけ。`Get` / `First` / `Paginate` / `Cursor` を呼んだ時点で初めてエンジンへの往復が発生します。クエリ修正・リクエストボディの傍受・結果の後処理はすべてコールバック経由で行われ、エンジンは関知しません。
 - **DSL 中間表現** — 高度な条件を bool クエリ JSON にコンパイルし、ES / OpenSearch が直接消費。Meilisearch / Typesense / Algolia / database はそれぞれ独自の構文に翻訳します。エンジン差異は翻訳層に隔離されます。
@@ -66,7 +87,7 @@ go-scout は「モデルと検索エンジンの同期」という問題を解�
 
 ## ライフサイクル
 
-![検索ライフサイクルの図](docs/i18n/ja/lifecycle.svg)
+![検索ライフサイクルの図](./lifecycle.svg)
 
 **検索パス**: `Searchable(model, source).Search(ctx, query, cb)` が `*scout.Builder` を作成 → `Manager.Driver(name)` がエンジンをディスパッチ（遅延生成・キャッシュ）→ `engine.Search` / `Paginate`（REST / SQL / インメモリ）→ `scout.Result`（Hits · Total · Aggregations · Raw）にパース → モデルの埋め戻しが必要な場合（`Get` / `Paginate` / `First`）：`MapIDs` → `Source.ByIDs` → `attachMeta`（`KeyString` で位置合わせ、エンジンが返した順序を維持）→ `ResultItem` / `PaginationResult` を返却。`Keys` / `GetAggregations` / `PaginateRaw` はモデルを読み込まず直接返却します。
 
@@ -76,46 +97,60 @@ go-scout は「モデルと検索エンジンの同期」という問題を解�
 
 ```
 go-scout/
-├── go.mod                  # モジュール定義: github.com/erikwang2013/go-scout · go 1.24.1 · 依存ゼロ
-├── .gitignore              # IDE・キャッシュ・鍵ファイルの無視
-├── scout.go                # Scout ファサード: Config / Manager / Events / Queue / Observer の配線とファクトリ
-├── config.go               # 設定ツリー: DefaultConfig + Env 上書き + ドットパスアクセス
-├── engine.go               # Engine / AdvancedEngine インターフェース + Result / Hit / PaginationResult 型
-├── manager.go              # EngineManager: Extend 登録、遅延 Driver 生成・キャッシュ、デフォルト null エンジン
-├── builder.go              # Builder 構造体 + チェーン条件構築（Where / OrderBy / Take / 高度な条件）
-├── builder_search.go       # クエリ実行: Raw / Get / First / Paginate / Cursor / GetAs[T]
-├── searchable.go           # Searchable: モデルとデータソースのバインド、全量インポート/エクスポート、ソフトデリートメタデータ
-├── observer.go             # ModelObserver: Saved / Deleted / Restored の自動同期
-├── events.go               # EventBus: スレッドセーフな同期 Pub/Sub + import/flush イベント
-├── queue.go                # Queue: プロセス内非同期キュー（chan 4096）+ 同期フォールバック
-├── model.go                # ScoutModel インターフェース + オプション拡張インターフェース + KeyName/KeyString ヘルパー
-├── source.go               # Source[T] インターフェース + MemorySource（線形スキャン）
-├── exceptions.go           # エラー体系 ErrNotSupported / ErrScout
-├── cmd/scout/main.go       # CLI デモ: import / flush / index / queue-import ほか計 7 サブコマンド
+├── go.mod                      # モジュール定義: github.com/erikwang2013/go-scout · go 1.24.1 · 依存ゼロ
+├── .gitignore                  # IDE・キャッシュ・鍵ファイルの無視
+├── scout.go                    # Scout ファサード: Config / Manager / Events / Queue / Observer の配線とファクトリ
+├── config.go                   # 設定ツリー: DefaultConfig + Env 上書き + ドットパスアクセス
+├── engine.go                   # Engine / AdvancedEngine インターフェース + Result / Hit / PaginationResult 型
+├── manager.go                  # EngineManager: Extend 登録、遅延 Driver 生成・キャッシュ、デフォルト null エンジン
+├── builder.go                  # Builder 構造体 + チェーン条件構築（Where / OrderBy / Take / 高度な条件）
+├── builder_search.go           # クエリ実行: Raw / Get / First / Paginate / Cursor / GetAs[T]
+├── searchable.go               # Searchable: モデルとデータソースのバインド、全量インポート/エクスポート、ソフトデリートメタデータ
+├── observer.go                 # ModelObserver: Saved / Deleted / Restored の自動同期
+├── events.go                   # EventBus: スレッドセーフな同期 Pub/Sub + import/flush イベント
+├── queue.go                    # Queue: プロセス内非同期キュー（chan 4096）+ 同期フォールバック
+├── model.go                    # ScoutModel インターフェース + オプション拡張インターフェース + KeyName/KeyString ヘルパー
+├── source.go                   # Source[T] インターフェース + MemorySource（線形スキャン）
+├── exceptions.go               # エラー体系 ErrNotSupported / ErrScout
+├── mascot.go                   # マスコット Scouty: MascotName / MascotSVG / MascotASCII
+├── mascot_test.go              # 内蔵 SVG と docs/mascot.svg の一致 + docs/ の全 SVG 検証
+├── cmd/scout/main.go           # CLI デモ: import / flush / index / queue-import ほか計 8 サブコマンド
 ├── engines/
-│   ├── engine.go           # HTTP クライアント（Auth、TLS スキップ）+ 共通 DoJSON/DoBytes ヘルパー
-│   ├── register.go         # SetDatabase + Register: 15 ドライバ名 + Drivers()
-│   ├── dsl.go              # DSL 中間表現: bool クエリ / ソート / アグリゲーション / ファセット / ハイライト
-│   ├── null.go             # NullEngine: 空実装
-│   ├── collection.go       # CollectionEngine: インメモリ検索（大文字小文字を無視した部分一致）
-│   ├── database.go         # DatabaseEngine: テーブルをインデックスとして SQL（LIKE/ILIKE + pgsql tsvector）
-│   ├── elasticsearch.go    # ElasticsearchEngine + OpenSearch と共有する es* ヘルパー
-│   ├── opensearch.go       # OpenSearchEngine（基本ドライバ、Advanced Engine も兼ねる）
-│   ├── meilisearch.go      # MeilisearchEngine: フィルタ / ソート / ベクトルハイブリッド / ファセット
-│   ├── typesense.go        # TypesenseEngine: filter_by / アグリゲーション / グルーピング / 最近傍検索
-│   ├── algolia.go          # AlgoliaEngine: v3/v4 を単一構造体 + バージョンフラグで対応
-│   └── xunsearch.go        # XunSearchEngine: 索引デーモン + 検索デーモン
+│   ├── engine.go               # HTTP クライアント（Auth、TLS スキップ）+ 共通 DoJSON/DoBytes ヘルパー
+│   ├── register.go             # SetDatabase + Register: 16 ドライバ名 + Drivers()
+│   ├── dsl.go                  # DSL 中間表現: bool クエリ / ソート / アグリゲーション / ファセット / ハイライト
+│   ├── null.go                 # NullEngine: 空実装
+│   ├── collection.go           # CollectionEngine: インメモリ検索（大文字小文字を無視した部分一致）
+│   ├── database.go             # DatabaseEngine: テーブルをインデックスとして SQL（LIKE/ILIKE + pgsql tsvector）
+│   ├── elasticsearch.go        # ElasticsearchEngine + OpenSearch と共有する es* ヘルパー
+│   ├── opensearch.go           # OpenSearchEngine（基本ドライバ、Advanced Engine も兼ねる）
+│   ├── meilisearch.go          # MeilisearchEngine: フィルタ / ソート / ベクトルハイブリッド / ファセット
+│   ├── meilisearch_advanced.go # Meilisearch 拡張エンジン：ベクトル／ハイブリッド検索の拡張
+│   ├── typesense.go            # TypesenseEngine: filter_by / アグリゲーション / グルーピング / 最近傍検索
+│   ├── typesense_advanced.go   # Typesense 拡張エンジン：検索パラメータ／集計／ベクトルの拡張
+│   ├── algolia.go              # AlgoliaEngine: v3/v4 を単一構造体 + バージョンフラグで対応
+│   ├── xunsearch.go            # XunSearchEngine: 索引デーモン + 検索デーモン
+│   └── xunsearch_advanced.go   # XunSearch 拡張エンジン：高度な条件／ファセットの拡張
 ├── docs/
-│   ├── arch.svg            # アーキテクチャ層の図
-│   ├── features.svg        # 機能の図
-│   ├── design.svg          # 設計思想の図
-│   └── lifecycle.svg       # 検索ライフサイクルのフローチャート
+│   ├── arch.svg                # アーキテクチャ層の図
+│   ├── features.svg            # 機能の図
+│   ├── design.svg              # 設計思想の図
+│   ├── logo.svg                # メインビジュアル：全身の Scouty + go-scout ワードマーク
+│   ├── mascot.svg              # マスコット Scouty（mascot.go に同じ図を内蔵）
+│   ├── alipay.png              # Alipay 支払い QR コード（寄付セクションから参照）
+│   ├── weixinpay.png           # WeChat Pay 支払い QR コード（寄付セクションから参照）
+│   ├── coin/                   # チェーン別の寄付用 QR コード（jpg 10 枚）
+│   └── lifecycle.svg           # 検索ライフサイクルのフローチャート
 └── engines/
-    ├── collection_test.go  # インメモリエンジンの振る舞いテスト（フィルタ / ソート / ページネーション / 埋め戻し）
-    ├── database_test.go    # SQL 生成とアサーション（assertSQL 完全一致）
-    ├── meilisearch_test.go # Meilisearch リクエスト/パーステスト（httptest スタブ）
-    ├── typesense_test.go   # Typesense リクエスト/パーステスト（404 自動コレクション作成含む）
-    └── null_test.go        # NullEngine の空振る舞いテスト
+    ├── algolia_test.go         # Algolia フィルタリテラルのテスト（algoliaLit / algoliaFilters）
+    ├── elasticsearch_test.go   # Elasticsearch リクエスト／解析テスト（httptest スタブ）
+    ├── opensearch_test.go      # OpenSearch リクエスト／解析テスト（httptest スタブ）
+    ├── xunsearch_test.go       # XunSearch デーモンプロトコルのテスト（httptest スタブ）
+    ├── collection_test.go      # インメモリエンジンの振る舞いテスト（フィルタ / ソート / ページネーション / 埋め戻し）
+    ├── database_test.go        # SQL 生成とアサーション（assertSQL 完全一致）
+    ├── meilisearch_test.go     # Meilisearch リクエスト/パーステスト（httptest スタブ）
+    ├── typesense_test.go       # Typesense リクエスト/パーステスト（404 自動コレクション作成含む）
+    └── null_test.go            # NullEngine の空振る舞いテスト
 ```
 
 ## クイックスタート / 使い方
@@ -138,6 +173,7 @@ go get github.com/erikwang2013/go-scout
 | `SCOUT_PREFIX` | 空 | インデックスプレフィックス |
 | `SCOUT_QUEUE` | 無効 | 1 にすると非同期キューを有効化 |
 | `SCOUT_SOFT_DELETE` | 無効 | ソフトデリートメタデータをドキュメントとともにインデックスへ |
+| `SCOUT_IDENTIFY` | 無効 | 設定ツリー `identify`：誰が検索しているかをエンジンに伝える（algolia） |
 | `SCOUT_CHUNK_SEARCHABLE` / `SCOUT_CHUNK_UNSEARCHABLE` | `500` | 一括インポート/削除のチャンクサイズ |
 | `SCOUT_BULK_SIZE` | `100` | 一括書き込みサイズ（opensearch） |
 
@@ -146,10 +182,10 @@ go get github.com/erikwang2013/go-scout
 | エンジン | 環境変数（デフォルト） |
 |---|---|
 | meilisearch | `MEILISEARCH_HOST`（`http://127.0.0.1:7700`）、`MEILISEARCH_KEY` |
-| typesense | `TYPESENSE_HOST`（`127.0.0.1`）、`TYPESENSE_PORT`（`8108`）、`TYPESENSE_PROTOCOL`（`http`）、`TYPESENSE_API_KEY`（`xyz`）、`TYPESENSE_IMPORT_ACTION`（`upsert`）、`TYPESENSE_MAX_TOTAL_RESULTS`（`1000`） |
+| typesense | `TYPESENSE_HOST`（`127.0.0.1`）、`TYPESENSE_PORT`（`8108`）、`TYPESENSE_PROTOCOL`（`http`）、`TYPESENSE_API_KEY`（`xyz`）、`TYPESENSE_IMPORT_ACTION`（`upsert`）、`TYPESENSE_MAX_TOTAL_RESULTS`（`1000`）、`TYPESENSE_CONNECTION_TIMEOUT`（`2`） |
 | elasticsearch | `ELASTICSEARCH_HOST`（`http://127.0.0.1:9200`、hosts リストの先頭）+ `elasticsearch.auth`（user/password） |
-| opensearch | `OPENSEARCH_HTTP_HOST`（`https://127.0.0.1:6205`）、`OPENSEARCH_USERNAME` / `OPENSEARCH_PASSWORD`（`admin`/`admin`）、`OPENSEARCH_SSL_VERIFICATION`（デフォルトで TLS 検証をスキップ）、`OPENSEARCH_TIMEOUT`（`30` 秒） |
-| xunsearch | `XUNSEARCH_INDEX_HOST`（`127.0.0.1`）+ `XUNSEARCH_INDEX_PORT`（`8383`）、`XUNSEARCH_SEARCH_HOST` + `XUNSEARCH_SEARCH_PORT`（`8384`）、`XUNSEARCH_DEFAULT_INDEX`（`default`）、`XUNSEARCH_CHARSET`（`utf-8`） |
+| opensearch | `OPENSEARCH_HTTP_HOST`（`https://127.0.0.1:6205`）、`OPENSEARCH_USERNAME` / `OPENSEARCH_PASSWORD`（`admin`/`admin`）、`OPENSEARCH_SSL_VERIFICATION`（デフォルトで TLS 検証をスキップ）、`OPENSEARCH_TIMEOUT`（`30` 秒）、`OPENSEARCH_CONNECTION_TIMEOUT`（`10`） |
+| xunsearch | `XUNSEARCH_INDEX_HOST`（`http://127.0.0.1`）+ `XUNSEARCH_INDEX_PORT`（`8383`）、`XUNSEARCH_SEARCH_HOST`（`http://127.0.0.1`）+ `XUNSEARCH_SEARCH_PORT`（`8384`）、`XUNSEARCH_DEFAULT_INDEX`（`default`）、`XUNSEARCH_CHARSET`（`utf-8`）、`XUNSEARCH_CONFIG_PATH`、`XUNSEARCH_BATCH_SIZE`（`100`） |
 | algolia | `ALGOLIA_APP_ID`、`ALGOLIA_SECRET`（欠けているとエンジン構築時に panic） |
 
 `database` ドライバはさらに、注入されたデータベース接続と方言が必要です：
@@ -234,6 +270,7 @@ go run ./cmd/scout queue-import --chunk 3 --min 1 --max 100 --workers 4  # キ�
 go run ./cmd/scout sync-index-settings --driver meilisearch  # インデックス設定の同期（UpdateIndexSettings 対応エンジンのみ）
 go run ./cmd/scout delete-index posts           # 単一インデックス削除
 go run ./cmd/scout delete-all-indexes           # 全インデックス削除
+go run ./cmd/scout mascot                         # マスコットを表示（-svg でベクター版）
 ```
 
 ## ライセンスと注意事項
@@ -249,11 +286,11 @@ go run ./cmd/scout delete-all-indexes           # 全インデックス削除
 <tr>
 <td align="center">
 <b>微信支付（WeChat Pay）</b><br/>
-<img src="docs/weixinpay.png" width="130" height="130" alt="微信支付 QRコード"/>
+<img src="../../../docs/weixinpay.png" width="130" height="130" alt="微信支付 QRコード"/>
 </td>
 <td align="center">
 <b>支付宝（Alipay）</b><br/>
-<img src="docs/alipay.png" width="130" height="130" alt="支付宝 QRコード"/>
+<img src="../../../docs/alipay.png" width="130" height="130" alt="支付宝 QRコード"/>
 </td>
 </tr>
 </table>
@@ -265,16 +302,16 @@ go run ./cmd/scout delete-all-indexes           # 全インデックス削除
 
 | メインネット | ウォレットアドレス | QRコード |
 |---|---|---|
-| BNB Smart Chain (BEP20) | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="docs/coin/1.jpg" width="100" height="100" alt="BNB Smart Chain (BEP20) QRコード"/> |
-| Tron (TRC20) | `TEdDHWLajt1XvqtPDWmQctdrJaC3pzZZzz` | <img src="docs/coin/2.jpg" width="100" height="100" alt="Tron (TRC20) QRコード"/> |
-| Ethereum (ERC20) | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="docs/coin/3.jpg" width="100" height="100" alt="Ethereum (ERC20) QRコード"/> |
-| Aptos | `0x836e3780edfc3f7b2372b39e2a1a3a5d7adfaccd96c726f21cfde1b50dd68030` | <img src="docs/coin/4.jpg" width="100" height="100" alt="Aptos QRコード"/> |
-| Plasma | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="docs/coin/5.jpg" width="100" height="100" alt="Plasma QRコード"/> |
-| Polygon POS | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="docs/coin/6.jpg" width="100" height="100" alt="Polygon POS QRコード"/> |
-| Solana | `2hfhboHdmdrYsY25XfQSsEWxq5ip4EQsR7f4AzSRMUyr` | <img src="docs/coin/7.jpg" width="100" height="100" alt="Solana QRコード"/> |
-| The Open Network (TON) | `UQB9kFQohzmXUir9QSSZq01iwl9aQZIDdBpNmDklljRtCoGK` | <img src="docs/coin/8.jpg" width="100" height="100" alt="The Open Network (TON) QRコード"/> |
-| Arbitrum One | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="docs/coin/9.jpg" width="100" height="100" alt="Arbitrum One QRコード"/> |
-| AVAX C-Chain | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="docs/coin/10.jpg" width="100" height="100" alt="AVAX C-Chain QRコード"/> |
+| BNB Smart Chain (BEP20) | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="../../../docs/coin/1.jpg" width="100" height="100" alt="BNB Smart Chain (BEP20) QRコード"/> |
+| Tron (TRC20) | `TEdDHWLajt1XvqtPDWmQctdrJaC3pzZZzz` | <img src="../../../docs/coin/2.jpg" width="100" height="100" alt="Tron (TRC20) QRコード"/> |
+| Ethereum (ERC20) | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="../../../docs/coin/3.jpg" width="100" height="100" alt="Ethereum (ERC20) QRコード"/> |
+| Aptos | `0x836e3780edfc3f7b2372b39e2a1a3a5d7adfaccd96c726f21cfde1b50dd68030` | <img src="../../../docs/coin/4.jpg" width="100" height="100" alt="Aptos QRコード"/> |
+| Plasma | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="../../../docs/coin/5.jpg" width="100" height="100" alt="Plasma QRコード"/> |
+| Polygon POS | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="../../../docs/coin/6.jpg" width="100" height="100" alt="Polygon POS QRコード"/> |
+| Solana | `2hfhboHdmdrYsY25XfQSsEWxq5ip4EQsR7f4AzSRMUyr` | <img src="../../../docs/coin/7.jpg" width="100" height="100" alt="Solana QRコード"/> |
+| The Open Network (TON) | `UQB9kFQohzmXUir9QSSZq01iwl9aQZIDdBpNmDklljRtCoGK` | <img src="../../../docs/coin/8.jpg" width="100" height="100" alt="The Open Network (TON) QRコード"/> |
+| Arbitrum One | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="../../../docs/coin/9.jpg" width="100" height="100" alt="Arbitrum One QRコード"/> |
+| AVAX C-Chain | `0x355d429f97511897ccb4e271ec888205f9ab6629` | <img src="../../../docs/coin/10.jpg" width="100" height="100" alt="AVAX C-Chain QRコード"/> |
 
 ### 海外送金（銀行振込）
 

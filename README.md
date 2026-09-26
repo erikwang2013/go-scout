@@ -1,7 +1,11 @@
+<p align="center">
+  <img src="docs/logo.svg" alt="go-scout · 完整项目宠物小侦 Scouty" width="460"/>
+</p>
+
 # go-scout
 
 > 用 Go 编写的搜索同步库 —— Laravel Scout 的 Go 移植（基于 PHP 插件 [webman-scout](https://github.com/shopwwi/webman-scout)）。
-> Go 1.24 · 纯标准库实现，零第三方依赖 · 版本 v1.2.0
+> Go 1.24 · 纯标准库实现，零第三方依赖 · 版本 v1.3.0
 
 **Languages / 语言**: [中文](README.md) · [English](docs/i18n/en/README.md) · [한국어](docs/i18n/ko/README.md) · [Русский](docs/i18n/ru/README.md) · [Deutsch](docs/i18n/de/README.md) · [Français](docs/i18n/fr/README.md) · [Español](docs/i18n/es/README.md) · [Português](docs/i18n/pt/README.md) · [हिन्दी](docs/i18n/hi/README.md) · [العربية](docs/i18n/ar/README.md) · [বাংলা](docs/i18n/bn/README.md) · [Bahasa Indonesia](docs/i18n/id/README.md) · [日本語](docs/i18n/ja/README.md)
 
@@ -31,7 +35,33 @@ go-scout 解决的是"模型与搜索引擎之间的同步"问题：让实现 `s
 - **algolia** —— REST 查询，v3 / v4 两个版本
 - **xunsearch** —— HTTP 守护进程协议（索引端 + 搜索端）
 
-连同 `advanced_*` 别名，`engines.Register` 一共注册 15 个驱动名（见 [engines/register.go](engines/register.go)）。
+连同 `advanced_*` 别名，`engines.Register` 一共注册 16 个驱动名（见 [engines/register.go](engines/register.go)）。
+
+## 项目宠物 · 小侦 Scouty
+
+<p align="center">
+  <img src="docs/mascot.svg" alt="go-scout 项目宠物：小侦 Scouty" width="210"/>
+</p>
+
+**小侦（Scouty）** 是 go-scout 的搜索小侦——一只戴着放大镜风镜、系着侦察兵领巾的探针。它是照着这个库的职责画出来的，每个零件都对应代码里的一层：
+
+| 小侦的零件 | 对应实现 | 说明 |
+|---|---|---|
+| 放大镜风镜 | `scout.Builder`（查询层） | 只负责看清"要找什么"：`Where` / `OrderBy` / 向量 / 地理条件最终都编译进这只镜头 |
+| 天线与检索信号 | `EngineManager`（多引擎广播） | 一次查询、16 个驱动名任选；`Driver(name)` 惰性创建并缓存 |
+| 侦察兵领巾 | `ModelObserver`（同步层） | 保存即同步：`Saved` / `Deleted` / `Restored` 自动写入或移出索引 |
+| 领巾的结 | `EventBus` | 同步完成后的 `models_imported` / `models_flushed` 事件 |
+| 手里的文档卡片 | `ScoutModel`（文档） | `ToSearchableArray()` 之后的文档；卡片角上的色块就是主键字段（`KeyString`） |
+| 脚下的影子 | `Source[T]`（数据源） | 模型站在数据源上：`All` / `ByIDs` / `Count` |
+
+配色沿用文档插图的纸感底色（`#f4f3ee` / `#4a4a4a`），只加了一支 `#2f6f6a` 强调色，与架构 / 功能 / 设计 / 生命周期四张图同族。
+
+小侦也住进了代码里：
+
+- [mascot.go](mascot.go) —— `scout.MascotName` / `scout.MascotSVG` / `scout.MascotASCII`，宠物本体随库分发，可直接写进网页、报告或生成的资源文件
+- `go run ./cmd/scout mascot` —— 终端里的小侦（加 `-svg` 打印矢量版）；不带参数运行 CLI 时也会先打招呼
+- [docs/logo.svg](docs/logo.svg) —— 主视觉（完整小侦 + 字标），README 最前面用的就是它
+- `mascot_test.go` —— 守住两件事：内嵌 SVG 与 `docs/mascot.svg` 永远一致，以及 `docs/` 下全部 SVG（含 12 种语言）都是合法 XML
 
 ## 架构设计
 
@@ -55,7 +85,7 @@ go-scout 解决的是"模型与搜索引擎之间的同步"问题：让实现 `s
 - **软删除** —— 索引文档写入 `__soft_deleted` 元数据（0/1）；`OnlyTrashed` / `WithTrashed` 查询过滤；database 引擎走 `deleted_at` 列。
 - **异步队列** —— 进程内队列（`chan` 缓冲 4096 + 工作协程），`SCOUT_QUEUE=1` 开启；队列不可用时同步回退并告警；`MakeAllSearchable` 按 chunk 分块导入（默认 500 条/块）。
 - **事件与观察者** —— `ModelObserver` 监听 `Saved` / `Deleted` / `Restored` 自动同步；`EventBus` 发布 `scout.models_imported`、`scout.models_flushed`；`WithoutSyncingToSearch` 临时禁用同步。
-- **多引擎注册** —— `Manager.Extend` + `engines.Register` 注册 15 个驱动名，驱动惰性创建并缓存；未知驱动返回 `scout.ErrNotSupported`；切换引擎只改 `SCOUT_DRIVER` 配置。
+- **多引擎注册** —— `Manager.Extend` + `engines.Register` 注册 16 个驱动名，驱动惰性创建并缓存；未知驱动返回 `scout.ErrNotSupported`；切换引擎只改 `SCOUT_DRIVER` 配置。
 
 ## 设计思路
 
@@ -78,46 +108,60 @@ go-scout 解决的是"模型与搜索引擎之间的同步"问题：让实现 `s
 
 ```
 go-scout/
-├── go.mod                  # 模块定义：github.com/erikwang2013/go-scout · go 1.24.1 · 零依赖
-├── .gitignore              # IDE / 缓存 / 密钥类文件忽略
-├── scout.go                # Scout 门面：Config / Manager / Events / Queue / Observer 组装与工厂
-├── config.go               # 配置树：DefaultConfig + 环境变量覆盖 + dot-path 取值
-├── engine.go               # Engine / AdvancedEngine 接口 + Result / Hit / PaginationResult 类型
-├── manager.go              # EngineManager：Extend 注册、Driver 惰性创建缓存、默认 null 引擎
-├── builder.go              # Builder 结构 + 链式条件构建（Where / OrderBy / Take / 高级条件）
-├── builder_search.go       # 查询执行：Raw / Get / First / Paginate / Cursor / GetAs[T]
-├── searchable.go           # Searchable：模型与数据源绑定、全量导入导出、软删除元数据
-├── observer.go             # ModelObserver：Saved / Deleted / Restored 自动同步
-├── events.go               # EventBus：同步线程安全发布订阅 + 导入/清空事件
-├── queue.go                # Queue：进程内异步队列（chan 4096）+ 同步回退
-├── model.go                # ScoutModel 接口 + 可选扩展接口 + KeyName/KeyString 等辅助
-├── source.go               # Source[T] 接口 + MemorySource（线性扫描）
-├── exceptions.go           # ErrNotSupported / ErrScout 错误体系
-├── cmd/scout/main.go       # CLI 演示程序：import / flush / index / queue-import 等 7 个子命令
+├── go.mod                      # 模块定义：github.com/erikwang2013/go-scout · go 1.24.1 · 零依赖
+├── .gitignore                  # IDE / 缓存 / 密钥类文件忽略
+├── scout.go                    # Scout 门面：Config / Manager / Events / Queue / Observer 组装与工厂
+├── config.go                   # 配置树：DefaultConfig + 环境变量覆盖 + dot-path 取值
+├── engine.go                   # Engine / AdvancedEngine 接口 + Result / Hit / PaginationResult 类型
+├── manager.go                  # EngineManager：Extend 注册、Driver 惰性创建缓存、默认 null 引擎
+├── builder.go                  # Builder 结构 + 链式条件构建（Where / OrderBy / Take / 高级条件）
+├── builder_search.go           # 查询执行：Raw / Get / First / Paginate / Cursor / GetAs[T]
+├── searchable.go               # Searchable：模型与数据源绑定、全量导入导出、软删除元数据
+├── observer.go                 # ModelObserver：Saved / Deleted / Restored 自动同步
+├── events.go                   # EventBus：同步线程安全发布订阅 + 导入/清空事件
+├── queue.go                    # Queue：进程内异步队列（chan 4096）+ 同步回退
+├── model.go                    # ScoutModel 接口 + 可选扩展接口 + KeyName/KeyString 等辅助
+├── source.go                   # Source[T] 接口 + MemorySource（线性扫描）
+├── exceptions.go               # ErrNotSupported / ErrScout 错误体系
+├── mascot.go                   # 项目宠物小侦：MascotName / MascotSVG / MascotASCII
+├── mascot_test.go              # 内嵌 SVG 与 docs/mascot.svg 一致性 + docs/ 全部 SVG 合法性
+├── cmd/scout/main.go           # CLI 演示程序：import / flush / index / queue-import 等 8 个子命令
 ├── engines/
-│   ├── engine.go           # HTTP 客户端（认证、TLS 跳过）+ DoJSON/DoBytes 共用辅助
-│   ├── register.go         # SetDatabase + Register 注册 15 个驱动名 + Drivers()
-│   ├── dsl.go              # DSL 中间表示：bool 查询 / 排序 / 聚合 / 分面 / 高亮
-│   ├── null.go             # NullEngine：空实现
-│   ├── collection.go       # CollectionEngine：内存搜索（大小写不敏感子串匹配）
-│   ├── database.go         # DatabaseEngine：表即索引 SQL（LIKE/ILIKE + pgsql tsvector）
-│   ├── elasticsearch.go    # ElasticsearchEngine + 与 OpenSearch 共享的 es* 辅助
-│   ├── opensearch.go       # OpenSearchEngine（基础驱动即高级引擎）
-│   ├── meilisearch.go      # MeilisearchEngine：过滤 / 排序 / 向量混合 / 分面
-│   ├── typesense.go        # TypesenseEngine：filter_by / 聚合 / 分组 / 近邻搜索
-│   ├── algolia.go          # AlgoliaEngine：v3/v4 单结构 + 版本标志
-│   └── xunsearch.go        # XunSearchEngine：索引守护进程 + 搜索守护进程
-├── docs/
-│   ├── arch.svg            # 架构分层图
-│   ├── features.svg        # 功能特性图
-│   ├── design.svg          # 设计思路图
-│   └── lifecycle.svg       # 搜索生命周期流程图
-└── engines/
-    ├── collection_test.go  # 内存引擎行为测试（过滤 / 排序 / 分页 / 回填）
-    ├── database_test.go    # SQL 生成与断言（assertSQL 精确匹配）
-    ├── meilisearch_test.go # Meilisearch 请求/解析测试（httptest 桩）
-    ├── typesense_test.go   # Typesense 请求/解析测试（含 404 自动建集合）
-    └── null_test.go        # NullEngine 空行为测试
+│   ├── engine.go               # HTTP 客户端（认证、TLS 跳过）+ DoJSON/DoBytes 共用辅助
+│   ├── register.go             # SetDatabase + Register 注册 16 个驱动名 + Drivers()
+│   ├── dsl.go                  # DSL 中间表示：bool 查询 / 排序 / 聚合 / 分面 / 高亮
+│   ├── null.go                 # NullEngine：空实现
+│   ├── collection.go           # CollectionEngine：内存搜索（大小写不敏感子串匹配）
+│   ├── database.go             # DatabaseEngine：表即索引 SQL（LIKE/ILIKE + pgsql tsvector）
+│   ├── elasticsearch.go        # ElasticsearchEngine + 与 OpenSearch 共享的 es* 辅助
+│   ├── opensearch.go           # OpenSearchEngine（基础驱动即高级引擎）
+│   ├── meilisearch.go          # MeilisearchEngine：过滤 / 排序 / 向量混合 / 分面
+│   ├── meilisearch_advanced.go # Meilisearch 高级引擎：向量 / 混合搜索扩展
+│   ├── typesense.go            # TypesenseEngine：filter_by / 聚合 / 分组 / 近邻搜索
+│   ├── typesense_advanced.go   # Typesense 高级引擎：检索参数 / 聚合 / 向量扩展
+│   ├── algolia.go              # AlgoliaEngine：v3/v4 单结构 + 版本标志
+│   ├── xunsearch.go            # XunSearchEngine：索引守护进程 + 搜索守护进程
+│   ├── xunsearch_advanced.go   # XunSearch 高级引擎：高级条件 / 分面扩展
+│   ├── algolia_test.go         # Algolia 过滤字面量测试（algoliaLit / algoliaFilters）
+│   ├── elasticsearch_test.go   # Elasticsearch 请求/解析测试（httptest 桩）
+│   ├── opensearch_test.go      # OpenSearch 请求/解析测试（httptest 桩）
+│   ├── xunsearch_test.go       # XunSearch 守护进程协议测试（httptest 桩）
+│   ├── collection_test.go      # 内存引擎行为测试（过滤 / 排序 / 分页 / 回填）
+│   ├── database_test.go        # SQL 生成与断言（assertSQL 精确匹配）
+│   ├── meilisearch_test.go     # Meilisearch 请求/解析测试（httptest 桩）
+│   ├── typesense_test.go       # Typesense 请求/解析测试（含 404 自动建集合）
+│   └── null_test.go            # NullEngine 空行为测试
+└── docs/
+    ├── logo.svg                # 主视觉：完整小侦 + go-scout 字标
+    ├── mascot.svg              # 项目宠物小侦 Scouty（同一份图内嵌于 mascot.go）
+    ├── alipay.png              # 支付宝收款码（打赏部分引用）
+    ├── weixinpay.png           # 微信支付收款码（打赏部分引用）
+    ├── coin/                   # 各链收款二维码（10 张 jpg）
+    ├── arch.svg                # 架构分层图
+    ├── features.svg            # 功能特性图
+    ├── design.svg              # 设计思路图
+    ├── lifecycle.svg           # 搜索生命周期流程图
+    └── i18n/<lang>/            # 12 种语言的 README 与对应翻译版四张插图
 ```
 
 ## 快速开始 / 使用说明
@@ -140,6 +184,7 @@ go get github.com/erikwang2013/go-scout
 | `SCOUT_PREFIX` | 空 | 索引前缀 |
 | `SCOUT_QUEUE` | 关 | 置 1 开启异步队列 |
 | `SCOUT_SOFT_DELETE` | 关 | 软删除元数据随文档写入索引 |
+| `SCOUT_IDENTIFY` | 关 | 配置树 `identify`：告知搜索引擎是谁在检索（algolia） |
 | `SCOUT_CHUNK_SEARCHABLE` / `SCOUT_CHUNK_UNSEARCHABLE` | `500` | 批量导入/移除的块大小 |
 | `SCOUT_BULK_SIZE` | `100` | 批量写入大小（opensearch） |
 
@@ -148,10 +193,10 @@ go get github.com/erikwang2013/go-scout
 | 引擎 | 环境变量（默认值） |
 |---|---|
 | meilisearch | `MEILISEARCH_HOST`（`http://127.0.0.1:7700`）、`MEILISEARCH_KEY` |
-| typesense | `TYPESENSE_HOST`（`127.0.0.1`）、`TYPESENSE_PORT`（`8108`）、`TYPESENSE_PROTOCOL`（`http`）、`TYPESENSE_API_KEY`（`xyz`）、`TYPESENSE_IMPORT_ACTION`（`upsert`）、`TYPESENSE_MAX_TOTAL_RESULTS`（`1000`） |
+| typesense | `TYPESENSE_HOST`（`127.0.0.1`）、`TYPESENSE_PORT`（`8108`）、`TYPESENSE_PROTOCOL`（`http`）、`TYPESENSE_API_KEY`（`xyz`）、`TYPESENSE_IMPORT_ACTION`（`upsert`）、`TYPESENSE_MAX_TOTAL_RESULTS`（`1000`）、`TYPESENSE_CONNECTION_TIMEOUT`（`2`） |
 | elasticsearch | `ELASTICSEARCH_HOST`（`http://127.0.0.1:9200`，取 hosts 列表首项）+ `elasticsearch.auth`（user/password） |
-| opensearch | `OPENSEARCH_HTTP_HOST`（`https://127.0.0.1:6205`）、`OPENSEARCH_USERNAME` / `OPENSEARCH_PASSWORD`（`admin`/`admin`）、`OPENSEARCH_SSL_VERIFICATION`（默认跳过 TLS 校验）、`OPENSEARCH_TIMEOUT`（`30` 秒） |
-| xunsearch | `XUNSEARCH_INDEX_HOST`（`127.0.0.1`）+ `XUNSEARCH_INDEX_PORT`（`8383`）、`XUNSEARCH_SEARCH_HOST` + `XUNSEARCH_SEARCH_PORT`（`8384`）、`XUNSEARCH_DEFAULT_INDEX`（`default`）、`XUNSEARCH_CHARSET`（`utf-8`） |
+| opensearch | `OPENSEARCH_HTTP_HOST`（`https://127.0.0.1:6205`）、`OPENSEARCH_USERNAME` / `OPENSEARCH_PASSWORD`（`admin`/`admin`）、`OPENSEARCH_SSL_VERIFICATION`（默认跳过 TLS 校验）、`OPENSEARCH_TIMEOUT`（`30` 秒）、`OPENSEARCH_CONNECTION_TIMEOUT`（`10`） |
+| xunsearch | `XUNSEARCH_INDEX_HOST`（`http://127.0.0.1`）+ `XUNSEARCH_INDEX_PORT`（`8383`）、`XUNSEARCH_SEARCH_HOST`（`http://127.0.0.1`）+ `XUNSEARCH_SEARCH_PORT`（`8384`）、`XUNSEARCH_DEFAULT_INDEX`（`default`）、`XUNSEARCH_CHARSET`（`utf-8`）、`XUNSEARCH_CONFIG_PATH`、`XUNSEARCH_BATCH_SIZE`（`100`） |
 | algolia | `ALGOLIA_APP_ID`、`ALGOLIA_SECRET`（缺失时构造引擎直接 panic） |
 
 `database` 驱动还需注入数据库连接与方言：
@@ -236,7 +281,10 @@ go run ./cmd/scout queue-import --chunk 3 --min 1 --max 100 --workers 4  # 按�
 go run ./cmd/scout sync-index-settings --driver meilisearch  # 同步索引设置（需引擎实现 UpdateIndexSettings）
 go run ./cmd/scout delete-index posts           # 删除单个索引
 go run ./cmd/scout delete-all-indexes           # 删除全部索引
+go run ./cmd/scout mascot                       # 打印项目宠物小侦（-svg 输出矢量图）
 ```
+
+不带参数运行 `go run ./cmd/scout` 时，小侦会先出现在用法说明上方。
 
 ## 许可与说明
 

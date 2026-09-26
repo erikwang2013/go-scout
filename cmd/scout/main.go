@@ -91,6 +91,8 @@ func main() {
 		doSyncIndexSettings(ctx, s, args)
 	case "delete-all-indexes":
 		doDeleteAllIndexes(ctx, s)
+	case "mascot":
+		doMascot(args)
 	default:
 		usage()
 		os.Exit(2)
@@ -344,13 +346,30 @@ func intKeys(models []scout.ScoutModel) []int {
 	return out
 }
 
+// doMascot prints the project mascot: ASCII by default so it survives any
+// terminal, SVG on request for docs and embedding.
+func doMascot(args []string) {
+	fs := flag.NewFlagSet("mascot", flag.ContinueOnError)
+	svg := fs.Bool("svg", false, "print the mascot as SVG (docs/mascot.svg) instead of ASCII")
+	fs.Parse(args)
+	if *svg {
+		fmt.Print(scout.MascotSVG)
+		return
+	}
+	fmt.Println(scout.MascotASCII)
+	fmt.Println()
+	fmt.Println(scout.MascotName, "-", scout.MascotTagline)
+}
+
 func fatal(err error) {
 	fmt.Fprintln(os.Stderr, "error:", err)
 	os.Exit(1)
 }
 
 func usage() {
-	fmt.Fprintln(os.Stderr, `go-scout v`+scout.Version+`
+	fmt.Fprintln(os.Stderr, scout.MascotASCII+`
+
+go-scout v`+scout.Version+`
 
 Usage: scout <command> [args]
 
@@ -363,6 +382,7 @@ Commands:
                                              import key ranges via queued jobs
   sync-index-settings [--driver <name>]      sync configured index settings
   delete-all-indexes                         drop every index
+  mascot [--svg]                             print the project mascot
 
 The demo runs the in-memory "collection" engine over MemorySource seeded with
 7 posts. Try:
