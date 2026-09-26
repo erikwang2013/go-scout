@@ -117,6 +117,7 @@ go-scout/
 ├── model.go                    # ScoutModel インターフェース + オプション拡張インターフェース + KeyName/KeyString ヘルパー
 ├── source.go                   # Source[T] インターフェース + MemorySource（線形スキャン）
 ├── exceptions.go               # エラー体系 ErrNotSupported / ErrScout
+├── identity.go                 # アイデンティティ伝達: `scout.WithUser` / `scout.WithClientIP`（Algolia identify 用）
 ├── mascot.go                   # マスコット Scouty: MascotName / MascotSVG / MascotASCII
 ├── mascot_test.go              # 内蔵 SVG と docs/mascot.svg の一致 + docs/ の全 SVG 検証
 ├── cmd/scout/main.go           # CLI デモ: import / flush / index / queue-import ほか計 8 サブコマンド
@@ -178,7 +179,7 @@ go get github.com/erikwang2013/go-scout
 | `SCOUT_PREFIX` | 空 | インデックスプレフィックス |
 | `SCOUT_QUEUE` | 無効 | 1 にすると非同期キューを有効化 |
 | `SCOUT_SOFT_DELETE` | 無効 | ソフトデリートメタデータをドキュメントとともにインデックスへ |
-| `SCOUT_IDENTIFY` | 無効 | 設定ツリー `identify`：誰が検索しているかをエンジンに伝える（algolia） |
+| `SCOUT_IDENTIFY` | 無効 | 有効にすると「誰が検索しているか」を Algolia に伝えます：`X-Algolia-UserToken`（`scout.WithUser` のユーザー主キー）と `X-Forwarded-For`（`scout.WithClientIP`、公開 IP のみ） |
 | `SCOUT_CHUNK_SEARCHABLE` / `SCOUT_CHUNK_UNSEARCHABLE` | `500` | 一括インポート/削除のチャンクサイズ |
 | `SCOUT_BULK_SIZE` | `100` | 一括書き込みサイズ（opensearch） |
 
@@ -190,7 +191,7 @@ go get github.com/erikwang2013/go-scout
 | typesense | `TYPESENSE_HOST`（`127.0.0.1`）、`TYPESENSE_PORT`（`8108`）、`TYPESENSE_PROTOCOL`（`http`）、`TYPESENSE_API_KEY`（`xyz`）、`TYPESENSE_IMPORT_ACTION`（`upsert`）、`TYPESENSE_MAX_TOTAL_RESULTS`（`1000`）、`TYPESENSE_CONNECTION_TIMEOUT`（`2`） |
 | elasticsearch | `ELASTICSEARCH_HOST`（`http://127.0.0.1:9200`、hosts リストの先頭）+ `elasticsearch.auth`（user/password） |
 | opensearch | `OPENSEARCH_HTTP_HOST`（`https://127.0.0.1:6205`）、`OPENSEARCH_USERNAME` / `OPENSEARCH_PASSWORD`（`admin`/`admin`）、`OPENSEARCH_SSL_VERIFICATION`（デフォルトで TLS 検証をスキップ）、`OPENSEARCH_TIMEOUT`（`30` 秒）、`OPENSEARCH_CONNECTION_TIMEOUT`（`10`） |
-| xunsearch | `XUNSEARCH_INDEX_HOST`（`http://127.0.0.1`）+ `XUNSEARCH_INDEX_PORT`（`8383`）、`XUNSEARCH_SEARCH_HOST`（`http://127.0.0.1`）+ `XUNSEARCH_SEARCH_PORT`（`8384`）、`XUNSEARCH_DEFAULT_INDEX`（`default`）、`XUNSEARCH_CHARSET`（`utf-8`）、`XUNSEARCH_CONFIG_PATH`、`XUNSEARCH_BATCH_SIZE`（`100`） |
+| xunsearch | `XUNSEARCH_INDEX_HOST`（`http://127.0.0.1`）+ `XUNSEARCH_INDEX_PORT`（`8383`）、`XUNSEARCH_SEARCH_HOST`（`http://127.0.0.1`）+ `XUNSEARCH_SEARCH_PORT`（`8384`）、`XUNSEARCH_DEFAULT_INDEX`（`default`）、`XUNSEARCH_CHARSET`（`utf-8`）、`XUNSEARCH_CONFIG_PATH`（空 = 上記のホスト/ポート。設定時は `<パス>/<インデックス名>.ini` からプロジェクト名・デーモン・文字セットを取得）、`XUNSEARCH_BATCH_SIZE`（`100`） |
 | algolia | `ALGOLIA_APP_ID`、`ALGOLIA_SECRET`（欠けているとエンジン構築時に panic） |
 
 `database` ドライバはさらに、注入されたデータベース接続と方言が必要です：

@@ -117,6 +117,7 @@ go-scout/
 ├── model.go                    # ScoutModel इंटरफ़ेस + वैकल्पिक एक्सटेंशन इंटरफ़ेस + KeyName/KeyString हेल्पर
 ├── source.go                   # Source[T] इंटरफ़ेस + MemorySource (रैखिक स्कैन)
 ├── exceptions.go               # त्रुटि प्रणाली ErrNotSupported / ErrScout
+├── identity.go                 # पहचान: `scout.WithUser` / `scout.WithClientIP` (Algolia identify हेतु)
 ├── mascot.go                   # मैस्कॉट Scouty: MascotName / MascotSVG / MascotASCII
 ├── mascot_test.go              # एम्बेडेड SVG बनाम docs/mascot.svg + docs/ के सभी SVG की जाँच
 ├── cmd/scout/main.go           # CLI डेमो: import / flush / index / queue-import आदि कुल 8 उपकमांड
@@ -178,7 +179,7 @@ go get github.com/erikwang2013/go-scout
 | `SCOUT_PREFIX` | खाली | इंडेक्स उपसर्ग |
 | `SCOUT_QUEUE` | बंद | `1` एसिंक कतार चालू करता है |
 | `SCOUT_SOFT_DELETE` | बंद | सॉफ्ट-डिलीट मेटाडेटा डॉक्यूमेंट के साथ इंडेक्स में लिखा जाता है |
-| `SCOUT_IDENTIFY` | बंद | कॉन्फ़िग ट्री `identify`: इंजिन को बताता है कि कौन खोज रहा है (algolia) |
+| `SCOUT_IDENTIFY` | बंद | चालू होने पर "कौन खोज रहा है" Algolia को भेजता है: `X-Algolia-UserToken` (`scout.WithUser` की कुंजी) और `X-Forwarded-For` (`scout.WithClientIP`, केवल सार्वजनिक IP) |
 | `SCOUT_CHUNK_SEARCHABLE` / `SCOUT_CHUNK_UNSEARCHABLE` | `500` | बल्क इम्पोर्ट/डिलीट का चंक आकार |
 | `SCOUT_BULK_SIZE` | `100` | बल्क राइट आकार (opensearch) |
 
@@ -190,7 +191,7 @@ go get github.com/erikwang2013/go-scout
 | typesense | `TYPESENSE_HOST` (`127.0.0.1`), `TYPESENSE_PORT` (`8108`), `TYPESENSE_PROTOCOL` (`http`), `TYPESENSE_API_KEY` (`xyz`), `TYPESENSE_IMPORT_ACTION` (`upsert`), `TYPESENSE_MAX_TOTAL_RESULTS` (`1000`), `TYPESENSE_CONNECTION_TIMEOUT` (`2`) |
 | elasticsearch | `ELASTICSEARCH_HOST` (`http://127.0.0.1:9200`, hosts सूची का पहला तत्व) + `elasticsearch.auth` (user/password) |
 | opensearch | `OPENSEARCH_HTTP_HOST` (`https://127.0.0.1:6205`), `OPENSEARCH_USERNAME` / `OPENSEARCH_PASSWORD` (`admin`/`admin`), `OPENSEARCH_SSL_VERIFICATION` (डिफ़ॉल्ट रूप से TLS जाँच बंद), `OPENSEARCH_TIMEOUT` (`30` सेकंड), `OPENSEARCH_CONNECTION_TIMEOUT` (`10`) |
-| xunsearch | `XUNSEARCH_INDEX_HOST` (`http://127.0.0.1`) + `XUNSEARCH_INDEX_PORT` (`8383`), `XUNSEARCH_SEARCH_HOST` (`http://127.0.0.1`) + `XUNSEARCH_SEARCH_PORT` (`8384`), `XUNSEARCH_DEFAULT_INDEX` (`default`), `XUNSEARCH_CHARSET` (`utf-8`), `XUNSEARCH_CONFIG_PATH`, `XUNSEARCH_BATCH_SIZE` (`100`) |
+| xunsearch | `XUNSEARCH_INDEX_HOST` (`http://127.0.0.1`) + `XUNSEARCH_INDEX_PORT` (`8383`), `XUNSEARCH_SEARCH_HOST` (`http://127.0.0.1`) + `XUNSEARCH_SEARCH_PORT` (`8384`), `XUNSEARCH_DEFAULT_INDEX` (`default`), `XUNSEARCH_CHARSET` (`utf-8`), `XUNSEARCH_CONFIG_PATH` (खाली = ऊपर के होस्ट; सेट होने पर `<पथ>/<इंडेक्स>.ini` से प्रोजेक्ट नाम, डेमन और charset), `XUNSEARCH_BATCH_SIZE` (`100`) |
 | algolia | `ALGOLIA_APP_ID`, `ALGOLIA_SECRET` (अनुपस्थित होने पर इंजन कंस्ट्रक्टर panic करता है) |
 
 `database` ड्राइवर को DB कनेक्शन और डायलेक्ट भी चाहिए:

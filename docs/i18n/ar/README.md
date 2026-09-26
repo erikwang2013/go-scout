@@ -121,6 +121,7 @@ go-scout/
 ├── model.go                    # واجهة ScoutModel + واجهات التمديد الاختيارية + أدوات KeyName/KeyString
 ├── source.go                   # واجهة Source[T] + MemorySource (مسح خطي)
 ├── exceptions.go               # نظام الأخطاء ErrNotSupported / ErrScout
+├── identity.go                 # الهوية: `scout.WithUser` / `scout.WithClientIP` (لـ Algolia identify)
 ├── mascot.go                   # تميمة Scouty: MascotName / MascotSVG / MascotASCII
 ├── mascot_test.go              # مطابقة SVG المضمّن مع docs/mascot.svg + فحص كل ملفات SVG في docs/
 ├── cmd/scout/main.go           # CLI تجريبي: import / flush / index / queue-import إلخ، 8 أوامر فرعية إجمالًا
@@ -190,7 +191,7 @@ go get github.com/erikwang2013/go-scout
 | `SCOUT_PREFIX` | فارغ | بادئة الفهرس |
 | `SCOUT_QUEUE` | معطّل | `1` يفعّل قائمة الانتظار غير المتزامنة |
 | `SCOUT_SOFT_DELETE` | معطّل | كتابة بيانات الحذف الناعم الوصفية مع المستند في الفهرس |
-| `SCOUT_IDENTIFY` | معطّل | شجرة الإعدادات `identify`: تخبر المحرك بمن يبحث (algolia) |
+| `SCOUT_IDENTIFY` | متوقف | عند التفعيل يمرّر «مَن يبحث» إلى Algolia: `X-Algolia-UserToken` (المفتاح من `scout.WithUser`) و`X-Forwarded-For` (من `scout.WithClientIP`، عناوين عامة فقط) |
 | `SCOUT_CHUNK_SEARCHABLE` / `SCOUT_CHUNK_UNSEARCHABLE` | `500` | حجم الدفعة للاستيراد/الحذف المجمّع |
 | `SCOUT_BULK_SIZE` | `100` | حجم الكتابة المجمّعة (opensearch) |
 
@@ -206,7 +207,7 @@ go get github.com/erikwang2013/go-scout
 | typesense | `TYPESENSE_HOST` (`127.0.0.1`)، `TYPESENSE_PORT` (`8108`)، `TYPESENSE_PROTOCOL` (`http`)، `TYPESENSE_API_KEY` (`xyz`)، `TYPESENSE_IMPORT_ACTION` (`upsert`)، `TYPESENSE_MAX_TOTAL_RESULTS` (`1000`)، `TYPESENSE_CONNECTION_TIMEOUT` (`2`) |
 | elasticsearch | `ELASTICSEARCH_HOST` (`http://127.0.0.1:9200`، العنصر الأول في قائمة hosts) + `elasticsearch.auth` (user/password) |
 | opensearch | `OPENSEARCH_HTTP_HOST` (`https://127.0.0.1:6205`)، `OPENSEARCH_USERNAME` / `OPENSEARCH_PASSWORD` (`admin`/`admin`)، `OPENSEARCH_SSL_VERIFICATION` (تعطيل التحقق من TLS افتراضيًا)، `OPENSEARCH_TIMEOUT` (`30` ثانية)، `OPENSEARCH_CONNECTION_TIMEOUT` (`10`) |
-| xunsearch | `XUNSEARCH_INDEX_HOST` (`http://127.0.0.1`) + `XUNSEARCH_INDEX_PORT` (`8383`)، `XUNSEARCH_SEARCH_HOST` (`http://127.0.0.1`) + `XUNSEARCH_SEARCH_PORT` (`8384`)، `XUNSEARCH_DEFAULT_INDEX` (`default`)، `XUNSEARCH_CHARSET` (`utf-8`)، `XUNSEARCH_CONFIG_PATH`، `XUNSEARCH_BATCH_SIZE` (`100`) |
+| xunsearch | `XUNSEARCH_INDEX_HOST` (`http://127.0.0.1`) + `XUNSEARCH_INDEX_PORT` (`8383`)، `XUNSEARCH_SEARCH_HOST` (`http://127.0.0.1`) + `XUNSEARCH_SEARCH_PORT` (`8384`)، `XUNSEARCH_DEFAULT_INDEX` (`default`)، `XUNSEARCH_CHARSET` (`utf-8`)، `XUNSEARCH_CONFIG_PATH` (فارغ = المضيفان أعلاه؛ وعند تعيينه يوفّر `<المسار>/<الفهرس>.ini` اسم المشروع والخوادم والترميز)، `XUNSEARCH_BATCH_SIZE` (`100`) |
 | algolia | `ALGOLIA_APP_ID`، `ALGOLIA_SECRET` (عند غيابهما ينهار مُنشئ المحرك مع panic) |
 
 </div>

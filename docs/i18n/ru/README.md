@@ -117,6 +117,7 @@ go-scout/
 ├── model.go                    # Интерфейс ScoutModel + опциональные расширения + помощники KeyName/KeyString
 ├── source.go                   # Интерфейс Source[T] + MemorySource (линейный перебор)
 ├── exceptions.go               # Система ошибок ErrNotSupported / ErrScout
+├── identity.go                 # Передача идентичности: `scout.WithUser` / `scout.WithClientIP` (для Algolia identify)
 ├── mascot.go                   # Талисман Scouty: MascotName / MascotSVG / MascotASCII
 ├── mascot_test.go              # Встроенный SVG против docs/mascot.svg + разбор всех SVG в docs/
 ├── cmd/scout/main.go           # Демонстрационный CLI: import / flush / index / queue-import и др., всего 8 подкоманд
@@ -178,7 +179,7 @@ go get github.com/erikwang2013/go-scout
 | `SCOUT_PREFIX` | пусто | Префикс индекса |
 | `SCOUT_QUEUE` | выкл | `1` включает асинхронную очередь |
 | `SCOUT_SOFT_DELETE` | выкл | Метаданные мягкого удаления записываются в индекс вместе с документом |
-| `SCOUT_IDENTIFY` | выкл | Дерево конфигурации `identify`: сообщает движку, кто ищет (algolia) |
+| `SCOUT_IDENTIFY` | выкл | включает передачу того, «кто ищет», в Algolia: `X-Algolia-UserToken` (ключ из `scout.WithUser`) и `X-Forwarded-For` (из `scout.WithClientIP`, только публичные IP) |
 | `SCOUT_CHUNK_SEARCHABLE` / `SCOUT_CHUNK_UNSEARCHABLE` | `500` | Размер блока при массовом импорте/удалении |
 | `SCOUT_BULK_SIZE` | `100` | Размер массовой записи (opensearch) |
 
@@ -190,7 +191,7 @@ go get github.com/erikwang2013/go-scout
 | typesense | `TYPESENSE_HOST` (`127.0.0.1`), `TYPESENSE_PORT` (`8108`), `TYPESENSE_PROTOCOL` (`http`), `TYPESENSE_API_KEY` (`xyz`), `TYPESENSE_IMPORT_ACTION` (`upsert`), `TYPESENSE_MAX_TOTAL_RESULTS` (`1000`), `TYPESENSE_CONNECTION_TIMEOUT` (`2`) |
 | elasticsearch | `ELASTICSEARCH_HOST` (`http://127.0.0.1:9200`, берётся первый элемент списка hosts) + `elasticsearch.auth` (user/password) |
 | opensearch | `OPENSEARCH_HTTP_HOST` (`https://127.0.0.1:6205`), `OPENSEARCH_USERNAME` / `OPENSEARCH_PASSWORD` (`admin`/`admin`), `OPENSEARCH_SSL_VERIFICATION` (по умолчанию проверка TLS отключена), `OPENSEARCH_TIMEOUT` (`30` секунд), `OPENSEARCH_CONNECTION_TIMEOUT` (`10`) |
-| xunsearch | `XUNSEARCH_INDEX_HOST` (`http://127.0.0.1`) + `XUNSEARCH_INDEX_PORT` (`8383`), `XUNSEARCH_SEARCH_HOST` (`http://127.0.0.1`) + `XUNSEARCH_SEARCH_PORT` (`8384`), `XUNSEARCH_DEFAULT_INDEX` (`default`), `XUNSEARCH_CHARSET` (`utf-8`), `XUNSEARCH_CONFIG_PATH`, `XUNSEARCH_BATCH_SIZE` (`100`) |
+| xunsearch | `XUNSEARCH_INDEX_HOST` (`http://127.0.0.1`) + `XUNSEARCH_INDEX_PORT` (`8383`), `XUNSEARCH_SEARCH_HOST` (`http://127.0.0.1`) + `XUNSEARCH_SEARCH_PORT` (`8384`), `XUNSEARCH_DEFAULT_INDEX` (`default`), `XUNSEARCH_CHARSET` (`utf-8`), `XUNSEARCH_CONFIG_PATH` (пусто = хосты выше; если задан, `<путь>/<индекс>.ini` даёт имя проекта, демоны и кодировку), `XUNSEARCH_BATCH_SIZE` (`100`) |
 | algolia | `ALGOLIA_APP_ID`, `ALGOLIA_SECRET` (при отсутствии конструктор движка вызывает panic) |
 
 Драйверу `database` также нужно передать подключение к БД и диалект:

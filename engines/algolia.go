@@ -17,11 +17,12 @@ import (
 // to search. It mirrors AlgoliaEngine; the PHP plugin ships no
 // AdvancedAlgoliaEngine, so AdvancedSearch delegates to Search.
 type AlgoliaEngine struct {
-	cfg    *scout.Config
-	client *http.Client
-	appID  string
-	key    string
-	header string
+	cfg      *scout.Config
+	client   *http.Client
+	appID    string
+	key      string
+	header   string
+	identify bool
 }
 
 // NewAlgolia builds an engine from the "algolia" config section (v4 API).
@@ -48,22 +49,38 @@ func newAlgolia(cfg *scout.Config) *AlgoliaEngine {
 		panic("scout: algolia.admin_key is required (set ALGOLIA_SECRET)")
 	}
 	return &AlgoliaEngine{
-		cfg:    cfg,
-		client: HTTPClient(30*time.Second, "", "", cfg.Bool("algolia.skip_tls_verify", false)),
-		appID:  appID,
-		key:    key,
-		header: cfg.String("algolia.api_key_header", "X-Algolia-API-Key"),
+		cfg:      cfg,
+		client:   HTTPClient(30*time.Second, "", "", cfg.Bool("algolia.skip_tls_verify", false)),
+		appID:    appID,
+		key:      key,
+		header:   cfg.String("algolia.api_key_header", "X-Algolia-API-Key"),
+		identify: cfg.Identify(),
 	}
 }
 
 // Name returns the driver name.
 func (e *AlgoliaEngine) Name() string { return "algolia" }
 
-func (e *AlgoliaEngine) headers() map[string]string {
-	return map[string]string{
+// headers builds the request headers. With SCOUT_IDENTIFY on it also forwards
+// who is searching, exactly as laravel-scout's defaultAlgoliaHeaders does: the
+// user key as X-Algolia-UserToken and the client IP as X-Forwarded-For (public
+// addresses only). Both come off the context — see scout.WithUser and
+// scout.WithClientIP — and are simply absent when the caller set neither.
+func (e *AlgoliaEngine) headers(ctx context.Context) map[string]string {
+	h := map[string]string{
 		e.header:                   e.key,
 		"X-Algolia-Application-Id": e.appID,
 	}
+	if !e.identify {
+		return h
+	}
+	if user, ok := scout.UserFrom(ctx); ok {
+		h["X-Algolia-UserToken"] = user
+	}
+	if ip, ok := scout.ClientIPFrom(ctx); ok {
+		h["X-Forwarded-For"] = ip
+	}
+	return h
 }
 
 func (e *AlgoliaEngine) index(model scout.ScoutModel) string {
@@ -77,7 +94,7 @@ func (e *AlgoliaEngine) Update(ctx context.Context, models []scout.ScoutModel) e
 		return nil
 	}
 	path := e.base() + "/1/indexes/" + e.index(models[0]) + "/objects?batch=1111"
-	_, err := DoJSON(ctx, e.client, http.MethodPost, path, e.headers(), map[string]any{"objects": docs})
+	_, err := DoJSON(ctx, e.client, http.MethodPost, path, e.headers(ctx), map[string]any{"objects": docs})
 	return algoliaErr("update", err)
 }
 
@@ -91,7 +108,7 @@ func (e *AlgoliaEngine) Delete(ctx context.Context, models []scout.ScoutModel) e
 		ids = append(ids, scout.KeyString(m.ScoutKey()))
 	}
 	path := e.base() + "/1/indexes/" + e.index(models[0]) + "/batch?requestBodyType=objects"
-	_, err := DoJSON(ctx, e.client, http.MethodPost, path, e.headers(), map[string]any{"objectIDs": ids})
+	_, err := DoJSON(ctx, e.client, http.MethodPost, path, e.headers(ctx), map[string]any{"objectIDs": ids})
 	return algoliaErr("delete", err)
 }
 
@@ -111,7 +128,7 @@ func (e *AlgoliaEngine) Search(ctx context.Context, b *scout.Builder) (*scout.Re
 		name = IndexName(b.Model, e.cfg)
 	}
 	path := e.base() + "/1/indexes/" + url.PathEscape(name) + "/query"
-	raw, err := DoJSON(ctx, e.client, http.MethodPost, path, e.headers(), body)
+	raw, err := DoJSON(ctx, e.client, http.MethodPost, path, e.headers(ctx), body)
 	if err != nil {
 		return nil, algoliaErr("search", err)
 	}
@@ -137,7 +154,7 @@ func (e *AlgoliaEngine) Paginate(ctx context.Context, b *scout.Builder, perPage,
 	if name == "" && b.Model != nil {
 		name = IndexName(b.Model, e.cfg)
 	}
-	raw, err := DoJSON(ctx, e.client, http.MethodPost, e.base()+"/1/indexes/"+url.PathEscape(name)+"/query", e.headers(), body)
+	raw, err := DoJSON(ctx, e.client, http.MethodPost, e.base()+"/1/indexes/"+url.PathEscape(name)+"/query", e.headers(ctx), body)
 	if err != nil {
 		return nil, algoliaErr("search", err)
 	}
@@ -168,7 +185,7 @@ func (e *AlgoliaEngine) GetTotalCount(results *scout.Result) int { return result
 // Flush deletes every object in the model's index.
 func (e *AlgoliaEngine) Flush(ctx context.Context, model scout.ScoutModel) error {
 	path := e.base() + "/1/indexes/" + e.index(model) + "/objects"
-	_, err := DoJSON(ctx, e.client, http.MethodDelete, path, e.headers(), nil)
+	_, err := DoJSON(ctx, e.client, http.MethodDelete, path, e.headers(ctx), nil)
 	return algoliaErr("flush", err)
 }
 
@@ -181,7 +198,7 @@ func (e *AlgoliaEngine) CreateIndex(ctx context.Context, name string, options ma
 // DeleteIndex drops an index.
 func (e *AlgoliaEngine) DeleteIndex(ctx context.Context, name string) (any, error) {
 	path := e.base() + "/1/indexes/" + url.PathEscape(name)
-	_, err := DoJSON(ctx, e.client, http.MethodDelete, path, e.headers(), nil)
+	_, err := DoJSON(ctx, e.client, http.MethodDelete, path, e.headers(ctx), nil)
 	if err != nil {
 		return nil, algoliaErr("delete index", err)
 	}

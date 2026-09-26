@@ -6,6 +6,8 @@ import (
 	"errors"
 	"net/http"
 	"net/url"
+	"os"
+	"path/filepath"
 	"reflect"
 	"testing"
 
@@ -215,5 +217,72 @@ func TestXunSearchAdvancedEmpty(t *testing.T) {
 	facets, err := e.GetFacets(ctx, b)
 	if err != nil || len(facets) != 0 {
 		t.Errorf("GetFacets = %v, %v", facets, err)
+	}
+}
+
+// XUNSEARCH_CONFIG_PATH mirrors XunSearchClient::newIndex() in the PHP plugin:
+// <config_path>/<project>.ini supplies the project's daemons, charset and name,
+// and a missing file is an error.
+func TestXunSearchProjectIni(t *testing.T) {
+	dir := t.TempDir()
+	ini := "; demo project\n[unused]\nproject.name = blog\nproject.default_charset = gbk\n" +
+		"server.index = 8391\nserver.search = search.internal:8392\n"
+	if err := os.WriteFile(filepath.Join(dir, "posts.ini"), []byte(ini), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv("XUNSEARCH_CONFIG_PATH", dir)
+	e := NewXunSearch(scout.DefaultConfig())
+
+	ep, err := e.endpoint("posts")
+	if err != nil {
+		t.Fatalf("endpoint(posts): %v", err)
+	}
+	if ep.name != "blog" || ep.charset != "gbk" {
+		t.Errorf("name=%q charset=%q, want blog/gbk", ep.name, ep.charset)
+	}
+	if ep.indexBase != "http://127.0.0.1:8391" {
+		t.Errorf("bare port must reuse the configured host, got %s", ep.indexBase)
+	}
+	if ep.searchBase != "http://search.internal:8392" {
+		t.Errorf("host:port must be honoured, got %s", ep.searchBase)
+	}
+
+	t.Run("missing ini is an error", func(t *testing.T) {
+		if _, err := e.endpoint("nope"); err == nil {
+			t.Error("a project without an ini should fail loudly, like the PHP plugin")
+		}
+	})
+
+	t.Run("no config path falls back to env", func(t *testing.T) {
+		t.Setenv("XUNSEARCH_CONFIG_PATH", "")
+		t.Setenv("XUNSEARCH_INDEX_PORT", "8399")
+		fallback := NewXunSearch(scout.DefaultConfig())
+		ep, err := fallback.endpoint("posts")
+		if err != nil {
+			t.Fatalf("endpoint without config_path: %v", err)
+		}
+		if ep.name != "posts" || ep.charset != "utf-8" || ep.indexBase != "http://127.0.0.1:8399" {
+			t.Errorf("fallback wrong: %+v", ep)
+		}
+	})
+}
+
+func TestXSIniParsing(t *testing.T) {
+	ini := parseXSIni("; comment\n# comment\n[section]\nproject.name = demo\ndefault_charset: utf-8")
+	if ini["project.name"] != "demo" {
+		t.Errorf("project.name = %q", ini["project.name"])
+	}
+	if _, ok := ini["default_charset"]; ok {
+		t.Error("a line without '=' must be ignored, not parsed")
+	}
+	cases := []struct{ in, host, want string }{
+		{"8383", "http://127.0.0.1", "http://127.0.0.1:8383"},
+		{"idx.internal:8390", "http://127.0.0.1", "http://idx.internal:8390"},
+		{"https://idx.internal:8390/", "http://127.0.0.1", "https://idx.internal:8390"},
+	}
+	for _, c := range cases {
+		if got := xsHostPort(c.in, c.host); got != c.want {
+			t.Errorf("xsHostPort(%q) = %q, want %q", c.in, got, c.want)
+		}
 	}
 }

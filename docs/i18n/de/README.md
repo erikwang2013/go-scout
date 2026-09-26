@@ -117,6 +117,7 @@ go-scout/
 ├── model.go                    # ScoutModel-Interface + optionale Erweiterungs-Interfaces + KeyName/KeyString-Helfer
 ├── source.go                   # Source[T]-Interface + MemorySource (linearer Scan)
 ├── exceptions.go               # Fehlersystem ErrNotSupported / ErrScout
+├── identity.go                 # Identität: `scout.WithUser` / `scout.WithClientIP` (für Algolia identify)
 ├── mascot.go                   # Maskottchen Scouty: MascotName / MascotSVG / MascotASCII
 ├── mascot_test.go              # Eingebettetes SVG vs. docs/mascot.svg + alle SVGs unter docs/
 ├── cmd/scout/main.go           # CLI-Demoprogramm: import / flush / index / queue-import, insgesamt 8 Unterbefehle
@@ -178,7 +179,7 @@ Keine Drittanbieter-Abhängigkeiten — einbinden und loslegen.
 | `SCOUT_PREFIX` | leer | Index-Präfix |
 | `SCOUT_QUEUE` | aus | auf 1 setzen, um die asynchrone Queue zu aktivieren |
 | `SCOUT_SOFT_DELETE` | aus | Soft-Delete-Metadaten werden mit den Dokumenten in den Index geschrieben |
-| `SCOUT_IDENTIFY` | aus | Konfigurationsbaum `identify`: teilt der Engine mit, wer sucht (algolia) |
+| `SCOUT_IDENTIFY` | aus | überträgt „wer sucht“ an Algolia: `X-Algolia-UserToken` (der Schlüssel aus `scout.WithUser`) und `X-Forwarded-For` (aus `scout.WithClientIP`, nur öffentliche IPs) |
 | `SCOUT_CHUNK_SEARCHABLE` / `SCOUT_CHUNK_UNSEARCHABLE` | `500` | Blockgröße für Bulk-Import/-Entfernung |
 | `SCOUT_BULK_SIZE` | `100` | Bulk-Schreibgröße (opensearch) |
 
@@ -190,7 +191,7 @@ Engine-spezifisch (Konfigurationsbaum-Pfade `engine.key` entsprechen den Env-Nam
 | typesense | `TYPESENSE_HOST` (`127.0.0.1`), `TYPESENSE_PORT` (`8108`), `TYPESENSE_PROTOCOL` (`http`), `TYPESENSE_API_KEY` (`xyz`), `TYPESENSE_IMPORT_ACTION` (`upsert`), `TYPESENSE_MAX_TOTAL_RESULTS` (`1000`), `TYPESENSE_CONNECTION_TIMEOUT` (`2`) |
 | elasticsearch | `ELASTICSEARCH_HOST` (`http://127.0.0.1:9200`, erster Eintrag der Hosts-Liste) + `elasticsearch.auth` (user/password) |
 | opensearch | `OPENSEARCH_HTTP_HOST` (`https://127.0.0.1:6205`), `OPENSEARCH_USERNAME` / `OPENSEARCH_PASSWORD` (`admin`/`admin`), `OPENSEARCH_SSL_VERIFICATION` (TLS-Prüfung standardmäßig übersprungen), `OPENSEARCH_TIMEOUT` (`30` Sekunden), `OPENSEARCH_CONNECTION_TIMEOUT` (`10`) |
-| xunsearch | `XUNSEARCH_INDEX_HOST` (`http://127.0.0.1`) + `XUNSEARCH_INDEX_PORT` (`8383`), `XUNSEARCH_SEARCH_HOST` (`http://127.0.0.1`) + `XUNSEARCH_SEARCH_PORT` (`8384`), `XUNSEARCH_DEFAULT_INDEX` (`default`), `XUNSEARCH_CHARSET` (`utf-8`), `XUNSEARCH_CONFIG_PATH`, `XUNSEARCH_BATCH_SIZE` (`100`) |
+| xunsearch | `XUNSEARCH_INDEX_HOST` (`http://127.0.0.1`) + `XUNSEARCH_INDEX_PORT` (`8383`), `XUNSEARCH_SEARCH_HOST` (`http://127.0.0.1`) + `XUNSEARCH_SEARCH_PORT` (`8384`), `XUNSEARCH_DEFAULT_INDEX` (`default`), `XUNSEARCH_CHARSET` (`utf-8`), `XUNSEARCH_CONFIG_PATH` (leer = die Hosts oben; gesetzt: `<Pfad>/<Index>.ini` liefert Projektname, Daemons und Charset), `XUNSEARCH_BATCH_SIZE` (`100`) |
 | algolia | `ALGOLIA_APP_ID`, `ALGOLIA_SECRET` (fehlen sie, panict die Engine-Konstruktion) |
 
 Der `database`-Treiber benötigt zusätzlich eine injizierte Datenbankverbindung und Dialekt:

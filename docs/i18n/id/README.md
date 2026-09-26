@@ -117,6 +117,7 @@ go-scout/
 ├── model.go                    # Antarmuka ScoutModel + antarmuka ekstensi opsional + helper KeyName/KeyString…
 ├── source.go                   # Antarmuka Source[T] + MemorySource (pemindaian linear)
 ├── exceptions.go               # Sistem error ErrNotSupported / ErrScout
+├── identity.go                 # Identitas: `scout.WithUser` / `scout.WithClientIP` (untuk Algolia identify)
 ├── mascot.go                   # Maskot Scouty: MascotName / MascotSVG / MascotASCII
 ├── mascot_test.go              # SVG tertanam vs docs/mascot.svg + semua SVG di docs/
 ├── cmd/scout/main.go           # Program demo CLI: 8 subperintah import / flush / index / queue-import…
@@ -178,7 +179,7 @@ Tanpa dependensi pihak ketiga, langsung siap pakai setelah import.
 | `SCOUT_PREFIX` | kosong | Awalan indeks |
 | `SCOUT_QUEUE` | nonaktif | Atur ke 1 untuk mengaktifkan antrean asinkron |
 | `SCOUT_SOFT_DELETE` | nonaktif | Metadata soft delete ditulis bersama dokumen ke indeks |
-| `SCOUT_IDENTIFY` | nonaktif | Pohon konfigurasi `identify`: memberi tahu mesin siapa yang mencari (algolia) |
+| `SCOUT_IDENTIFY` | mati | meneruskan «siapa yang mencari» ke Algolia: `X-Algolia-UserToken` (kunci dari `scout.WithUser`) dan `X-Forwarded-For` (dari `scout.WithClientIP`, hanya IP publik) |
 | `SCOUT_CHUNK_SEARCHABLE` / `SCOUT_CHUNK_UNSEARCHABLE` | `500` | Ukuran kelompok impor/penghapusan massal |
 | `SCOUT_BULK_SIZE` | `100` | Ukuran tulis massal (opensearch) |
 
@@ -190,7 +191,7 @@ Khusus per mesin (kunci `engine.key` pada pohon konfigurasi sama dengan nama var
 | typesense | `TYPESENSE_HOST` (`127.0.0.1`), `TYPESENSE_PORT` (`8108`), `TYPESENSE_PROTOCOL` (`http`), `TYPESENSE_API_KEY` (`xyz`), `TYPESENSE_IMPORT_ACTION` (`upsert`), `TYPESENSE_MAX_TOTAL_RESULTS` (`1000`), `TYPESENSE_CONNECTION_TIMEOUT` (`2`) |
 | elasticsearch | `ELASTICSEARCH_HOST` (`http://127.0.0.1:9200`, entri pertama daftar host) + `elasticsearch.auth` (user/password) |
 | opensearch | `OPENSEARCH_HTTP_HOST` (`https://127.0.0.1:6205`), `OPENSEARCH_USERNAME` / `OPENSEARCH_PASSWORD` (`admin`/`admin`), `OPENSEARCH_SSL_VERIFICATION` (verifikasi TLS dilewati secara default), `OPENSEARCH_TIMEOUT` (`30` detik), `OPENSEARCH_CONNECTION_TIMEOUT` (`10`) |
-| xunsearch | `XUNSEARCH_INDEX_HOST` (`http://127.0.0.1`) + `XUNSEARCH_INDEX_PORT` (`8383`), `XUNSEARCH_SEARCH_HOST` (`http://127.0.0.1`) + `XUNSEARCH_SEARCH_PORT` (`8384`), `XUNSEARCH_DEFAULT_INDEX` (`default`), `XUNSEARCH_CHARSET` (`utf-8`), `XUNSEARCH_CONFIG_PATH`, `XUNSEARCH_BATCH_SIZE` (`100`) |
+| xunsearch | `XUNSEARCH_INDEX_HOST` (`http://127.0.0.1`) + `XUNSEARCH_INDEX_PORT` (`8383`), `XUNSEARCH_SEARCH_HOST` (`http://127.0.0.1`) + `XUNSEARCH_SEARCH_PORT` (`8384`), `XUNSEARCH_DEFAULT_INDEX` (`default`), `XUNSEARCH_CHARSET` (`utf-8`), `XUNSEARCH_CONFIG_PATH` (kosong = host di atas; bila diisi, `<path>/<index>.ini` memberi nama proyek, daemon, dan charset), `XUNSEARCH_BATCH_SIZE` (`100`) |
 | algolia | `ALGOLIA_APP_ID`, `ALGOLIA_SECRET` (panic saat membangun mesin jika tidak ada) |
 
 Driver `database` juga memerlukan injeksi koneksi dan dialek basis data:

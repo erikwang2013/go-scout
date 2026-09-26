@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -23,6 +25,9 @@ type XunSearchEngine struct {
 	client     *http.Client
 	indexBase  string
 	searchBase string
+	indexHost  string
+	searchHost string
+	configPath string
 	charset    string
 }
 
@@ -31,11 +36,16 @@ func NewXunSearch(cfg *scout.Config) *XunSearchEngine {
 	if cfg == nil {
 		cfg = scout.DefaultConfig()
 	}
+	indexHost := strings.TrimRight(cfg.String("xunsearch.index_host", "http://127.0.0.1"), "/")
+	searchHost := strings.TrimRight(cfg.String("xunsearch.search_host", "http://127.0.0.1"), "/")
 	return &XunSearchEngine{
 		cfg:        cfg,
 		client:     HTTPClient(30*time.Second, "", "", false),
-		indexBase:  strings.TrimRight(cfg.String("xunsearch.index_host", "http://127.0.0.1"), "/") + ":" + cfg.String("xunsearch.index_port", "8383"),
-		searchBase: strings.TrimRight(cfg.String("xunsearch.search_host", "http://127.0.0.1"), "/") + ":" + cfg.String("xunsearch.search_port", "8384"),
+		indexBase:  indexHost + ":" + cfg.String("xunsearch.index_port", "8383"),
+		searchBase: searchHost + ":" + cfg.String("xunsearch.search_port", "8384"),
+		indexHost:  indexHost,
+		searchHost: searchHost,
+		configPath: strings.TrimSpace(cfg.String("xunsearch.config_path", "")),
 		charset:    cfg.String("xunsearch.charset", "utf-8"),
 	}
 }
@@ -153,12 +163,16 @@ func (e *XunSearchEngine) DeleteIndex(ctx context.Context, name string) (any, er
 // The daemon signals failures in 200 responses ("ERR:..."/"FAIL:..." etc), so
 // a non-empty reply that is not "OK" is surfaced as an error.
 func (e *XunSearchEngine) index(ctx context.Context, cmd, project, data string) ([]byte, error) {
-	form := url.Values{"cmd": {cmd}, "project": {project}}
+	ep, err := e.endpoint(project)
+	if err != nil {
+		return nil, err
+	}
+	form := url.Values{"cmd": {cmd}, "project": {ep.name}}
 	if data != "" {
 		form.Set("data", data)
 	}
 	headers := map[string]string{"Content-Type": "application/x-www-form-urlencoded"}
-	reply, err := DoBytes(ctx, e.client, http.MethodPost, e.indexBase, headers, []byte(form.Encode()))
+	reply, err := DoBytes(ctx, e.client, http.MethodPost, ep.indexBase, headers, []byte(form.Encode()))
 	if err != nil {
 		return nil, err
 	}
@@ -170,10 +184,14 @@ func (e *XunSearchEngine) index(ctx context.Context, cmd, project, data string) 
 
 // run issues one search-daemon query and parses the JSON response.
 func (e *XunSearchEngine) run(ctx context.Context, b *scout.Builder, limit, offset int) (*scout.Result, error) {
+	ep, err := e.endpoint(b.GetIndex())
+	if err != nil {
+		return nil, err
+	}
 	q := url.Values{
 		"q":        {xsQuery(b)},
-		"project":  {b.GetIndex()},
-		"charset":  {e.charset},
+		"project":  {ep.name},
+		"charset":  {ep.charset},
 		"per_page": {fmt.Sprint(limit)},
 		"start":    {fmt.Sprint(offset)},
 	}
@@ -200,12 +218,88 @@ func (e *XunSearchEngine) run(ctx context.Context, b *scout.Builder, limit, offs
 			return e.parse(raw, b), nil
 		}
 	}
-	path := e.searchBase + "/search?" + q.Encode()
+	path := ep.searchBase + "/search?" + q.Encode()
 	raw, err := DoJSON(ctx, e.client, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("scout: xunsearch search: %w", err)
 	}
 	return e.parse(raw, b), nil
+}
+
+// xsEndpoint is how one project is reached: its daemon bases, charset and the
+// project name sent to the daemons.
+type xsEndpoint struct {
+	name       string
+	indexBase  string
+	searchBase string
+	charset    string
+}
+
+// endpoint resolves a project's addressing. The env-derived values are the
+// default; when XUNSEARCH_CONFIG_PATH is set, the project's own ini file
+// (<config_path>/<project>.ini) overrides them key by key, mirroring
+// XunSearchClient::newIndex() in the PHP plugin, which builds \XS($file) from
+// exactly that path. A missing file is an error there and here alike.
+//
+// ponytail: the ini is re-read per operation, as the PHP plugin does with its
+// per-call new \XS(); cache it here if a profile ever shows the file read.
+func (e *XunSearchEngine) endpoint(project string) (xsEndpoint, error) {
+	ep := xsEndpoint{name: project, indexBase: e.indexBase, searchBase: e.searchBase, charset: e.charset}
+	if e.configPath == "" {
+		return ep, nil
+	}
+	file := filepath.Join(e.configPath, project+".ini")
+	data, err := os.ReadFile(file)
+	if err != nil {
+		return ep, fmt.Errorf("scout: xunsearch ini not found: %s", file)
+	}
+	ini := parseXSIni(string(data))
+	if v := ini["project.name"]; v != "" {
+		ep.name = v
+	}
+	if v := ini["project.default_charset"]; v != "" {
+		ep.charset = v
+	}
+	if v := ini["server.index"]; v != "" {
+		ep.indexBase = xsHostPort(v, e.indexHost)
+	}
+	if v := ini["server.search"]; v != "" {
+		ep.searchBase = xsHostPort(v, e.searchHost)
+	}
+	return ep, nil
+}
+
+// xsHostPort takes a "server.index"/"server.search" value — a bare port, or
+// host:port, or a full URL — and turns it into a base URL, reusing host for the
+// bare-port form.
+func xsHostPort(v, host string) string {
+	v = strings.TrimSpace(v)
+	if strings.Contains(v, "://") {
+		return strings.TrimRight(v, "/")
+	}
+	if strings.Contains(v, ":") {
+		return "http://" + v
+	}
+	return host + ":" + v
+}
+
+// parseXSIni reads the flat "key = value" lines a XunSearch project file uses.
+// Comments (; and #) and section headers are ignored; keys keep their dotted
+// prefix ("project.name", "server.index") exactly as they appear.
+func parseXSIni(s string) map[string]string {
+	out := map[string]string{}
+	for _, line := range strings.Split(s, "\n") {
+		line = strings.TrimSpace(line)
+		if line == "" || strings.HasPrefix(line, ";") || strings.HasPrefix(line, "#") || strings.HasPrefix(line, "[") {
+			continue
+		}
+		k, v, ok := strings.Cut(line, "=")
+		if !ok {
+			continue
+		}
+		out[strings.ToLower(strings.TrimSpace(k))] = strings.TrimSpace(v)
+	}
+	return out
 }
 
 // parse converts a raw search-daemon response into a scout.Result.

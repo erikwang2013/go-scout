@@ -117,6 +117,7 @@ go-scout/
 ├── model.go                    # ScoutModel ইন্টারফেস + ঐচ্ছিক এক্সটেনশন ইন্টারফেস + KeyName/KeyString হেল্পার
 ├── source.go                   # Source[T] ইন্টারফেস + MemorySource (রৈখিক স্ক্যান)
 ├── exceptions.go               # ত্রুটি সিস্টেম ErrNotSupported / ErrScout
+├── identity.go                 # পরিচয়: `scout.WithUser` / `scout.WithClientIP` (Algolia identify-এর জন্য)
 ├── mascot.go                   # মাসকট Scouty: MascotName / MascotSVG / MascotASCII
 ├── mascot_test.go              # এমবেড করা SVG বনাম docs/mascot.svg + docs/-এর সব SVG যাচাই
 ├── cmd/scout/main.go           # CLI ডেমো: import / flush / index / queue-import ইত্যাদি মোট ৭টি উপকমান্ড
@@ -178,7 +179,7 @@ go get github.com/erikwang2013/go-scout
 | `SCOUT_PREFIX` | খালি | ইনডেক্স উপসর্গ |
 | `SCOUT_QUEUE` | বন্ধ | `1` অ্যাসিংক কিউ চালু করে |
 | `SCOUT_SOFT_DELETE` | বন্ধ | সফট-ডিলিট মেটাডেটা ডকুমেন্টসহ ইনডেক্সে লেখা হয় |
-| `SCOUT_IDENTIFY` | বন্ধ | কনফিগ ট্রি `identify`: ইঞ্জিনকে জানায় কে খুঁজছে (algolia) |
+| `SCOUT_IDENTIFY` | বন্ধ | চালু থাকলে "কে খুঁজছে" Algolia-তে পাঠায়: `X-Algolia-UserToken` (`scout.WithUser`-এর কি) এবং `X-Forwarded-For` (`scout.WithClientIP`, শুধু পাবলিক IP) |
 | `SCOUT_CHUNK_SEARCHABLE` / `SCOUT_CHUNK_UNSEARCHABLE` | `500` | বাল্ক ইমপোর্ট/ডিলিটের চাঙ্ক আকার |
 | `SCOUT_BULK_SIZE` | `100` | বাল্ক রাইট আকার (opensearch) |
 
@@ -190,7 +191,7 @@ go get github.com/erikwang2013/go-scout
 | typesense | `TYPESENSE_HOST` (`127.0.0.1`), `TYPESENSE_PORT` (`8108`), `TYPESENSE_PROTOCOL` (`http`), `TYPESENSE_API_KEY` (`xyz`), `TYPESENSE_IMPORT_ACTION` (`upsert`), `TYPESENSE_MAX_TOTAL_RESULTS` (`1000`), `TYPESENSE_CONNECTION_TIMEOUT` (`2`) |
 | elasticsearch | `ELASTICSEARCH_HOST` (`http://127.0.0.1:9200`, hosts তালিকার প্রথম উপাদান) + `elasticsearch.auth` (user/password) |
 | opensearch | `OPENSEARCH_HTTP_HOST` (`https://127.0.0.1:6205`), `OPENSEARCH_USERNAME` / `OPENSEARCH_PASSWORD` (`admin`/`admin`), `OPENSEARCH_SSL_VERIFICATION` (ডিফল্ট TLS জাচ বন্ধ), `OPENSEARCH_TIMEOUT` (`30` সেকেন্ড), `OPENSEARCH_CONNECTION_TIMEOUT` (`10`) |
-| xunsearch | `XUNSEARCH_INDEX_HOST` (`http://127.0.0.1`) + `XUNSEARCH_INDEX_PORT` (`8383`), `XUNSEARCH_SEARCH_HOST` (`http://127.0.0.1`) + `XUNSEARCH_SEARCH_PORT` (`8384`), `XUNSEARCH_DEFAULT_INDEX` (`default`), `XUNSEARCH_CHARSET` (`utf-8`), `XUNSEARCH_CONFIG_PATH`, `XUNSEARCH_BATCH_SIZE` (`100`) |
+| xunsearch | `XUNSEARCH_INDEX_HOST` (`http://127.0.0.1`) + `XUNSEARCH_INDEX_PORT` (`8383`), `XUNSEARCH_SEARCH_HOST` (`http://127.0.0.1`) + `XUNSEARCH_SEARCH_PORT` (`8384`), `XUNSEARCH_DEFAULT_INDEX` (`default`), `XUNSEARCH_CHARSET` (`utf-8`), `XUNSEARCH_CONFIG_PATH` (খালি = উপরের হোস্ট; সেট থাকলে `<পাথ>/<ইনডেক্স>.ini` থেকে প্রকল্পের নাম, ডেমন ও charset), `XUNSEARCH_BATCH_SIZE` (`100`) |
 | algolia | `ALGOLIA_APP_ID`, `ALGOLIA_SECRET` (অনুপস্থিত থাকলে ইঞ্জিন কনস্ট্রাক্টর panic করে) |
 
 `database` ড্রাইভারকে DB সংযোগ ও ডায়ালেক্টও লাগে:

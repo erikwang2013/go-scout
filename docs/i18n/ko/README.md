@@ -117,6 +117,7 @@ go-scout/
 ├── model.go                    # ScoutModel 인터페이스 + 옵션 확장 인터페이스 + KeyName/KeyString 헬퍼
 ├── source.go                   # Source[T] 인터페이스 + MemorySource (선형 스캔)
 ├── exceptions.go               # ErrNotSupported / ErrScout 오류 체계
+├── identity.go                 # 신원 전달: `scout.WithUser` / `scout.WithClientIP`(Algolia identify용)
 ├── mascot.go                   # 마스코트 Scouty: MascotName / MascotSVG / MascotASCII
 ├── mascot_test.go              # 내장 SVG와 docs/mascot.svg 일치 + docs/ 전체 SVG 검증
 ├── cmd/scout/main.go           # CLI 데모 프로그램: import / flush / index / queue-import 등 7개 하위 명령
@@ -178,7 +179,7 @@ go get github.com/erikwang2013/go-scout
 | `SCOUT_PREFIX` | 빈 값 | 인덱스 접두사 |
 | `SCOUT_QUEUE` | 꺼짐 | 1로 설정하면 비동기 큐 활성화 |
 | `SCOUT_SOFT_DELETE` | 꺼짐 | 소프트 삭제 메타데이터를 문서와 함께 인덱스에 기록 |
-| `SCOUT_IDENTIFY` | 꺼짐 | 설정 트리 `identify`: 누가 검색하는지 엔진에 알림 (algolia) |
+| `SCOUT_IDENTIFY` | 꺼짐 | 켜면 "누가 검색하는지"를 Algolia에 전달합니다: `X-Algolia-UserToken`(`scout.WithUser`의 사용자 키)와 `X-Forwarded-For`(`scout.WithClientIP`, 공인 IP만) |
 | `SCOUT_CHUNK_SEARCHABLE` / `SCOUT_CHUNK_UNSEARCHABLE` | `500` | 일괄 임포트/제거의 블록 크기 |
 | `SCOUT_BULK_SIZE` | `100` | 일괄 쓰기 크기 (opensearch) |
 
@@ -190,7 +191,7 @@ go get github.com/erikwang2013/go-scout
 | typesense | `TYPESENSE_HOST` (`127.0.0.1`), `TYPESENSE_PORT` (`8108`), `TYPESENSE_PROTOCOL` (`http`), `TYPESENSE_API_KEY` (`xyz`), `TYPESENSE_IMPORT_ACTION` (`upsert`), `TYPESENSE_MAX_TOTAL_RESULTS` (`1000`), `TYPESENSE_CONNECTION_TIMEOUT` (`2`) |
 | elasticsearch | `ELASTICSEARCH_HOST` (`http://127.0.0.1:9200`, hosts 목록의 첫 항목) + `elasticsearch.auth` (user/password) |
 | opensearch | `OPENSEARCH_HTTP_HOST` (`https://127.0.0.1:6205`), `OPENSEARCH_USERNAME` / `OPENSEARCH_PASSWORD` (`admin`/`admin`), `OPENSEARCH_SSL_VERIFICATION` (기본 TLS 검증 스킵), `OPENSEARCH_TIMEOUT` (`30`초), `OPENSEARCH_CONNECTION_TIMEOUT` (`10`) |
-| xunsearch | `XUNSEARCH_INDEX_HOST` (`http://127.0.0.1`) + `XUNSEARCH_INDEX_PORT` (`8383`), `XUNSEARCH_SEARCH_HOST` (`http://127.0.0.1`) + `XUNSEARCH_SEARCH_PORT` (`8384`), `XUNSEARCH_DEFAULT_INDEX` (`default`), `XUNSEARCH_CHARSET` (`utf-8`), `XUNSEARCH_CONFIG_PATH`, `XUNSEARCH_BATCH_SIZE` (`100`) |
+| xunsearch | `XUNSEARCH_INDEX_HOST` (`http://127.0.0.1`) + `XUNSEARCH_INDEX_PORT` (`8383`), `XUNSEARCH_SEARCH_HOST` (`http://127.0.0.1`) + `XUNSEARCH_SEARCH_PORT` (`8384`), `XUNSEARCH_DEFAULT_INDEX` (`default`), `XUNSEARCH_CHARSET` (`utf-8`), `XUNSEARCH_CONFIG_PATH`(비우면 위 호스트/포트. 설정하면 `<경로>/<인덱스명>.ini`에서 프로젝트 이름·데몬·문자셋을 읽음), `XUNSEARCH_BATCH_SIZE` (`100`) |
 | algolia | `ALGOLIA_APP_ID`, `ALGOLIA_SECRET` (누락 시 엔진 생성이 바로 panic) |
 
 `database` 드라이버는 데이터베이스 연결과 방언(dialect) 주입이 필요합니다:
