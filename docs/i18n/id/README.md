@@ -2,10 +2,14 @@
   <img src="../../logo.svg" alt="go-scout · maskot Scouty (utuh)" width="460"/>
 </p>
 
+<p align="center">
+  <a href="https://pkg.go.dev/github.com/erikwang2013/go-scout"><img src="https://pkg.go.dev/badge/github.com/erikwang2013/go-scout.svg" alt="Go Reference"/></a>
+</p>
+
 # go-scout
 
 > Pustaka sinkronisasi pencarian yang ditulis dalam Go — port Laravel Scout ke Go (berbasis plugin PHP [webman-scout](https://github.com/shopwwi/webman-scout)).
-> Go 1.24 · 100 % implementasi pustaka standar, tanpa dependensi pihak ketiga · versi v1.3.0
+> Go 1.24 · 100 % implementasi pustaka standar, tanpa dependensi pihak ketiga · versi v1.3.1
 
 **Languages / 语言**: [中文](../../../README.md) · [English](../en/README.md) · [한국어](../ko/README.md) · [Русский](../ru/README.md) · [Deutsch](../de/README.md) · [Français](../fr/README.md) · [Español](../es/README.md) · [Português](../pt/README.md) · [हिन्दी](../hi/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Bahasa Indonesia](./README.md) · [日本語](../ja/README.md)
 
@@ -99,6 +103,7 @@ Lima lapisan dari bawah ke atas, dengan tanggung jawab yang semakin sempit:
 go-scout/
 ├── go.mod                      # Definisi modul: github.com/erikwang2013/go-scout · go 1.24.1 · tanpa dependensi
 ├── .gitignore                  # Mengabaikan file IDE / cache / kunci
+├── LICENSE                     # Lisensi BSD 3-Clause
 ├── scout.go                    # Fasad Scout: perakitan & factory Config / Manager / Events / Queue / Observer
 ├── config.go                   # Pohon konfigurasi: DefaultConfig + override env var + akses dot-path
 ├── engine.go                   # Antarmuka Engine / AdvancedEngine + tipe Result / Hit / PaginationResult

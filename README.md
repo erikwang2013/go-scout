@@ -2,10 +2,14 @@
   <img src="docs/logo.svg" alt="go-scout · 完整项目宠物小侦 Scouty" width="460"/>
 </p>
 
+<p align="center">
+  <a href="https://pkg.go.dev/github.com/erikwang2013/go-scout"><img src="https://pkg.go.dev/badge/github.com/erikwang2013/go-scout.svg" alt="Go Reference"/></a>
+</p>
+
 # go-scout
 
 > 用 Go 编写的搜索同步库 —— Laravel Scout 的 Go 移植（基于 PHP 插件 [webman-scout](https://github.com/shopwwi/webman-scout)）。
-> Go 1.24 · 纯标准库实现，零第三方依赖 · 版本 v1.3.0
+> Go 1.24 · 纯标准库实现，零第三方依赖 · 版本 v1.3.1
 
 **Languages / 语言**: [中文](README.md) · [English](docs/i18n/en/README.md) · [한국어](docs/i18n/ko/README.md) · [Русский](docs/i18n/ru/README.md) · [Deutsch](docs/i18n/de/README.md) · [Français](docs/i18n/fr/README.md) · [Español](docs/i18n/es/README.md) · [Português](docs/i18n/pt/README.md) · [हिन्दी](docs/i18n/hi/README.md) · [العربية](docs/i18n/ar/README.md) · [বাংলা](docs/i18n/bn/README.md) · [Bahasa Indonesia](docs/i18n/id/README.md) · [日本語](docs/i18n/ja/README.md)
 
@@ -110,6 +114,7 @@ go-scout 解决的是"模型与搜索引擎之间的同步"问题：让实现 `s
 go-scout/
 ├── go.mod                      # 模块定义：github.com/erikwang2013/go-scout · go 1.24.1 · 零依赖
 ├── .gitignore                  # IDE / 缓存 / 密钥类文件忽略
+├── LICENSE                     # BSD 3-Clause 许可证
 ├── scout.go                    # Scout 门面：Config / Manager / Events / Queue / Observer 组装与工厂
 ├── config.go                   # 配置树：DefaultConfig + 环境变量覆盖 + dot-path 取值
 ├── engine.go                   # Engine / AdvancedEngine 接口 + Result / Hit / PaginationResult 类型

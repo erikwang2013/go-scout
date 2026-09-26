@@ -2,10 +2,14 @@
   <img src="../../logo.svg" alt="go-scout · मैस्कॉट Scouty (पूर्ण आकृति)" width="460"/>
 </p>
 
+<p align="center">
+  <a href="https://pkg.go.dev/github.com/erikwang2013/go-scout"><img src="https://pkg.go.dev/badge/github.com/erikwang2013/go-scout.svg" alt="Go Reference"/></a>
+</p>
+
 # go-scout
 
 > Go में लिखा गया सर्च-सिंक लाइब्रेरी — Laravel Scout का Go पोर्ट (PHP प्लगइन [webman-scout](https://github.com/shopwwi/webman-scout) पर आधारित)।
-> Go 1.24 · केवल मानक लाइब्रेरी, शून्य थर्ड-पार्टी निर्भरता · संस्करण v1.3.0
+> Go 1.24 · केवल मानक लाइब्रेरी, शून्य थर्ड-पार्टी निर्भरता · संस्करण v1.3.1
 
 **Languages / 语言**: [中文](../../../README.md) · [English](../en/README.md) · [한국어](../ko/README.md) · [Русский](../ru/README.md) · [Deutsch](../de/README.md) · [Français](../fr/README.md) · [Español](../es/README.md) · [Português](../pt/README.md) · [हिन्दी](./README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Bahasa Indonesia](../id/README.md) · [日本語](../ja/README.md)
 
@@ -99,6 +103,7 @@ Scouty कोड में भी रहता है: [mascot.go](../../../masc
 go-scout/
 ├── go.mod                      # मॉड्यूल: github.com/erikwang2013/go-scout · go 1.24.1 · शून्य निर्भरता
 ├── .gitignore                  # IDE / कैश / कुंजी-फ़ाइलों के बहिष्करण
+├── LICENSE                     # BSD 3-Clause लाइसेंस
 ├── scout.go                    # Scout फ़ेसाडे: Config / Manager / Events / Queue / Observer की असेंबली और फ़ैक्टरियाँ
 ├── config.go                   # कॉन्फ़िग ट्री: DefaultConfig + एनवायरनमेंट-वेरिएबल ओवरराइड + dot-path वैल्यू
 ├── engine.go                   # Engine / AdvancedEngine इंटरफ़ेस + Result / Hit / PaginationResult टाइप

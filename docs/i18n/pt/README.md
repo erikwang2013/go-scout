@@ -2,10 +2,14 @@
   <img src="../../logo.svg" alt="go-scout · mascote Scouty (corpo inteiro)" width="460"/>
 </p>
 
+<p align="center">
+  <a href="https://pkg.go.dev/github.com/erikwang2013/go-scout"><img src="https://pkg.go.dev/badge/github.com/erikwang2013/go-scout.svg" alt="Go Reference"/></a>
+</p>
+
 # go-scout
 
 > Biblioteca de sincronização de busca escrita em Go — um port de Laravel Scout para Go (baseado no plugin PHP [webman-scout](https://github.com/shopwwi/webman-scout)).
-> Go 1.24 · implementação 100 % com a biblioteca padrão, zero dependências de terceiros · versão v1.3.0
+> Go 1.24 · implementação 100 % com a biblioteca padrão, zero dependências de terceiros · versão v1.3.1
 
 **Languages / 语言**: [中文](../../../README.md) · [English](../en/README.md) · [한국어](../ko/README.md) · [Русский](../ru/README.md) · [Deutsch](../de/README.md) · [Français](../fr/README.md) · [Español](../es/README.md) · [Português](./README.md) · [हिन्दी](../hi/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Bahasa Indonesia](../id/README.md) · [日本語](../ja/README.md)
 
@@ -99,6 +103,7 @@ Cinco camadas de baixo para cima, com responsabilidades cada vez mais estreitas:
 go-scout/
 ├── go.mod                      # Definição do módulo: github.com/erikwang2013/go-scout · go 1.24.1 · zero dependências
 ├── .gitignore                  # Ignora arquivos de IDE / caches / chaves
+├── LICENSE                     # Licença BSD 3-Clause
 ├── scout.go                    # Fachada Scout: montagem e factories de Config / Manager / Events / Queue / Observer
 ├── config.go                   # Árvore de configuração: DefaultConfig + sobrescrita por env vars + acesso dot-path
 ├── engine.go                   # Interfaces Engine / AdvancedEngine + tipos Result / Hit / PaginationResult

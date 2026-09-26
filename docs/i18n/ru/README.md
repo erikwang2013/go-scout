@@ -2,10 +2,14 @@
   <img src="../../logo.svg" alt="go-scout · талисман Scouty (в полный рост)" width="460"/>
 </p>
 
+<p align="center">
+  <a href="https://pkg.go.dev/github.com/erikwang2013/go-scout"><img src="https://pkg.go.dev/badge/github.com/erikwang2013/go-scout.svg" alt="Go Reference"/></a>
+</p>
+
 # go-scout
 
 > Библиотека синхронизации поиска на Go — порт Laravel Scout для Go (на основе PHP-плагина [webman-scout](https://github.com/shopwwi/webman-scout)).
-> Go 1.24 · чистая реализация только на стандартной библиотеке, ноль сторонних зависимостей · версия v1.3.0
+> Go 1.24 · чистая реализация только на стандартной библиотеке, ноль сторонних зависимостей · версия v1.3.1
 
 **Languages / 语言**: [中文](../../../README.md) · [English](../en/README.md) · [한국어](../ko/README.md) · [Русский](./README.md) · [Deutsch](../de/README.md) · [Français](../fr/README.md) · [Español](../es/README.md) · [Português](../pt/README.md) · [हिन्दी](../hi/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Bahasa Indonesia](../id/README.md) · [日本語](../ja/README.md)
 
@@ -99,6 +103,7 @@ Scouty живёт и в коде: `scout.MascotName` / `scout.MascotSVG` / `scou
 go-scout/
 ├── go.mod                      # Модуль: github.com/erikwang2013/go-scout · go 1.24.1 · без зависимостей
 ├── .gitignore                  # Исключения для IDE / кэша / файлов с ключами
+├── LICENSE                     # Лицензия BSD 3-Clause
 ├── scout.go                    # Фасад Scout: сборка Config / Manager / Events / Queue / Observer и фабрики
 ├── config.go                   # Дерево конфигурации: DefaultConfig + переопределение переменными среды + dot-path
 ├── engine.go                   # Интерфейсы Engine / AdvancedEngine + типы Result / Hit / PaginationResult

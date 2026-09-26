@@ -2,10 +2,14 @@
   <img src="../../logo.svg" alt="go-scout · تميمة Scouty (كاملة)" width="460"/>
 </p>
 
+<p align="center">
+  <a href="https://pkg.go.dev/github.com/erikwang2013/go-scout"><img src="https://pkg.go.dev/badge/github.com/erikwang2013/go-scout.svg" alt="Go Reference"/></a>
+</p>
+
 # go-scout
 
 > مكتبة مزامنة بحث مكتوبة بلغة Go — منفذ Go لـ Laravel Scout (استنادًا إلى إضافة PHP [webman-scout](https://github.com/shopwwi/webman-scout)).
-> Go 1.24 · المكتبة القياسية فقط، بدون أي اعتماديات خارجية · الإصدار v1.3.0
+> Go 1.24 · المكتبة القياسية فقط، بدون أي اعتماديات خارجية · الإصدار v1.3.1
 
 **Languages / 语言**: [中文](../../../README.md) · [English](../en/README.md) · [한국어](../ko/README.md) · [Русский](../ru/README.md) · [Deutsch](../de/README.md) · [Français](../fr/README.md) · [Español](../es/README.md) · [Português](../pt/README.md) · [हिन्दी](../hi/README.md) · [العربية](./README.md) · [বাংলা](../bn/README.md) · [Bahasa Indonesia](../id/README.md) · [日本語](../ja/README.md)
 
@@ -103,6 +107,7 @@ go-scout يحل مشكلة «المزامنة بين النماذج ومحركا
 go-scout/
 ├── go.mod                      # الوحدة: github.com/erikwang2013/go-scout · go 1.24.1 · بدون اعتماديات
 ├── .gitignore                  # استبعاد IDE / ذاكرة التخزين المؤقت / ملفات المفاتيح
+├── LICENSE                     # رخصة BSD 3-Clause
 ├── scout.go                    # واجهة Scout: تجميع Config / Manager / Events / Queue / Observer والمصنع
 ├── config.go                   # شجرة الإعدادات: DefaultConfig + تجاوز متغيرات البيئة + قيم بمسار نقطي
 ├── engine.go                   # واجهتا Engine / AdvancedEngine + أنواع Result / Hit / PaginationResult

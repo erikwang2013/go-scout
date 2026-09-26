@@ -2,10 +2,14 @@
   <img src="../../logo.svg" alt="go-scout · マスコット Scouty（全身）" width="460"/>
 </p>
 
+<p align="center">
+  <a href="https://pkg.go.dev/github.com/erikwang2013/go-scout"><img src="https://pkg.go.dev/badge/github.com/erikwang2013/go-scout.svg" alt="Go Reference"/></a>
+</p>
+
 # go-scout
 
 > Go で書かれた検索同期ライブラリ — Laravel Scout の Go 移植版（PHP プラグイン [webman-scout](https://github.com/shopwwi/webman-scout) をベース）。
-> Go 1.24 · 純粋な標準ライブラリのみ、サードパーティ依存ゼロ · バージョン v1.3.0
+> Go 1.24 · 純粋な標準ライブラリのみ、サードパーティ依存ゼロ · バージョン v1.3.1
 
 **Languages / 语言**: [中文](../../../README.md) · [English](../en/README.md) · [한국어](../ko/README.md) · [Русский](../ru/README.md) · [Deutsch](../de/README.md) · [Français](../fr/README.md) · [Español](../es/README.md) · [Português](../pt/README.md) · [हिन्दी](../hi/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Bahasa Indonesia](../id/README.md) · [日本語](./README.md)
 
@@ -99,6 +103,7 @@ Scouty はコードにも住んでいます：[mascot.go](../../../mascot.go) �
 go-scout/
 ├── go.mod                      # モジュール定義: github.com/erikwang2013/go-scout · go 1.24.1 · 依存ゼロ
 ├── .gitignore                  # IDE・キャッシュ・鍵ファイルの無視
+├── LICENSE                     # BSD 3-Clause ライセンス
 ├── scout.go                    # Scout ファサード: Config / Manager / Events / Queue / Observer の配線とファクトリ
 ├── config.go                   # 設定ツリー: DefaultConfig + Env 上書き + ドットパスアクセス
 ├── engine.go                   # Engine / AdvancedEngine インターフェース + Result / Hit / PaginationResult 型

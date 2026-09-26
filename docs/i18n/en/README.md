@@ -2,10 +2,14 @@
   <img src="../../logo.svg" alt="go-scout · Scouty, the complete project mascot" width="460"/>
 </p>
 
+<p align="center">
+  <a href="https://pkg.go.dev/github.com/erikwang2013/go-scout"><img src="https://pkg.go.dev/badge/github.com/erikwang2013/go-scout.svg" alt="Go Reference"/></a>
+</p>
+
 # go-scout
 
 > A search synchronization library written in Go — a Go port of Laravel Scout (based on the PHP plugin [webman-scout](https://github.com/shopwwi/webman-scout)).
-> Go 1.24 · pure standard library, zero third-party dependencies · version v1.3.0
+> Go 1.24 · pure standard library, zero third-party dependencies · version v1.3.1
 
 **Languages / 语言**: [中文](../../../README.md) · [English](./README.md) · [한국어](../ko/README.md) · [Русский](../ru/README.md) · [Deutsch](../de/README.md) · [Français](../fr/README.md) · [Español](../es/README.md) · [Português](../pt/README.md) · [हिन्दी](../hi/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Bahasa Indonesia](../id/README.md) · [日本語](../ja/README.md)
 
@@ -99,6 +103,7 @@ Five layers from bottom to top, with responsibility narrowing at each layer:
 go-scout/
 ├── go.mod                      # Module definition: github.com/erikwang2013/go-scout · go 1.24.1 · zero deps
 ├── .gitignore                  # IDE / cache / key-file ignores
+├── LICENSE                     # BSD 3-Clause license
 ├── scout.go                    # Scout facade: assembles Config / Manager / Events / Queue / Observer, factories
 ├── config.go                   # Config tree: DefaultConfig + env overrides + dot-path lookups
 ├── engine.go                   # Engine / AdvancedEngine interfaces + Result / Hit / PaginationResult types

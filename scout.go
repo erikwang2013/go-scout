@@ -1,7 +1,7 @@
 package scout
 
 // Version is the go-scout module version.
-const Version = "1.3.0"
+const Version = "1.3.1"
 
 // Scout wires the configuration, engine registry, event bus and queue together.
 // It is the Go counterpart of scout's Scout class plus its container bindings.

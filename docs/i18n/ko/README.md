@@ -2,10 +2,14 @@
   <img src="../../logo.svg" alt="go-scout · 마스코트 Scouty(전신)" width="460"/>
 </p>
 
+<p align="center">
+  <a href="https://pkg.go.dev/github.com/erikwang2013/go-scout"><img src="https://pkg.go.dev/badge/github.com/erikwang2013/go-scout.svg" alt="Go Reference"/></a>
+</p>
+
 # go-scout
 
 > Go로 작성된 검색 동기화 라이브러리 — Laravel Scout의 Go 포팅 (PHP 플러그인 [webman-scout](https://github.com/shopwwi/webman-scout) 기반).
-> Go 1.24 · 순수 표준 라이브러리 구현, 서드파티 의존성 0개 · 버전 v1.3.0
+> Go 1.24 · 순수 표준 라이브러리 구현, 서드파티 의존성 0개 · 버전 v1.3.1
 
 **Languages / 语言**: [中文](../../../README.md) · [English](../en/README.md) · [한국어](./README.md) · [Русский](../ru/README.md) · [Deutsch](../de/README.md) · [Français](../fr/README.md) · [Español](../es/README.md) · [Português](../pt/README.md) · [हिन्दी](../hi/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Bahasa Indonesia](../id/README.md) · [日本語](../ja/README.md)
 
@@ -99,6 +103,7 @@ Scouty는 코드에도 살고 있습니다: [mascot.go](../../../mascot.go)의 `
 go-scout/
 ├── go.mod                      # 모듈 정의: github.com/erikwang2013/go-scout · go 1.24.1 · 의존성 0
 ├── .gitignore                  # IDE / 캐시 / 키 파일 무시
+├── LICENSE                     # BSD 3-Clause 라이선스
 ├── scout.go                    # Scout 파사드: Config / Manager / Events / Queue / Observer 조립 및 팩토리
 ├── config.go                   # 설정 트리: DefaultConfig + 환경변수 오버라이드 + dot-path 조회
 ├── engine.go                   # Engine / AdvancedEngine 인터페이스 + Result / Hit / PaginationResult 타입
