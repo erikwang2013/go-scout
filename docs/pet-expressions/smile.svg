@@ -79,12 +79,6 @@
   
   <circle cx="130" cy="130" r="50" fill="#dbe8e5" stroke="#4a4a4a" stroke-width="7"/>
   <path d="M 96.2 117.7 A 36 36 0 0 1 117.7 96.2" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" opacity=".9"/>
-  <g fill="#3a3a3a">
-    <circle cx="114" cy="132" r="7"/>
-    <circle cx="146" cy="132" r="7"/>
-  </g>
-  <g fill="#ffffff" opacity=".85">
-    <circle cx="111.6" cy="129.4" r="2.3"/>
-    <circle cx="143.6" cy="129.4" r="2.3"/>
-  </g>
-  <path d="M 118 152 Q 130 162 142 152" fill="none" stroke="#3a3a3a" stroke-width="3.5" stroke-linecap="round"/></g><g class="ex-face"><ellipse cx="130" cy="144" rx="32" ry="24" fill="#DBE8E5"/><path d="M 107.35,133.96 Q 114,123.95 120.65,133.96" fill="none" stroke="#3A3A3A" stroke-width="1.8" stroke-linecap="round"/><path d="M 139.35,133.96 Q 146,123.95 152.65,133.96" fill="none" stroke="#3A3A3A" stroke-width="1.8" stroke-linecap="round"/><path d="M 121.95,147.4 Q 130,154.96 138.05,147.4" fill="none" stroke="#3A3A3A" stroke-width="1.7" stroke-linecap="round"/><ellipse cx="108.75" cy="141.45" rx="5.46" ry="2.94" fill="#FF8FB3" opacity="0.5"/><ellipse cx="151.25" cy="141.45" rx="5.46" ry="2.94" fill="#FF8FB3" opacity="0.5"/><path class="ex-anim-spark" style="animation-delay:0.0s" d="M 98.88,110.58 L 99.95,113.35 L 102.73,114.43 L 99.95,115.51 L 98.88,118.28 L 97.8,115.51 L 95.03,114.43 L 97.8,113.35 Z" fill="#FFD166"/><path class="ex-anim-spark" style="animation-delay:0.5s" d="M 159.12,104.96 L 159.94,107.08 L 162.06,107.9 L 159.94,108.73 L 159.12,110.84 L 158.29,108.73 L 156.18,107.9 L 158.29,107.08 Z" fill="#FFD166"/></g></g></svg>
+  
+  
+  </g><g class="ex-face"><path d="M 107.35,133.96 Q 114,123.95 120.65,133.96" fill="none" stroke="#3A3A3A" stroke-width="1.8" stroke-linecap="round"/><path d="M 139.35,133.96 Q 146,123.95 152.65,133.96" fill="none" stroke="#3A3A3A" stroke-width="1.8" stroke-linecap="round"/><path d="M 121.95,147.4 Q 130,154.96 138.05,147.4" fill="none" stroke="#3A3A3A" stroke-width="1.7" stroke-linecap="round"/><ellipse cx="108.75" cy="141.45" rx="5.46" ry="2.94" fill="#FF8FB3" opacity="0.5"/><ellipse cx="151.25" cy="141.45" rx="5.46" ry="2.94" fill="#FF8FB3" opacity="0.5"/><path class="ex-anim-spark" style="animation-delay:0.0s" d="M 98.88,110.58 L 99.95,113.35 L 102.73,114.43 L 99.95,115.51 L 98.88,118.28 L 97.8,115.51 L 95.03,114.43 L 97.8,113.35 Z" fill="#FFD166"/><path class="ex-anim-spark" style="animation-delay:0.5s" d="M 159.12,104.96 L 159.94,107.08 L 162.06,107.9 L 159.94,108.73 L 159.12,110.84 L 158.29,108.73 L 156.18,107.9 L 158.29,107.08 Z" fill="#FFD166"/></g></g></svg>
